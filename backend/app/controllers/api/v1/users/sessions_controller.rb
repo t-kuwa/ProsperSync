@@ -3,6 +3,7 @@ module Api
     module Users
       class SessionsController < Devise::SessionsController
         respond_to :json
+        prepend_before_action :set_devise_mapping
 
         private
 
@@ -16,6 +17,15 @@ module Api
         def respond_to_on_destroy
           head :no_content
         end
+
+        def set_devise_mapping
+          request.env["devise.mapping"] = Devise.mappings[:api_v1_user]
+        end
+
+        def devise_mapping
+          Devise.mappings[:api_v1_user]
+        end
+
       end
     end
   end

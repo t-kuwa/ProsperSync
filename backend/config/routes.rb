@@ -15,8 +15,8 @@ Rails.application.routes.draw do
                  }
 
       devise_scope :user do
-        post "login", to: "users/sessions#create"
-        delete "logout", to: "users/sessions#destroy"
+        post "/login", to: "users/sessions#create", defaults: { format: :json }
+        delete "/logout", to: "users/sessions#destroy", defaults: { format: :json }
       end
     end
   end
