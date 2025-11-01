@@ -10,5 +10,66 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 0) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_01_090400) do
+  create_table "accounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "ユーザーのグループアカウント", force: :cascade do |t|
+    t.string "name", null: false, comment: "アカウント名"
+    t.bigint "owner_id", null: false, comment: "オーナー"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_accounts_on_owner_id"
+  end
+
+  create_table "expenses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "user_id", null: false
+    t.string "category", null: false
+    t.integer "amount", null: false
+    t.date "spent_on", null: false
+    t.text "memo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_expenses_on_account_id"
+    t.index ["user_id"], name: "index_expenses_on_user_id"
+  end
+
+  create_table "incomes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "収入", force: :cascade do |t|
+    t.bigint "account_id", null: false, comment: "アカウント"
+    t.bigint "user_id", null: false, comment: "ユーザー"
+    t.string "category", null: false, comment: "カテゴリ"
+    t.integer "amount", null: false, comment: "金額"
+    t.date "received_on", null: false, comment: "収入日"
+    t.text "memo", comment: "メモ"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_incomes_on_account_id"
+    t.index ["user_id"], name: "index_incomes_on_user_id"
+  end
+
+  create_table "members", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "ユーザーのグループアカウントに所属するメンバー", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "user_id", null: false
+    t.string "role", default: "member", null: false, comment: "ロール"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "user_id"], name: "index_members_on_account_id_and_user_id", unique: true
+    t.index ["account_id"], name: "index_members_on_account_id"
+    t.index ["user_id"], name: "index_members_on_user_id"
+  end
+
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "ユーザー", force: :cascade do |t|
+    t.string "name", null: false, comment: "名前"
+    t.string "email", null: false, comment: "メールアドレス"
+    t.string "password_digest", null: false, comment: "パスワードハッシュ"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+  end
+
+  add_foreign_key "accounts", "users", column: "owner_id"
+  add_foreign_key "expenses", "accounts"
+  add_foreign_key "expenses", "users"
+  add_foreign_key "incomes", "accounts"
+  add_foreign_key "incomes", "users"
+  add_foreign_key "members", "accounts"
+  add_foreign_key "members", "users"
 end
