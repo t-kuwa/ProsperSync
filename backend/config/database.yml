@@ -20,14 +20,14 @@ default: &default
 
 development:
   <<: *default
-  database: <%= ENV.fetch("DB_NAME_DEVELOPMENT") { "prosper_sync_backend_development" } %>
+  database: <%= ENV.fetch("DB_NAME_DEVELOPMENT") { "haruve_backend_development" } %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: <%= ENV.fetch("DB_NAME_TEST") { "prosper_sync_backend_test" } %>
+  database: <%= ENV.fetch("DB_NAME_TEST") { "haruve_backend_test" } %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -52,18 +52,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: <%= ENV.fetch("DB_NAME_PRODUCTION") { "prosper_sync_backend_production" } %>
-    username: <%= ENV.fetch("DB_USERNAME_PRODUCTION") { ENV.fetch("DB_USERNAME") { "prosper_sync_backend" } } %>
+    database: <%= ENV.fetch("DB_NAME_PRODUCTION") { "haruve_backend_production" } %>
+    username: <%= ENV.fetch("DB_USERNAME_PRODUCTION") { ENV.fetch("DB_USERNAME") { "haruve_backend" } } %>
     password: <%= ENV.fetch("DB_PASSWORD_PRODUCTION") { ENV["DB_PASSWORD"] } %>
   cache:
     <<: *primary_production
-    database: prosper_sync_backend_production_cache
+    database: haruve_backend_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: prosper_sync_backend_production_queue
+    database: haruve_backend_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: prosper_sync_backend_production_cable
+    database: haruve_backend_production_cable
     migrations_paths: db/cable_migrate

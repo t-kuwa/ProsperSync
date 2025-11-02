@@ -1,6 +1,6 @@
-# ProsperSync 開発環境
+# Haruve 開発環境
 
-「ProsperSync」の開発を始めるための環境構築手順です。
+「Haruve」の開発を始めるための環境構築手順です。
 
 ## 技術スタック
 - **バックエンド**: Ruby on Rails 8（API モード） / MySQL 8 / rack-cors / dotenv-rails

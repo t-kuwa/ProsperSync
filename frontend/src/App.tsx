@@ -33,7 +33,7 @@ const App = () => {
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
       <section className="w-full max-w-xl rounded-xl bg-white p-8 shadow-2xl">
-        <h1 className="text-3xl font-bold text-slate-900">ProsperSync Frontend</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Haruve Frontend</h1>
         <p className="mt-4 text-sm text-slate-600">
           Ready-to-use Vite + React + Tailwind environment configured to talk to the Rails API.
         </p>
