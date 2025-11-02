@@ -52,7 +52,7 @@ export const LoginForm = ({
         className="mt-0"
         label="ログイン情報を保存"
       />
-      <button type="button" className="font-semibold text-indigo-300 hover:text-indigo-200">
+      <button type="button" className="hidden font-semibold text-indigo-300 hover:text-indigo-200">
         パスワードをお忘れですか？
       </button>
     </div>

@@ -25,7 +25,7 @@ const AuthPage = () => {
 
   return (
     <main className="min-h-screen bg-slate-950 md:flex md:items-center md:justify-center md:px-6 md:py-10">
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col overflow-hidden bg-slate-950 md:min-h-0 md:flex-row md:items-stretch md:rounded-3xl md:bg-slate-900 md:shadow-2xl md:shadow-slate-950/60 md:ring-1 md:ring-slate-800">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col overflow-hidden bg-slate-950 md:h-[90vh] md:min-h-0 md:flex-row md:items-stretch md:rounded-3xl md:bg-slate-900 md:shadow-2xl md:shadow-slate-950/60 md:ring-1 md:ring-slate-800">
         <MobileHero />
         <DesktopHero />
 
