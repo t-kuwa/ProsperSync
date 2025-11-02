@@ -15,7 +15,7 @@ type LoginResponse = {
 
 export const loginUser = async (credentials: LoginRequest) => {
   const { data } = await apiClient.post<LoginResponse>("/api/v1/login", {
-    user: credentials,
+    api_v1_user: credentials,
   });
 
   return data;
@@ -43,7 +43,7 @@ export const registerUser = async ({
   passwordConfirmation,
 }: SignupRequest) => {
   const { data } = await apiClient.post<SignupResponse>("/api/v1/users", {
-    user: {
+    api_v1_user: {
       name,
       email,
       password,

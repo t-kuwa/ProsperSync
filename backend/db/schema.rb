@@ -19,13 +19,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_01_090600) do
     t.index ["owner_id"], name: "index_accounts_on_owner_id"
   end
 
-  create_table "expenses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "account_id", null: false
-    t.bigint "user_id", null: false
-    t.string "category", null: false
-    t.integer "amount", null: false
-    t.date "spent_on", null: false
-    t.text "memo"
+  create_table "expenses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "支出", force: :cascade do |t|
+    t.bigint "account_id", null: false, comment: "アカウント"
+    t.bigint "user_id", null: false, comment: "ユーザー"
+    t.string "category", null: false, comment: "カテゴリ"
+    t.integer "amount", null: false, comment: "金額"
+    t.date "spent_on", null: false, comment: "支出日"
+    t.text "memo", comment: "メモ"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_expenses_on_account_id"
