@@ -14,7 +14,7 @@ const HeroBrand = () => (
 const HeroMessaging = () => (
   <div className="space-y-4 md:space-y-6">
     <p className="text-xs uppercase tracking-[0.4em] text-indigo-200/80 md:text-sm">SMART BUDGETING</p>
-    <h2 className="text-3xl font-semibold leading-snug md:text-4xl md:leading-tight lg:text-5xl">
+    <h2 className="text-3xl font-semibold leading-normal md:text-4xl md:leading-relaxed lg:text-5xl">
       画期的でシンプルな
       <br />
       家計簿からはじめよう
@@ -27,7 +27,7 @@ const HeroMessaging = () => (
 
 const HeroFooter = () => (
   <div className="flex items-center gap-3 text-xs text-indigo-100/70">
-    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 font-semibold">
+    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 font-semibold text-2xl">
       ¥0
     </span>
     <p className="max-w-[14rem]">
