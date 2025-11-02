@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type ChangeEvent, type FormEvent, useMemo, useState } from "react";
 import axios from "axios";
 
 const apiClient = axios.create({
@@ -8,50 +8,427 @@ const apiClient = axios.create({
   },
 });
 
+type Status = {
+  type: "success" | "error";
+  message: string;
+};
+
+type LoginForm = {
+  email: string;
+  password: string;
+};
+
+type SignupForm = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  passwordConfirmation: string;
+  acceptTerms: boolean;
+};
+
+const getErrorMessage = (error: unknown) => {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data as
+      | { errors?: string[]; error?: string; message?: string }
+      | undefined;
+
+    if (data?.errors && data.errors.length > 0) {
+      return data.errors.join("\n");
+    }
+
+    if (data?.error) {
+      return data.error;
+    }
+
+    if (data?.message) {
+      return data.message;
+    }
+
+    return error.message;
+  }
+
+  return "予期しないエラーが発生しました。";
+};
+
 const App = () => {
-  const [status, setStatus] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"signup" | "login">("signup");
+  const [loginForm, setLoginForm] = useState<LoginForm>({
+    email: "",
+    password: "",
+  });
+  const [signupForm, setSignupForm] = useState<SignupForm>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    passwordConfirmation: "",
+    acceptTerms: false,
+  });
+  const [loginStatus, setLoginStatus] = useState<Status | null>(null);
+  const [signupStatus, setSignupStatus] = useState<Status | null>(null);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [signupLoading, setSignupLoading] = useState(false);
+
   const baseUrl = apiClient.defaults.baseURL;
 
-  const pingBackend = async () => {
-    setLoading(true);
-    setStatus("");
+  const handleLoginChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setLoginForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSignupChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = event.target;
+    setSignupForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const combinedName = useMemo(() => {
+    return [signupForm.firstName, signupForm.lastName]
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .join(" ");
+  }, [signupForm.firstName, signupForm.lastName]);
+
+  const handleLoginSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoginLoading(true);
+    setLoginStatus(null);
+
     try {
-      const response = await apiClient.get("/health");
-      setStatus(JSON.stringify(response.data, null, 2));
+      const { data } = await apiClient.post("/api/v1/login", {
+        user: {
+          email: loginForm.email,
+          password: loginForm.password,
+        },
+      });
+
+      setLoginStatus({
+        type: "success",
+        message: `${data.user.name}としてログインしました。トークン: ${data.token}`,
+      });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setStatus(error.message);
-      } else {
-        setStatus("Unexpected error while contacting the API.");
-      }
+      setLoginStatus({ type: "error", message: getErrorMessage(error) });
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
     }
   };
 
+  const handleSignupSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!signupForm.acceptTerms) {
+      setSignupStatus({
+        type: "error",
+        message: "利用規約に同意してください。",
+      });
+      return;
+    }
+
+    if (!combinedName) {
+      setSignupStatus({
+        type: "error",
+        message: "姓と名を入力してください。",
+      });
+      return;
+    }
+
+    setSignupLoading(true);
+    setSignupStatus(null);
+
+    try {
+      const { data } = await apiClient.post("/api/v1/users", {
+        user: {
+          name: combinedName,
+          email: signupForm.email,
+          password: signupForm.password,
+          password_confirmation: signupForm.passwordConfirmation,
+        },
+      });
+
+      setSignupStatus({
+        type: "success",
+        message: `${data.user.name}さんのアカウントを作成しました。ログインして利用を開始してください。`,
+      });
+    } catch (error) {
+      setSignupStatus({ type: "error", message: getErrorMessage(error) });
+    } finally {
+      setSignupLoading(false);
+    }
+  };
+
+  const toggleButtonClass = (tab: "signup" | "login") =>
+    `rounded-full px-4 py-2 text-sm font-semibold transition ${
+      activeTab === tab
+        ? "bg-slate-900 text-white shadow-lg shadow-indigo-500/20"
+        : "text-slate-400 hover:text-white"
+    }`;
+
+  const statusClassName = (status: Status) =>
+    `rounded-lg border px-4 py-3 text-sm ${
+      status.type === "success"
+        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200"
+        : "border-rose-500/30 bg-rose-500/10 text-rose-200"
+    }`;
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-      <section className="w-full max-w-xl rounded-xl bg-white p-8 shadow-2xl">
-        <h1 className="text-3xl font-bold text-slate-900">ProsperSync Frontend</h1>
-        <p className="mt-4 text-sm text-slate-600">
-          Ready-to-use Vite + React + Tailwind environment configured to talk to the Rails API.
-        </p>
-        <p className="mt-2 text-xs text-slate-500">
-          API base URL:{" "}
-          <code className="rounded bg-slate-100 px-2 py-1 font-mono">{baseUrl}</code>
-        </p>
-        <button
-          type="button"
-          onClick={pingBackend}
-          disabled={loading}
-          className="mt-6 inline-flex items-center justify-center rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
-        >
-          {loading ? "Checking..." : "Call /health endpoint"}
-        </button>
-        <pre className="mt-6 max-h-48 overflow-auto rounded-lg bg-slate-900 p-4 text-xs text-emerald-200">
-          {status || "Result will appear here after hitting the API."}
-        </pre>
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10">
+      <section className="flex w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-slate-900 shadow-2xl shadow-slate-950/60 ring-1 ring-slate-800 md:flex-row">
+        <div className="relative flex flex-1 flex-col justify-between bg-gradient-to-br from-slate-800 via-indigo-800 to-slate-900 p-10 text-slate-100">
+          <div className="flex items-center justify-between text-sm font-medium">
+            <span className="text-lg font-semibold tracking-wide">AMU</span>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-wide text-slate-100 backdrop-blur transition hover:bg-white/20"
+            >
+              Back to website
+              <span aria-hidden>↗</span>
+            </button>
+          </div>
+          <div className="mt-16 space-y-6">
+            <p className="text-sm uppercase tracking-[0.4em] text-indigo-200/80">Create Moments</p>
+            <h2 className="text-4xl font-semibold leading-tight md:text-5xl">
+              Capturing Moments,
+              <br />
+              Creating Memories
+            </h2>
+            <p className="max-w-xs text-sm text-indigo-100/80">
+              ハイクオリティな体験を共有し、チームでのコラボレーションを加速させましょう。
+            </p>
+          </div>
+          <div className="mt-16 flex items-center gap-3 text-xs text-indigo-100/70">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 font-semibold">
+              24
+            </span>
+            <p className="max-w-[14rem]">
+              24時間以内のサポート体制で、安心して導入いただけます。
+            </p>
+          </div>
+        </div>
+
+        <div className="flex w-full flex-1 flex-col justify-between bg-slate-950/40 p-10 text-slate-100">
+          <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
+            <span>アカウントをお持ちですか？</span>
+            <button
+              type="button"
+              onClick={() => setActiveTab("login")}
+              className="font-semibold text-indigo-300 hover:text-indigo-200"
+            >
+              ログイン
+            </button>
+          </div>
+
+          <div className="mt-6 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab("signup")}
+              className={toggleButtonClass("signup")}
+            >
+              アカウント登録
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("login")}
+              className={toggleButtonClass("login")}
+            >
+              ログイン
+            </button>
+          </div>
+
+          <div className="mt-8">
+            {activeTab === "signup" ? (
+              <>
+                <h1 className="text-3xl font-semibold text-white md:text-4xl">
+                  新しいアカウントを作成
+                </h1>
+                <p className="mt-2 text-sm text-slate-400">
+                  まずはアカウントを作成して、体験をはじめましょう。
+                </p>
+                <form onSubmit={handleSignupSubmit} className="mt-8 space-y-6">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <label className="flex flex-col text-sm text-slate-300">
+                      <span className="mb-2 font-medium">姓</span>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={signupForm.firstName}
+                        onChange={handleSignupChange}
+                        autoComplete="given-name"
+                        className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                        placeholder="山田"
+                        required
+                      />
+                    </label>
+                    <label className="flex flex-col text-sm text-slate-300">
+                      <span className="mb-2 font-medium">名</span>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={signupForm.lastName}
+                        onChange={handleSignupChange}
+                        autoComplete="family-name"
+                        className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                        placeholder="太郎"
+                        required
+                      />
+                    </label>
+                  </div>
+                  <label className="flex flex-col text-sm text-slate-300">
+                    <span className="mb-2 font-medium">メールアドレス</span>
+                    <input
+                      type="email"
+                      name="email"
+                      value={signupForm.email}
+                      onChange={handleSignupChange}
+                      autoComplete="email"
+                      className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                      placeholder="example@company.com"
+                      required
+                    />
+                  </label>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <label className="flex flex-col text-sm text-slate-300">
+                      <span className="mb-2 font-medium">パスワード</span>
+                      <input
+                        type="password"
+                        name="password"
+                        value={signupForm.password}
+                        onChange={handleSignupChange}
+                        autoComplete="new-password"
+                        className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                        placeholder="••••••••"
+                        minLength={6}
+                        required
+                      />
+                    </label>
+                    <label className="flex flex-col text-sm text-slate-300">
+                      <span className="mb-2 font-medium">パスワード（確認）</span>
+                      <input
+                        type="password"
+                        name="passwordConfirmation"
+                        value={signupForm.passwordConfirmation}
+                        onChange={handleSignupChange}
+                        autoComplete="new-password"
+                        className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                        placeholder="••••••••"
+                        minLength={6}
+                        required
+                      />
+                    </label>
+                  </div>
+                  <label className="flex items-start gap-3 text-xs text-slate-400">
+                    <input
+                      type="checkbox"
+                      name="acceptTerms"
+                      checked={signupForm.acceptTerms}
+                      onChange={handleSignupChange}
+                      className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500"
+                    />
+                    <span>
+                      <span className="font-medium text-slate-200">利用規約</span>と
+                      <span className="font-medium text-slate-200">プライバシーポリシー</span>に同意します。
+                    </span>
+                  </label>
+                  <button
+                    type="submit"
+                    disabled={signupLoading}
+                    className="flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50"
+                  >
+                    {signupLoading ? "作成中..." : "アカウントを作成"}
+                  </button>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <button
+                      type="button"
+                      className="flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-900/70"
+                    >
+                      <span role="img" aria-label="google" className="text-lg">
+                        🔍
+                      </span>
+                      Googleで登録
+                    </button>
+                    <button
+                      type="button"
+                      className="flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-900/70"
+                    >
+                      <span role="img" aria-label="apple" className="text-lg">
+                        🍎
+                      </span>
+                      Appleで登録
+                    </button>
+                  </div>
+                  {signupStatus && (
+                    <p className={statusClassName(signupStatus)}>{signupStatus.message}</p>
+                  )}
+                </form>
+              </>
+            ) : (
+              <>
+                <h1 className="text-3xl font-semibold text-white md:text-4xl">
+                  おかえりなさい
+                </h1>
+                <p className="mt-2 text-sm text-slate-400">
+                  アカウントにサインインして、体験を続けましょう。
+                </p>
+                <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6">
+                  <label className="flex flex-col text-sm text-slate-300">
+                    <span className="mb-2 font-medium">メールアドレス</span>
+                    <input
+                      type="email"
+                      name="email"
+                      value={loginForm.email}
+                      onChange={handleLoginChange}
+                      autoComplete="email"
+                      className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                      placeholder="example@company.com"
+                      required
+                    />
+                  </label>
+                  <label className="flex flex-col text-sm text-slate-300">
+                    <span className="mb-2 font-medium">パスワード</span>
+                    <input
+                      type="password"
+                      name="password"
+                      value={loginForm.password}
+                      onChange={handleLoginChange}
+                      autoComplete="current-password"
+                      className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </label>
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500"
+                      />
+                      ログイン情報を保存
+                    </label>
+                    <button type="button" className="font-semibold text-indigo-300 hover:text-indigo-200">
+                      パスワードをお忘れですか？
+                    </button>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loginLoading}
+                    className="flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50"
+                  >
+                    {loginLoading ? "サインイン中..." : "サインイン"}
+                  </button>
+                  {loginStatus && (
+                    <p className={statusClassName(loginStatus)}>{loginStatus.message}</p>
+                  )}
+                </form>
+              </>
+            )}
+          </div>
+
+          <div className="mt-12 text-xs text-slate-500">
+            API base URL: <code className="rounded bg-slate-900 px-2 py-1 text-slate-300">{baseUrl}</code>
+          </div>
+        </div>
       </section>
     </main>
   );
