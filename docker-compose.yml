@@ -1,11 +1,13 @@
+name: haruve
+
 services:
   db:
     image: mysql:8.4
-    container_name: prosper_sync_db
+    container_name: haruve_db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: prosper_sync_backend_development
+      MYSQL_DATABASE: haruve_backend_development
       MYSQL_ROOT_HOST: "%"
       TZ: Asia/Tokyo
     ports:
@@ -16,7 +18,7 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: prosper_sync_backend
+    container_name: haruve_backend
     depends_on:
       - db
     environment:
@@ -24,8 +26,8 @@ services:
       DB_PORT: 3306
       DB_USERNAME: root
       DB_PASSWORD: secret
-      DB_NAME_DEVELOPMENT: prosper_sync_backend_development
-      DB_NAME_TEST: prosper_sync_backend_test
+      DB_NAME_DEVELOPMENT: haruve_backend_development
+      DB_NAME_TEST: haruve_backend_test
       CORS_ORIGINS: http://localhost:5173
     volumes:
       - ./backend:/app
@@ -37,7 +39,7 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: prosper_sync_frontend
+    container_name: haruve_frontend
     depends_on:
       - backend
     environment:
