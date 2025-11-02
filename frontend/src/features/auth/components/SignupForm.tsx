@@ -3,12 +3,7 @@ import StatusMessage from "./StatusMessage";
 import type { SignupFormValues, Status } from "../types";
 import { FormCheckbox, FormField, FormSubmitButton } from "./FormControls";
 
-type SignupFieldKey =
-  | "familyName"
-  | "givenName"
-  | "email"
-  | "password"
-  | "passwordConfirmation";
+type SignupFieldKey = | "name" | "email" | "password" | "passwordConfirmation";
 
 type FieldConfig<K extends SignupFieldKey> = {
   name: K;
@@ -18,21 +13,6 @@ type FieldConfig<K extends SignupFieldKey> = {
   type?: string;
   minLength?: number;
 };
-
-const personalFields = [
-  {
-    name: "familyName",
-    label: "姓",
-    placeholder: "山田",
-    autoComplete: "family-name",
-  },
-  {
-    name: "givenName",
-    label: "名",
-    placeholder: "太郎",
-    autoComplete: "given-name",
-  },
-] as const satisfies FieldConfig<"familyName" | "givenName">[];
 
 const passwordFields = [
   {
@@ -71,20 +51,15 @@ export const SignupForm = ({
   onSubmit,
 }: SignupFormProps) => (
   <form onSubmit={onSubmit} className="mt-8 space-y-6">
-    <div className="grid gap-6 md:grid-cols-2">
-      {personalFields.map(({ name, label, placeholder, autoComplete }) => (
-        <FormField
-          key={name}
-          label={label}
-          name={name}
-          value={values[name]}
-          onChange={onChange}
-          autoComplete={autoComplete}
-          placeholder={placeholder}
-          required
-        />
-      ))}
-    </div>
+    <FormField
+      label="名前"
+      name="name"
+      value={values.name}
+      onChange={onChange}
+      autoComplete="name"
+      placeholder="山田 太郎"
+      required
+    />
 
     <FormField
       label="メールアドレス"

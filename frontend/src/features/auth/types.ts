@@ -9,8 +9,7 @@ export type LoginFormValues = {
 };
 
 export type SignupFormValues = {
-  familyName: string;
-  givenName: string;
+  name: string;
   email: string;
   password: string;
   passwordConfirmation: string;

@@ -20,8 +20,7 @@ const initialLoginForm: LoginFormValues = {
 };
 
 const initialSignupForm: SignupFormValues = {
-  familyName: "",
-  givenName: "",
+  name: "",
   email: "",
   password: "",
   passwordConfirmation: "",
@@ -37,15 +36,6 @@ const useAuthFlow = () => {
   const [signupStatus, setSignupStatus] = useState<Status | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
   const [signupLoading, setSignupLoading] = useState(false);
-
-  const combinedName = useMemo(
-    () =>
-      [signupForm.familyName, signupForm.givenName]
-        .map((value) => value.trim())
-        .filter(Boolean)
-        .join(" "),
-    [signupForm.familyName, signupForm.givenName],
-  );
 
   const handleTabChange = useCallback((tab: ActiveTab) => {
     setActiveTab(tab);
@@ -113,10 +103,10 @@ const useAuthFlow = () => {
         return;
       }
 
-      if (!combinedName) {
+      if (!signupForm.name) {
         setSignupStatus({
           type: "error",
-          message: "姓と名を入力してください。",
+          message: "名前を入力してください。",
         });
         return;
       }
@@ -126,7 +116,7 @@ const useAuthFlow = () => {
 
       try {
         const data = await registerUser({
-          name: combinedName,
+          name: signupForm.name.trim(),
           email: signupForm.email.trim(),
           password: signupForm.password,
           passwordConfirmation: signupForm.passwordConfirmation,
@@ -144,7 +134,7 @@ const useAuthFlow = () => {
       }
     },
     [
-      combinedName,
+      signupForm.name,
       signupForm.acceptTerms,
       signupForm.email,
       signupForm.password,
