@@ -10,6 +10,7 @@ import type {
   SignupFormValues,
   Status,
 } from "./types";
+import { loginUser, registerUser } from "./api";
 
 const initialLoginForm: LoginFormValues = {
   email: "",
@@ -17,8 +18,8 @@ const initialLoginForm: LoginFormValues = {
 };
 
 const initialSignupForm: SignupFormValues = {
-  firstName: "",
-  lastName: "",
+  familyName: "",
+  givenName: "",
   email: "",
   password: "",
   passwordConfirmation: "",
@@ -40,11 +41,11 @@ const AuthPage = () => {
 
   const combinedName = useMemo(
     () =>
-      [signupForm.firstName, signupForm.lastName]
+      [signupForm.familyName, signupForm.givenName]
         .map((value) => value.trim())
         .filter(Boolean)
         .join(" "),
-    [signupForm.firstName, signupForm.lastName],
+    [signupForm.familyName, signupForm.givenName],
   );
 
   const handleTabChange = (tab: ActiveTab) => {
@@ -75,11 +76,9 @@ const AuthPage = () => {
     setLoginStatus(null);
 
     try {
-      const { data } = await apiClient.post("/api/v1/login", {
-        user: {
-          email: loginForm.email,
-          password: loginForm.password,
-        },
+      const data = await loginUser({
+        email: loginForm.email,
+        password: loginForm.password,
       });
 
       setLoginStatus({
@@ -116,13 +115,11 @@ const AuthPage = () => {
     setSignupStatus(null);
 
     try {
-      const { data } = await apiClient.post("/api/v1/users", {
-        user: {
-          name: combinedName,
-          email: signupForm.email,
-          password: signupForm.password,
-          password_confirmation: signupForm.passwordConfirmation,
-        },
+      const data = await registerUser({
+        name: combinedName,
+        email: signupForm.email,
+        password: signupForm.password,
+        passwordConfirmation: signupForm.passwordConfirmation,
       });
 
       setSignupStatus({
