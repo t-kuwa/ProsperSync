@@ -192,22 +192,22 @@ const App = () => {
                 </button>
               </div>
               <div className="space-y-4">
-                <p className="text-xs uppercase tracking-[0.4em] text-indigo-200/80">Create Moments</p>
+                <p className="text-xs uppercase tracking-[0.4em] text-indigo-200/80">SMART BUDGETING</p>
                 <h2 className="text-3xl font-semibold leading-snug">
-                  Capturing Moments,
+                  画期的でシンプルな
                   <br />
-                  Creating Memories
+                  家計簿からはじめよう
                 </h2>
                 <p className="text-sm text-indigo-100/80">
-                  ハイクオリティな体験を共有し、チームでのコラボレーションを加速させましょう。
+                  最初の機能は、入力負担を最小限に抑えたカード型の家計簿。レシートの撮影と数タップで支出を管理し、使いすぎをすぐに把握できます。
                 </p>
               </div>
               <div className="flex items-center gap-3 text-xs text-indigo-100/70">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 font-semibold">
-                  24
+                  ¥0
                 </span>
                 <p className="max-w-[14rem]">
-                  24時間以内のサポート体制で、安心して導入いただけます。
+                  自動分類と支出トレンドを毎朝フィードでお届け。貯蓄目標までの道のりが、ひと目で分かります。
                 </p>
               </div>
             </div>
@@ -226,22 +226,22 @@ const App = () => {
             </button>
           </div>
           <div className="mt-16 space-y-6">
-            <p className="text-sm uppercase tracking-[0.4em] text-indigo-200/80">Create Moments</p>
+            <p className="text-sm uppercase tracking-[0.4em] text-indigo-200/80">SMART BUDGETING</p>
             <h2 className="text-4xl font-semibold leading-tight md:text-5xl">
-              Capturing Moments,
+              画期的でシンプルな
               <br />
-              Creating Memories
+              家計簿からはじめよう
             </h2>
             <p className="max-w-xs text-sm text-indigo-100/80">
-              ハイクオリティな体験を共有し、チームでのコラボレーションを加速させましょう。
+              最初に提供するのは、カードをめくるだけで支出を整理できる次世代の家計簿。毎日の記録が自然と習慣化され、未来のプランニングがスムーズになります。
             </p>
           </div>
           <div className="mt-16 flex items-center gap-3 text-xs text-indigo-100/70">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 font-semibold">
-              24
+              ¥0
             </span>
             <p className="max-w-[14rem]">
-              24時間以内のサポート体制で、安心して導入いただけます。
+              自動分類、貯蓄シミュレーション、サブスクの可視化までをワンストップで。シンプルさと継続しやすさを両立しました。
             </p>
           </div>
         </div>
