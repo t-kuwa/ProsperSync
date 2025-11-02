@@ -1,12 +1,7 @@
 import type { ChangeEvent, FormEventHandler } from "react";
 import StatusMessage from "./StatusMessage";
 import type { SignupFormValues, Status } from "../types";
-import {
-  FormCheckbox,
-  FormField,
-  FormSubmitButton,
-  SocialButton,
-} from "./FormControls";
+import { FormCheckbox, FormField, FormSubmitButton } from "./FormControls";
 
 type SignupFieldKey =
   | "familyName"
@@ -59,11 +54,6 @@ const passwordFields = [
 ] as const satisfies FieldConfig<
   "password" | "passwordConfirmation"
 >[];
-
-const socialProviders = [
-  { icon: "🔍", label: "Googleで登録" },
-  { icon: "🍎", label: "Appleで登録" },
-] as const;
 
 type SignupFormProps = {
   values: SignupFormValues;
@@ -148,12 +138,6 @@ export const SignupForm = ({
       loadingLabel="作成中..."
       idleLabel="アカウントを作成"
     />
-
-    <div className="grid gap-3 md:grid-cols-2">
-      {socialProviders.map(({ icon, label }) => (
-        <SocialButton key={label} icon={icon} label={label} />
-      ))}
-    </div>
 
     {status && <StatusMessage status={status} />}
   </form>

@@ -15,7 +15,7 @@ export const AuthCard = ({
   subheading: string;
   children: ReactNode;
 }) => (
-  <div className="relative z-10 -mt-12 flex flex-1 flex-col rounded-t-3xl bg-slate-950 px-6 py-10 shadow-[0_-32px_80px_rgba(15,23,42,0.45)] md:mt-0 md:rounded-none md:bg-transparent md:px-10 md:py-10 md:shadow-none">
+  <div className="relative z-10 -mt-12 flex flex-1 flex-col rounded-t-3xl bg-slate-950 px-6 pt-16 pb-12 shadow-[0_-32px_80px_rgba(15,23,42,0.45)] md:mt-0 md:rounded-none md:bg-transparent md:px-10 md:py-10 md:shadow-none">
     <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
       <span>アカウントをお持ちですか？</span>
       <button

@@ -1,8 +1,4 @@
-import type {
-  ButtonHTMLAttributes,
-  InputHTMLAttributes,
-  ReactNode,
-} from "react";
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
 const mergeClassNames = (...classNames: Array<string | false | undefined>) =>
   classNames.filter(Boolean).join(" ");
@@ -103,32 +99,5 @@ export const FormSubmitButton = ({
     {...props}
   >
     {loading ? loadingLabel : idleLabel}
-  </button>
-);
-
-type SocialButtonProps = {
-  icon: ReactNode;
-  label: string;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
-
-export const SocialButton = ({
-  icon,
-  label,
-  className,
-  type,
-  ...props
-}: SocialButtonProps) => (
-  <button
-    type={type ?? "button"}
-    className={mergeClassNames(
-      "flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-900/70",
-      className,
-    )}
-    {...props}
-  >
-    <span aria-hidden className="text-lg">
-      {icon}
-    </span>
-    {label}
   </button>
 );
