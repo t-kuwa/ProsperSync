@@ -174,9 +174,47 @@ const App = () => {
     }`;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10">
-      <section className="flex w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-slate-900 shadow-2xl shadow-slate-950/60 ring-1 ring-slate-800 md:flex-row">
-        <div className="relative flex flex-1 flex-col justify-between bg-gradient-to-br from-slate-800 via-indigo-800 to-slate-900 p-10 text-slate-100">
+    <main className="min-h-screen bg-slate-950 md:flex md:items-center md:justify-center md:px-6 md:py-10">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col overflow-hidden bg-slate-950 md:min-h-0 md:flex-row md:items-stretch md:rounded-3xl md:bg-slate-900 md:shadow-2xl md:shadow-slate-950/60 md:ring-1 md:ring-slate-800">
+        <div className="md:hidden">
+          <div className="relative h-80 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-indigo-800 to-slate-900" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.45),transparent_60%)]" />
+            <div className="relative z-10 flex h-full flex-col justify-between p-8 text-slate-100">
+              <div className="flex items-center justify-between text-sm font-medium">
+                <span className="text-lg font-semibold tracking-wide">AMU</span>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-wide text-slate-100 backdrop-blur transition hover:bg-white/20"
+                >
+                  Back to website
+                  <span aria-hidden>↗</span>
+                </button>
+              </div>
+              <div className="space-y-4">
+                <p className="text-xs uppercase tracking-[0.4em] text-indigo-200/80">Create Moments</p>
+                <h2 className="text-3xl font-semibold leading-snug">
+                  Capturing Moments,
+                  <br />
+                  Creating Memories
+                </h2>
+                <p className="text-sm text-indigo-100/80">
+                  ハイクオリティな体験を共有し、チームでのコラボレーションを加速させましょう。
+                </p>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-indigo-100/70">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 font-semibold">
+                  24
+                </span>
+                <p className="max-w-[14rem]">
+                  24時間以内のサポート体制で、安心して導入いただけます。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative hidden flex-1 flex-col justify-between bg-gradient-to-br from-slate-800 via-indigo-800 to-slate-900 p-10 text-slate-100 md:flex">
           <div className="flex items-center justify-between text-sm font-medium">
             <span className="text-lg font-semibold tracking-wide">AMU</span>
             <button
@@ -208,221 +246,223 @@ const App = () => {
           </div>
         </div>
 
-        <div className="flex w-full flex-1 flex-col justify-between bg-slate-950/40 p-10 text-slate-100">
-          <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
-            <span>アカウントをお持ちですか？</span>
-            <button
-              type="button"
-              onClick={() => setActiveTab("login")}
-              className="font-semibold text-indigo-300 hover:text-indigo-200"
-            >
-              ログイン
-            </button>
-          </div>
+        <div className="relative flex flex-1 flex-col bg-transparent text-slate-100 md:bg-slate-950/40 md:p-10">
+          <div className="relative z-10 -mt-12 flex flex-1 flex-col rounded-t-3xl bg-slate-950 px-6 py-10 shadow-[0_-32px_80px_rgba(15,23,42,0.45)] md:mt-0 md:rounded-none md:bg-transparent md:px-10 md:py-10 md:shadow-none">
+            <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
+              <span>アカウントをお持ちですか？</span>
+              <button
+                type="button"
+                onClick={() => setActiveTab("login")}
+                className="font-semibold text-indigo-300 hover:text-indigo-200"
+              >
+                ログイン
+              </button>
+            </div>
 
-          <div className="mt-6 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("signup")}
-              className={toggleButtonClass("signup")}
-            >
-              アカウント登録
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("login")}
-              className={toggleButtonClass("login")}
-            >
-              ログイン
-            </button>
-          </div>
+            <div className="mt-6 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveTab("signup")}
+                className={toggleButtonClass("signup")}
+              >
+                アカウント登録
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("login")}
+                className={toggleButtonClass("login")}
+              >
+                ログイン
+              </button>
+            </div>
 
-          <div className="mt-8">
-            {activeTab === "signup" ? (
-              <>
-                <h1 className="text-3xl font-semibold text-white md:text-4xl">
-                  新しいアカウントを作成
-                </h1>
-                <p className="mt-2 text-sm text-slate-400">
-                  まずはアカウントを作成して、体験をはじめましょう。
-                </p>
-                <form onSubmit={handleSignupSubmit} className="mt-8 space-y-6">
-                  <div className="grid gap-6 md:grid-cols-2">
+            <div className="mt-8">
+              {activeTab === "signup" ? (
+                <>
+                  <h1 className="text-3xl font-semibold text-white md:text-4xl">
+                    新しいアカウントを作成
+                  </h1>
+                  <p className="mt-2 text-sm text-slate-400">
+                    まずはアカウントを作成して、体験をはじめましょう。
+                  </p>
+                  <form onSubmit={handleSignupSubmit} className="mt-8 space-y-6">
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <label className="flex flex-col text-sm text-slate-300">
+                        <span className="mb-2 font-medium">姓</span>
+                        <input
+                          type="text"
+                          name="firstName"
+                          value={signupForm.firstName}
+                          onChange={handleSignupChange}
+                          autoComplete="given-name"
+                          className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                          placeholder="山田"
+                          required
+                        />
+                      </label>
+                      <label className="flex flex-col text-sm text-slate-300">
+                        <span className="mb-2 font-medium">名</span>
+                        <input
+                          type="text"
+                          name="lastName"
+                          value={signupForm.lastName}
+                          onChange={handleSignupChange}
+                          autoComplete="family-name"
+                          className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                          placeholder="太郎"
+                          required
+                        />
+                      </label>
+                    </div>
                     <label className="flex flex-col text-sm text-slate-300">
-                      <span className="mb-2 font-medium">姓</span>
+                      <span className="mb-2 font-medium">メールアドレス</span>
                       <input
-                        type="text"
-                        name="firstName"
-                        value={signupForm.firstName}
+                        type="email"
+                        name="email"
+                        value={signupForm.email}
                         onChange={handleSignupChange}
-                        autoComplete="given-name"
+                        autoComplete="email"
                         className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
-                        placeholder="山田"
+                        placeholder="example@company.com"
                         required
                       />
                     </label>
-                    <label className="flex flex-col text-sm text-slate-300">
-                      <span className="mb-2 font-medium">名</span>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <label className="flex flex-col text-sm text-slate-300">
+                        <span className="mb-2 font-medium">パスワード</span>
+                        <input
+                          type="password"
+                          name="password"
+                          value={signupForm.password}
+                          onChange={handleSignupChange}
+                          autoComplete="new-password"
+                          className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                          placeholder="••••••••"
+                          minLength={6}
+                          required
+                        />
+                      </label>
+                      <label className="flex flex-col text-sm text-slate-300">
+                        <span className="mb-2 font-medium">パスワード（確認）</span>
+                        <input
+                          type="password"
+                          name="passwordConfirmation"
+                          value={signupForm.passwordConfirmation}
+                          onChange={handleSignupChange}
+                          autoComplete="new-password"
+                          className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
+                          placeholder="••••••••"
+                          minLength={6}
+                          required
+                        />
+                      </label>
+                    </div>
+                    <label className="flex items-start gap-3 text-xs text-slate-400">
                       <input
-                        type="text"
-                        name="lastName"
-                        value={signupForm.lastName}
+                        type="checkbox"
+                        name="acceptTerms"
+                        checked={signupForm.acceptTerms}
                         onChange={handleSignupChange}
-                        autoComplete="family-name"
+                        className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500"
+                      />
+                      <span>
+                        <span className="font-medium text-slate-200">利用規約</span>と
+                        <span className="font-medium text-slate-200">プライバシーポリシー</span>に同意します。
+                      </span>
+                    </label>
+                    <button
+                      type="submit"
+                      disabled={signupLoading}
+                      className="flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50"
+                    >
+                      {signupLoading ? "作成中..." : "アカウントを作成"}
+                    </button>
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <button
+                        type="button"
+                        className="flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-900/70"
+                      >
+                        <span role="img" aria-label="google" className="text-lg">
+                          🔍
+                        </span>
+                        Googleで登録
+                      </button>
+                      <button
+                        type="button"
+                        className="flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-900/70"
+                      >
+                        <span role="img" aria-label="apple" className="text-lg">
+                          🍎
+                        </span>
+                        Appleで登録
+                      </button>
+                    </div>
+                    {signupStatus && (
+                      <p className={statusClassName(signupStatus)}>{signupStatus.message}</p>
+                    )}
+                  </form>
+                </>
+              ) : (
+                <>
+                  <h1 className="text-3xl font-semibold text-white md:text-4xl">
+                    おかえりなさい
+                  </h1>
+                  <p className="mt-2 text-sm text-slate-400">
+                    アカウントにサインインして、体験を続けましょう。
+                  </p>
+                  <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6">
+                    <label className="flex flex-col text-sm text-slate-300">
+                      <span className="mb-2 font-medium">メールアドレス</span>
+                      <input
+                        type="email"
+                        name="email"
+                        value={loginForm.email}
+                        onChange={handleLoginChange}
+                        autoComplete="email"
                         className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
-                        placeholder="太郎"
+                        placeholder="example@company.com"
                         required
                       />
                     </label>
-                  </div>
-                  <label className="flex flex-col text-sm text-slate-300">
-                    <span className="mb-2 font-medium">メールアドレス</span>
-                    <input
-                      type="email"
-                      name="email"
-                      value={signupForm.email}
-                      onChange={handleSignupChange}
-                      autoComplete="email"
-                      className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
-                      placeholder="example@company.com"
-                      required
-                    />
-                  </label>
-                  <div className="grid gap-6 md:grid-cols-2">
                     <label className="flex flex-col text-sm text-slate-300">
                       <span className="mb-2 font-medium">パスワード</span>
                       <input
                         type="password"
                         name="password"
-                        value={signupForm.password}
-                        onChange={handleSignupChange}
-                        autoComplete="new-password"
+                        value={loginForm.password}
+                        onChange={handleLoginChange}
+                        autoComplete="current-password"
                         className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
                         placeholder="••••••••"
-                        minLength={6}
                         required
                       />
                     </label>
-                    <label className="flex flex-col text-sm text-slate-300">
-                      <span className="mb-2 font-medium">パスワード（確認）</span>
-                      <input
-                        type="password"
-                        name="passwordConfirmation"
-                        value={signupForm.passwordConfirmation}
-                        onChange={handleSignupChange}
-                        autoComplete="new-password"
-                        className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
-                        placeholder="••••••••"
-                        minLength={6}
-                        required
-                      />
-                    </label>
-                  </div>
-                  <label className="flex items-start gap-3 text-xs text-slate-400">
-                    <input
-                      type="checkbox"
-                      name="acceptTerms"
-                      checked={signupForm.acceptTerms}
-                      onChange={handleSignupChange}
-                      className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500"
-                    />
-                    <span>
-                      <span className="font-medium text-slate-200">利用規約</span>と
-                      <span className="font-medium text-slate-200">プライバシーポリシー</span>に同意します。
-                    </span>
-                  </label>
-                  <button
-                    type="submit"
-                    disabled={signupLoading}
-                    className="flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50"
-                  >
-                    {signupLoading ? "作成中..." : "アカウントを作成"}
-                  </button>
-                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500"
+                        />
+                        ログイン情報を保存
+                      </label>
+                      <button type="button" className="font-semibold text-indigo-300 hover:text-indigo-200">
+                        パスワードをお忘れですか？
+                      </button>
+                    </div>
                     <button
-                      type="button"
-                      className="flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-900/70"
+                      type="submit"
+                      disabled={loginLoading}
+                      className="flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50"
                     >
-                      <span role="img" aria-label="google" className="text-lg">
-                        🔍
-                      </span>
-                      Googleで登録
+                      {loginLoading ? "サインイン中..." : "サインイン"}
                     </button>
-                    <button
-                      type="button"
-                      className="flex items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-900/70"
-                    >
-                      <span role="img" aria-label="apple" className="text-lg">
-                        🍎
-                      </span>
-                      Appleで登録
-                    </button>
-                  </div>
-                  {signupStatus && (
-                    <p className={statusClassName(signupStatus)}>{signupStatus.message}</p>
-                  )}
-                </form>
-              </>
-            ) : (
-              <>
-                <h1 className="text-3xl font-semibold text-white md:text-4xl">
-                  おかえりなさい
-                </h1>
-                <p className="mt-2 text-sm text-slate-400">
-                  アカウントにサインインして、体験を続けましょう。
-                </p>
-                <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6">
-                  <label className="flex flex-col text-sm text-slate-300">
-                    <span className="mb-2 font-medium">メールアドレス</span>
-                    <input
-                      type="email"
-                      name="email"
-                      value={loginForm.email}
-                      onChange={handleLoginChange}
-                      autoComplete="email"
-                      className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
-                      placeholder="example@company.com"
-                      required
-                    />
-                  </label>
-                  <label className="flex flex-col text-sm text-slate-300">
-                    <span className="mb-2 font-medium">パスワード</span>
-                    <input
-                      type="password"
-                      name="password"
-                      value={loginForm.password}
-                      onChange={handleLoginChange}
-                      autoComplete="current-password"
-                      className="rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40"
-                      placeholder="••••••••"
-                      required
-                    />
-                  </label>
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500"
-                      />
-                      ログイン情報を保存
-                    </label>
-                    <button type="button" className="font-semibold text-indigo-300 hover:text-indigo-200">
-                      パスワードをお忘れですか？
-                    </button>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={loginLoading}
-                    className="flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50"
-                  >
-                    {loginLoading ? "サインイン中..." : "サインイン"}
-                  </button>
-                  {loginStatus && (
-                    <p className={statusClassName(loginStatus)}>{loginStatus.message}</p>
-                  )}
-                </form>
-              </>
-            )}
+                    {loginStatus && (
+                      <p className={statusClassName(loginStatus)}>{loginStatus.message}</p>
+                    )}
+                  </form>
+                </>
+              )}
+            </div>
           </div>
 
           <div className="mt-12 text-xs text-slate-500">
