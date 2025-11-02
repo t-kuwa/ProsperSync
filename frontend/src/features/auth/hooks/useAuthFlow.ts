@@ -28,7 +28,9 @@ const initialSignupForm: SignupFormValues = {
 };
 
 const useAuthFlow = () => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("signup");
+  const [activeTab, setActiveTab] = useState<ActiveTab>(
+    window.location.pathname === "/login" ? "login" : "signup",
+  );
   const [loginForm, setLoginForm] = useState<LoginFormValues>(initialLoginForm);
   const [signupForm, setSignupForm] =
     useState<SignupFormValues>(initialSignupForm);
