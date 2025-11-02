@@ -55,7 +55,7 @@ const TransactionForm = ({
       <input
         value={entryForm.category}
         onChange={(event) => onChange("category", event.target.value)}
-        placeholder="カテゴリ（例: サブスクリプション）"
+        placeholder="タイトル（例: 食費）"
         className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
         required
       />

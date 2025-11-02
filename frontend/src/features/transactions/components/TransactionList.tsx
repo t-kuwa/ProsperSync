@@ -46,8 +46,7 @@ const TransactionList = ({ entries }: TransactionListProps) => {
           <thead>
             <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
               <th className="px-3 py-2">日付</th>
-              <th className="px-3 py-2">カテゴリ</th>
-              <th className="px-3 py-2">種別</th>
+              <th className="px-3 py-2">タイトル</th>              
               <th className="px-3 py-2 text-right">金額</th>
               <th className="px-3 py-2">メモ</th>
             </tr>
