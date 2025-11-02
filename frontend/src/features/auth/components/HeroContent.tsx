@@ -1,6 +1,6 @@
 const HeroBrand = () => (
   <div className="flex items-center justify-between text-sm font-medium">
-    <span className="text-lg font-semibold tracking-wide">AMU</span>
+    <span className="text-lg font-semibold tracking-wide">Haruve</span>
     <button
       type="button"
       className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-wide text-slate-100 backdrop-blur transition hover:bg-white/20"
