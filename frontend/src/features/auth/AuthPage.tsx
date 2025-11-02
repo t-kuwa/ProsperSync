@@ -57,11 +57,7 @@ const AuthPage = () => {
                 onSubmit={handleLoginSubmit}
               />
             )}
-          </AuthCard>
-
-          <div className="mt-12 text-xs text-slate-500">
-            API base URL: <code className="rounded bg-slate-900 px-2 py-1 text-slate-300">{baseUrl}</code>
-          </div>
+          </AuthCard>          
         </div>
       </section>
     </main>
