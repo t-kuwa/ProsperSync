@@ -15,8 +15,8 @@ const DashboardHeader = ({
   actions,
   onMenuClick,
 }: DashboardHeaderProps) => (
-  <header className="flex flex-col gap-4 border-b border-slate-200 bg-white/60 px-4 py-4 backdrop-blur-sm sm:px-6 lg:border-transparent lg:bg-transparent lg:px-0 lg:py-0">
-    <div className="flex items-start justify-between gap-3">
+  <header className="border-b border-slate-200 bg-white/60 px-4 pt-6 pb-0 backdrop-blur-sm sm:px-6 lg:border-transparent lg:bg-transparent lg:px-12 lg:pb-6 lg:pt-6">
+    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
       <div className="flex items-start gap-3">
         <button
           type="button"
@@ -27,22 +27,21 @@ const DashboardHeader = ({
           ☰
         </button>
         <div>
-          <p className="text-sm text-slate-500">
-            {subtitle ??
-              `おかえりなさい${userName ? `、${userName}さん` : ""}`}
-          </p>
+          {subtitle ? (
+            <p className="text-sm text-slate-500">{subtitle}</p>
+          ) : null}
           <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">
             {title}
           </h1>
         </div>
       </div>
-    </div>
 
-    {actions ? (
-      <div className="flex flex-col gap-3 md:flex-row md:items-center">
-        {actions}
-      </div>
-    ) : null}
+      {actions ? (
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          {actions}
+        </div>
+      ) : null}
+    </div>
   </header>
 );
 

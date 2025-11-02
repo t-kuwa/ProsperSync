@@ -12,7 +12,7 @@ const InsightsPanel = ({
   className,
 }: InsightsPanelProps) => (
   <div
-    className={`flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
+    className={`flex h-full flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
   >
     <h2 className="text-lg font-semibold text-slate-900">インサイト</h2>
 

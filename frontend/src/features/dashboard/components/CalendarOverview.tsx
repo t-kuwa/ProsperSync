@@ -8,7 +8,7 @@ type CalendarOverviewProps = {
   title?: string;
 };
 
-const weekdays = ["月", "火", "水", "木", "金", "土", "日"];
+const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
 const CalendarOverview = ({
   entries,
@@ -51,8 +51,8 @@ const CalendarOverview = ({
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
 
-    const leadingDays = (firstDay.getDay() + 6) % 7;
-    const trailingDays = 6 - ((leadingDays + daysInMonth - 1) % 7);
+    const leadingDays = firstDay.getDay();
+    const trailingDays = (7 - ((leadingDays + daysInMonth) % 7)) % 7;
 
     const cells: Array<
       | {
@@ -86,7 +86,7 @@ const CalendarOverview = ({
 
   return (
     <div
-      className={`rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
+      className={`flex h-full flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
     >
       <div className="flex items-center justify-between">
         <div>

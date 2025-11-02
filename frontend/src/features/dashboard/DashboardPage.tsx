@@ -98,29 +98,27 @@ const DashboardPage = ({
       <div className="flex flex-col gap-6">
         <SummaryCards cards={summaryCards} />
 
-        <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-          <FinancialOverview
-            entries={entries}
-            className="xl:col-span-2"
-          />
+        <section className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-stretch">
           <CalendarOverview
             entries={entries}
-            className="xl:col-span-1"
+            className="xl:col-span-2 h-full"
             title="スケジュール"
           />
-        </section>
-
-        <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <InsightsPanel
             inflowOutflowRatio={inflowOutflowRatio}
             totalAccountBalance={totalAccountBalance}
-            className="lg:col-span-1"
+            className="xl:col-span-1 h-full"
           />
-
-          <div className="lg:col-span-2">
-            <RecentTransactions entries={recentEntries} />
-          </div>
         </section>
+
+        <FinancialOverview
+          entries={entries}
+          className="w-full"
+        />
+
+        <div className="h-full">
+          <RecentTransactions entries={recentEntries} />
+        </div>
       </div>
     </DashboardShell>
   );
@@ -131,7 +129,7 @@ type RecentTransactionsProps = {
 };
 
 const RecentTransactions = ({ entries }: RecentTransactionsProps) => (
-  <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+  <div className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
     <div className="flex items-center justify-between">
       <h2 className="text-lg font-semibold text-slate-900">
         最近のトランザクション

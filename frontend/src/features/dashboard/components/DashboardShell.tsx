@@ -65,7 +65,7 @@ const DashboardShell = ({
           actions={headerActions}
           onMenuClick={() => setMobileSidebarOpen(true)}
         />
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-12">{children}</main>
+        <main className="flex-1 px-4 pb-6 pt-0 sm:px-6 lg:px-12">{children}</main>
       </div>
     </div>
   );
