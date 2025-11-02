@@ -2,13 +2,13 @@ import {
   type ChangeEvent,
   type FormEvent,
   useCallback,
-  useMemo,
   useState,
 } from "react";
 import { getErrorMessage } from "../../../api/client";
 import { loginUser, registerUser } from "../api";
 import type {
   ActiveTab,
+  AuthSuccess,
   LoginFormValues,
   SignupFormValues,
   Status,
@@ -27,10 +27,21 @@ const initialSignupForm: SignupFormValues = {
   acceptTerms: false,
 };
 
-const useAuthFlow = () => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>(
-    window.location.pathname === "/login" ? "login" : "signup",
-  );
+type UseAuthFlowOptions = {
+  onAuthenticated?: (auth: AuthSuccess) => void;
+};
+
+const getInitialTab = (): ActiveTab => {
+  if (typeof window === "undefined") {
+    return "signup";
+  }
+
+  return window.location.pathname === "/login" ? "login" : "signup";
+};
+
+const useAuthFlow = (options?: UseAuthFlowOptions) => {
+  const onAuthenticated = options?.onAuthenticated;
+  const [activeTab, setActiveTab] = useState<ActiveTab>(getInitialTab);
   const [loginForm, setLoginForm] = useState<LoginFormValues>(initialLoginForm);
   const [signupForm, setSignupForm] =
     useState<SignupFormValues>(initialSignupForm);
@@ -84,13 +95,14 @@ const useAuthFlow = () => {
           type: "success",
           message: `${data.user.name}としてログインしました。トークン: ${data.token}`,
         });
+        onAuthenticated?.(data);
       } catch (error) {
         setLoginStatus({ type: "error", message: getErrorMessage(error) });
       } finally {
         setLoginLoading(false);
       }
     },
-    [loginForm.email, loginForm.password],
+    [loginForm.email, loginForm.password, onAuthenticated],
   );
 
   const handleSignupSubmit = useCallback(
@@ -129,6 +141,8 @@ const useAuthFlow = () => {
           message: `${data.user.name}さんのアカウントを作成しました。ログインして利用を開始してください。`,
         });
         setSignupForm(initialSignupForm);
+        setActiveTab("login");
+        onAuthenticated?.(data);
       } catch (error) {
         setSignupStatus({ type: "error", message: getErrorMessage(error) });
       } finally {
@@ -141,6 +155,7 @@ const useAuthFlow = () => {
       signupForm.email,
       signupForm.password,
       signupForm.passwordConfirmation,
+      onAuthenticated,
     ],
   );
 

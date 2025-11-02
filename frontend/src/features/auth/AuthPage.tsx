@@ -1,12 +1,16 @@
 import { useEffect } from "react";
-import { apiClient } from "../../api/client";
 import AuthCard from "./components/AuthCard";
 import { DesktopHero, MobileHero } from "./components/HeroContent";
 import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
 import useAuthFlow from "./hooks/useAuthFlow";
+import type { AuthSuccess } from "./types";
 
-const AuthPage = () => {
+type AuthPageProps = {
+  onAuthenticated?: (auth: AuthSuccess) => void;
+};
+
+const AuthPage = ({ onAuthenticated }: AuthPageProps) => {
   const {
     activeTab,
     loginForm,
@@ -20,7 +24,7 @@ const AuthPage = () => {
     handleSignupChange,
     handleLoginSubmit,
     handleSignupSubmit,
-  } = useAuthFlow();
+  } = useAuthFlow({ onAuthenticated });
 
   useEffect(() => {
     if (activeTab === "login") {
@@ -29,8 +33,6 @@ const AuthPage = () => {
       document.title = "新規登録 - Haruve";
     }
   }, [activeTab]);
-
-  const baseUrl = apiClient.defaults.baseURL;
 
   return (
     <main className="min-h-screen bg-slate-950 md:flex md:items-center md:justify-center md:px-6 md:py-10">
@@ -66,7 +68,7 @@ const AuthPage = () => {
                 onSubmit={handleLoginSubmit}
               />
             )}
-          </AuthCard>          
+          </AuthCard>
         </div>
       </section>
     </main>
