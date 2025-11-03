@@ -1,3 +1,6 @@
+# ==============================================
+# メンバーシップに関する認可ポリシーを管理するクラス
+# ==============================================
 class MembershipPolicy < ApplicationPolicy
   def index?
     AccountPolicy.new(user, record.account).show?

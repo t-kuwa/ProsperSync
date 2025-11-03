@@ -1,3 +1,6 @@
+# ==============================================
+# アカウントを作成するサービスクラス
+# ==============================================
 module Accounts
   class Creator
     class PersonalAccountCreationError < StandardError; end

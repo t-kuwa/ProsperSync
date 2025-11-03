@@ -1,5 +1,8 @@
 require "securerandom"
 
+# ==============================================
+# 個人用ワークスペースを作成するサービスクラス
+# ==============================================
 module Workspace
   class ProvisionPersonal
     def self.call(user:)
