@@ -46,6 +46,6 @@ class AccountPolicy < ApplicationPolicy
   end
 
   def owner?
-    membership&.owner?
+    membership.present? && membership.owner?
   end
 end

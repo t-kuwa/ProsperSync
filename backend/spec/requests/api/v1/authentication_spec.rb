@@ -13,6 +13,7 @@ RSpec.describe "API::V1::Authentication", type: :request do
 
       expect(response).to have_http_status(:created)
       expect(parsed_body.dig("user", "email")).to eq("alice@example.com")
+      expect(parsed_body.fetch("primary_account")).to include("account_type" => "personal")
     end
 
     it "無効な情報だとバリデーションエラーになる" do
@@ -27,7 +28,7 @@ RSpec.describe "API::V1::Authentication", type: :request do
 
       post "/api/v1/users", params: payload, headers:, as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to have_http_status(:unprocessable_entity)
       expect(parsed_body["errors"]).to be_present
     end
   end

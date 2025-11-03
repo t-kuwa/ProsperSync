@@ -6,7 +6,7 @@ class Membership < ApplicationRecord
   belongs_to :user, inverse_of: :memberships
   belongs_to :invited_by, class_name: "User", optional: true
 
-  enum :role, { owner: 0, member: 1 }
+  enum :role, { owner: "owner", member: "member" }
 
   validates :role, presence: true
   validates :user_id, uniqueness: { scope: :account_id }
