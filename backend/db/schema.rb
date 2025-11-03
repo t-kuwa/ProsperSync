@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_04_110402) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_04_120000) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -69,12 +69,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_04_110402) do
   create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "ユーザーのグループアカウントに所属するメンバー", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
-    t.string "role", default: "member", null: false, comment: "ロール"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "role_tmp", default: 1, null: false, comment: "ロール (0: owner, 1: member)"
+    t.integer "role", default: 1, null: false, comment: "ロール (0: owner, 1: member)"
     t.datetime "joined_at"
     t.bigint "invited_by_id"
+    t.datetime "left_at", comment: "離脱日時"
     t.index ["account_id", "user_id"], name: "index_memberships_on_account_id_and_user_id", unique: true
     t.index ["account_id"], name: "index_memberships_on_account_id"
     t.index ["invited_by_id"], name: "index_memberships_on_invited_by_id"
