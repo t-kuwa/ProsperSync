@@ -23,6 +23,10 @@ RSpec.describe MembershipPolicy, type: :policy do
         expect(policy.update?).to be(true)
       end
 
+      it "自身のオーナーメンバーシップのupdateを禁止すること" do
+        expect(described_class.new(user, owner_membership).update?).to be(false)
+      end
+
       it "他のメンバーのdestroyを許可すること" do
         expect(policy.destroy?).to be(true)
       end
