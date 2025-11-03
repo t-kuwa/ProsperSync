@@ -8,19 +8,19 @@ RSpec.describe "API::V1::Members", type: :request do
   let(:member) { member_membership.user }
 
   describe "GET /api/v1/accounts/:account_id/members" do
-    it "allows owners" do
+    it "オーナーは一覧取得できる" do
       get "/api/v1/accounts/#{account.id}/members", headers: auth_headers(owner), as: :json
 
       expect(response).to have_http_status(:ok)
       expect(parsed_body.size).to eq(account.memberships.count)
     end
 
-    it "allows members" do
+    it "メンバーは一覧取得できる" do
       get "/api/v1/accounts/#{account.id}/members", headers: auth_headers(member), as: :json
       expect(response).to have_http_status(:ok)
     end
 
-    it "forbids outsiders" do
+    it "外部ユーザーは拒否される" do
       get "/api/v1/accounts/#{account.id}/members", headers: auth_headers(create(:user)), as: :json
       expect(response).to have_http_status(:forbidden)
     end
@@ -29,7 +29,7 @@ RSpec.describe "API::V1::Members", type: :request do
   describe "POST /api/v1/accounts/:account_id/members" do
     let(:payload) { { member: { user_id: create(:user).id, role: :member } } }
 
-    it "allows owners to add members" do
+    it "オーナーはメンバーを追加できる" do
       expect do
         post "/api/v1/accounts/#{account.id}/members", params: payload, headers: auth_headers(owner), as: :json
       end.to change(Membership, :count).by(1)
@@ -37,7 +37,7 @@ RSpec.describe "API::V1::Members", type: :request do
       expect(response).to have_http_status(:created)
     end
 
-    it "rejects duplicate memberships" do
+    it "重複したメンバーシップは拒否される" do
       duplicate_payload = { member: { user_id: member.id, role: :member } }
 
       post "/api/v1/accounts/#{account.id}/members", params: duplicate_payload, headers: auth_headers(owner), as: :json
@@ -45,7 +45,7 @@ RSpec.describe "API::V1::Members", type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
-    it "forbids non-owners" do
+    it "オーナー以外は拒否される" do
       post "/api/v1/accounts/#{account.id}/members", params: payload, headers: auth_headers(member), as: :json
 
       expect(response).to have_http_status(:forbidden)
@@ -53,7 +53,7 @@ RSpec.describe "API::V1::Members", type: :request do
   end
 
   describe "PATCH /api/v1/accounts/:account_id/members/:id" do
-    it "allows owner to change role" do
+    it "オーナーはロールを変更できる" do
       patch "/api/v1/accounts/#{account.id}/members/#{member_membership.id}",
             params: { member: { role: :owner } },
             headers: auth_headers(owner),
@@ -63,7 +63,7 @@ RSpec.describe "API::V1::Members", type: :request do
       expect(member_membership.reload.role).to eq("owner")
     end
 
-    it "forbids members" do
+    it "メンバーは拒否される" do
       patch "/api/v1/accounts/#{account.id}/members/#{owner_membership.id}",
             params: { member: { role: :member } },
             headers: auth_headers(member),
@@ -71,10 +71,20 @@ RSpec.describe "API::V1::Members", type: :request do
 
       expect(response).to have_http_status(:forbidden)
     end
+
+    it "他のオーナー不在で自己降格すると422を返す" do
+      patch "/api/v1/accounts/#{account.id}/members/#{owner_membership.id}",
+            params: { member: { role: :member } },
+            headers: auth_headers(owner),
+            as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(parsed_body["errors"]).to include("オーナーは最低1名必要です。")
+    end
   end
 
   describe "DELETE /api/v1/accounts/:account_id/members/:id" do
-    it "allows owner to remove a member" do
+    it "オーナーはメンバーを削除できる" do
       expect do
         delete "/api/v1/accounts/#{account.id}/members/#{member_membership.id}", headers: auth_headers(owner), as: :json
       end.to change(Membership, :count).by(-1)
@@ -82,7 +92,7 @@ RSpec.describe "API::V1::Members", type: :request do
       expect(response).to have_http_status(:no_content)
     end
 
-    it "allows member to leave" do
+    it "メンバーは退会できる" do
       expect do
         delete "/api/v1/accounts/#{account.id}/members/#{member_membership.id}", headers: auth_headers(member), as: :json
       end.to change(Membership, :count).by(-1)
@@ -90,7 +100,7 @@ RSpec.describe "API::V1::Members", type: :request do
       expect(response).to have_http_status(:no_content)
     end
 
-    it "forbids removing owner membership" do
+    it "オーナーのメンバーシップ削除は拒否される" do
       delete "/api/v1/accounts/#{account.id}/members/#{owner_membership.id}", headers: auth_headers(owner), as: :json
 
       expect(response).to have_http_status(:forbidden)
