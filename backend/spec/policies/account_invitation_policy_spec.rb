@@ -8,13 +8,13 @@ RSpec.describe AccountInvitationPolicy, type: :policy do
   let(:invitation) { create(:account_invitation, account:, inviter: owner, email: "invitee@example.com") }
 
   describe "index and create" do
-    it "allows owner" do
+    it "オーナーに許可すること" do
       policy = described_class.new(owner, invitation)
       expect(policy.index?).to be(true)
       expect(policy.create?).to be(true)
     end
 
-    it "forbids non-owner" do
+    it "オーナーでないメンバーに禁止すること" do
       policy = described_class.new(member, invitation)
       expect(policy.index?).to be(false)
       expect(policy.create?).to be(false)
@@ -22,16 +22,16 @@ RSpec.describe AccountInvitationPolicy, type: :policy do
   end
 
   describe "accept" do
-    it "allows owner" do
+    it "オーナーに承諾を許可すること" do
       expect(described_class.new(owner, invitation).accept?).to be(true)
     end
 
-    it "allows user with matching email" do
+    it "メールアドレスが一致するユーザーに許可すること" do
       invitee = create(:user, email: invitation.email)
       expect(described_class.new(invitee, invitation).accept?).to be(true)
     end
 
-    it "forbids unmatched email" do
+    it "メールアドレスが一致しないユーザーに禁止すること" do
       invitee = create(:user, email: "other@example.com")
       expect(described_class.new(invitee, invitation).accept?).to be(false)
     end

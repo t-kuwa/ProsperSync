@@ -11,24 +11,24 @@ end
   describe "validations" do
     subject(:invitation) { build(:account_invitation) }
 
-    it "is valid with default attributes" do
+    it "デフォルトの属性で有効であること" do
       expect(invitation).to be_valid
     end
 
-    it "validates email format" do
+    it "メールアドレスのフォーマットを検証すること" do
       invitation.email = "invalid"
       expect(invitation).to be_invalid
       expect(invitation.errors[:email]).to include("is invalid")
     end
 
-    it "validates role presence" do
+    it "ロールの存在を検証すること" do
       allow(invitation).to receive(:set_defaults)
       invitation.role = nil
       expect(invitation).to be_invalid
       expect(invitation.errors[:role]).to include("can't be blank")
     end
 
-    it "enforces token uniqueness" do
+    it "トークンの一意性を強制すること" do
       create(:account_invitation, token: "dup-token")
       invitation.token = "dup-token"
 
@@ -38,7 +38,7 @@ end
   end
 
   describe "defaults" do
-    it "sets token, role, and expires_at" do
+    it "トークン、ロール、有効期限が設定されること" do
       invitation = create(:account_invitation, token: nil, expires_at: nil, role: nil)
 
       expect(invitation.token).to be_present
@@ -50,17 +50,17 @@ end
   describe "state helpers" do
     subject(:invitation) { build(:account_invitation) }
 
-    it "detects expired invitations" do
+    it "期限切れの招待を検出すること" do
       invitation.expires_at = 1.day.ago
       expect(invitation).to be_expired
     end
 
-    it "detects revoked invitations" do
+    it "取り消された招待を検出すること" do
       invitation.revoked_at = Time.current
       expect(invitation).to be_revoked
     end
 
-    it "detects acceptable invitations" do
+    it "承諾可能な招待を検出すること" do
       expect(invitation).to be_acceptable
 
       invitation.accepted_at = Time.current
@@ -73,7 +73,7 @@ end
     let(:inviter) { account.owner }
     let(:invitee) { create(:user, email: "invitee@example.com") }
 
-    it "creates membership and marks accepted_at" do
+    it "メンバーシップを作成し、承諾済みとしてマークすること" do
       invitation = create(:account_invitation, account:, inviter:, email: invitee.email)
 
       expect do
@@ -86,19 +86,19 @@ end
       expect(membership.invited_by).to eq(inviter)
     end
 
-    it "rejects mismatched email" do
+    it "メールアドレスが一致しない場合は拒否すること" do
       invitation = create(:account_invitation, account:, inviter:, email: "someone@example.com")
 
       expect { invitation.accept!(invitee) }.to raise_error(StandardError, /一致しません/)
     end
 
-    it "rejects expired invitation" do
+    it "期限切れの招待を拒否すること" do
       invitation = create(:account_invitation, account:, inviter:, email: invitee.email, expires_at: 1.day.ago)
 
       expect { invitation.accept!(invitee) }.to raise_error(StandardError, /招待が無効/)
     end
 
-    it "rejects duplicate membership" do
+    it "重複するメンバーシップを拒否すること" do
       invitation = create(:account_invitation, account:, inviter:, email: invitee.email)
       create(:membership, account:, user: invitee)
 

@@ -12,25 +12,25 @@ RSpec.describe AccountPolicy, type: :policy do
     context "when user is a member" do
       let(:user) { member_user }
 
-      it "allows index" do
+      it "indexを許可すること" do
         expect(described_class.new(user, Account).index?).to be(true)
       end
 
-      it "allows show and update" do
+      it "showとupdateを許可すること" do
         expect(policy.show?).to be(true)
         expect(policy.update?).to be(true)
       end
 
-      it "allows destroy for owners when team" do
+      it "チームアカウントのオーナーによるdestroyを許可すること" do
         member_membership.update!(role: :owner)
         expect(described_class.new(user, account).destroy?).to be(true)
       end
 
-      it "forbids destroy for non owners" do
+      it "オーナーでないメンバーによるdestroyを禁止すること" do
         expect(policy.destroy?).to be(false)
       end
 
-      it "forbids destroy for personal accounts" do
+      it "個人アカウントのdestroyを禁止すること" do
         allow_any_instance_of(User).to receive(:create_personal_workspace!)
         user = create(:user)
         personal = create(:account, :personal, owner: user)
@@ -43,7 +43,7 @@ RSpec.describe AccountPolicy, type: :policy do
     context "when user is not a member" do
       let(:user) { non_member }
 
-      it "forbids protected actions" do
+      it "保護されたアクションを禁止すること" do
         expect(policy.show?).to be(false)
         expect(policy.update?).to be(false)
         expect(policy.destroy?).to be(false)
@@ -51,18 +51,18 @@ RSpec.describe AccountPolicy, type: :policy do
     end
 
     context "when creating" do
-      it "allows authenticated users" do
+      it "認証済みユーザーに許可すること" do
         expect(described_class.new(member_user, Account).create?).to be(true)
       end
 
-      it "forbids unauthenticated users" do
+      it "未認証ユーザーに禁止すること" do
         expect(described_class.new(nil, Account).create?).to be(false)
       end
     end
   end
 
   describe "Scope" do
-    it "returns only accounts the user belongs to" do
+    it "ユーザーが所属するアカウントのみを返すこと" do
       member_account = account
       non_member_account = create(:account)
       create(:membership, account: non_member_account)

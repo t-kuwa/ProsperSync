@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe User, type: :model do
   describe "associations" do
-    it "has memberships and joined accounts" do
+    it "メンバーシップと参加済みアカウントを持つこと" do
       account = create(:account)
       membership = create(:membership, account: account)
       user = membership.user
@@ -13,7 +13,7 @@ RSpec.describe User, type: :model do
   end
 
   describe "#personal_account" do
-    it "returns primary account when set" do
+    it "プライマリアカウントが設定されている場合にそれを返すこと" do
       allow(Workspace::ProvisionPersonal).to receive(:call)
       account = create(:account, :personal)
       user = create(:user, primary_account: account)
@@ -21,7 +21,7 @@ RSpec.describe User, type: :model do
       expect(user.personal_account).to eq(account)
     end
 
-    it "falls back to first personal account" do
+    it "最初の個人アカウントにフォールバックすること" do
       allow(Workspace::ProvisionPersonal).to receive(:call)
       user = create(:user, primary_account: nil)
       allow(Workspace::ProvisionPersonal).to receive(:call).and_call_original
@@ -34,7 +34,7 @@ RSpec.describe User, type: :model do
   end
 
   describe "callbacks" do
-    it "invokes Workspace::ProvisionPersonal after create" do
+    it "作成後にWorkspace::ProvisionPersonalを呼び出すこと" do
       allow(Workspace::ProvisionPersonal).to receive(:call)
 
       create(:user)

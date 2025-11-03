@@ -4,17 +4,17 @@ RSpec.describe Account, type: :model do
   describe "validations" do
     subject(:account) { build(:account) }
 
-    it "is valid with default attributes" do
+    it "デフォルトの属性で有効であること" do
       expect(account).to be_valid
     end
 
-    it "requires name" do
+    it "名前が必須であること" do
       account.name = nil
       expect(account).to be_invalid
       expect(account.errors[:name]).to include("can't be blank")
     end
 
-    it "requires unique slug" do
+    it "スラッグが一意であること" do
       existing = create(:account, slug: "duplicate-slug")
       new_account = build(:account, slug: existing.slug)
 
@@ -22,13 +22,13 @@ RSpec.describe Account, type: :model do
       expect(new_account.errors[:slug]).to include("has already been taken")
     end
 
-    it "requires account_type" do
+    it "アカウントタイプが必須であること" do
       account.account_type = nil
       expect(account).to be_invalid
       expect(account.errors[:account_type]).to include("can't be blank")
     end
 
-    it "requires owner when personal" do
+    it "個人アカウントの場合、オーナーが必須であること" do
       personal = build(:account, :personal, owner: nil)
       expect(personal).to be_invalid
       expect(personal.errors[:owner]).to include("must exist")
@@ -36,13 +36,13 @@ RSpec.describe Account, type: :model do
   end
 
   describe "callbacks" do
-    it "assigns slug automatically" do
+    it "スラッグが自動的に割り当てられること" do
       account = build(:account, slug: nil)
       account.save!
       expect(account.slug).to be_present
     end
 
-    it "prevents destroying personal account" do
+    it "個人アカウントの削除を防止すること" do
       allow(Workspace::ProvisionPersonal).to receive(:call)
       account = create(:account, :personal)
 
@@ -53,7 +53,7 @@ RSpec.describe Account, type: :model do
   end
 
   describe "associations" do
-    it "has memberships and users through memberships" do
+    it "メンバーシップとメンバーシップを通じたユーザーを持つこと" do
       account = create(:account)
       membership = create(:membership, account:)
 
@@ -61,7 +61,7 @@ RSpec.describe Account, type: :model do
       expect(account.users).to include(membership.user)
     end
 
-    it "has account invitations" do
+    it "アカウント招待を持つこと" do
       account = create(:account)
       invitation = create(:account_invitation, account:)
 
