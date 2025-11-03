@@ -18,6 +18,20 @@ Rails.application.routes.draw do
         post "/login", to: "users/sessions#create", defaults: { format: :json }
         delete "/logout", to: "users/sessions#destroy", defaults: { format: :json }
       end
+
+      resources :accounts, defaults: { format: :json } do
+        resources :members, only: %i[index create update destroy], defaults: { format: :json }
+        resources :invitations,
+                  controller: :account_invitations,
+                  only: %i[index create],
+                  defaults: { format: :json }
+      end
+
+      resources :invitations, only: [], defaults: { format: :json } do
+        member do
+          post :accept
+        end
+      end
     end
   end
 end

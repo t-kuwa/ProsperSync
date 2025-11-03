@@ -1,0 +1,5 @@
+ja:
+  mailers:
+    account_invitation_mailer:
+      invite_email:
+        subject: "%{account}への招待"
