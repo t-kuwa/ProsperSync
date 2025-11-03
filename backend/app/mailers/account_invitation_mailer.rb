@@ -1,7 +1,7 @@
 class AccountInvitationMailer < ApplicationMailer
   def invite_email
     @invitation = params[:invitation]
-    @accept_url = invitation_accept_url(@invitation.token)
+    @accept_url = invitation_accept_url(@invitation)
 
     mail(
       to: @invitation.email,
@@ -15,12 +15,12 @@ class AccountInvitationMailer < ApplicationMailer
 
   private
 
-  def invitation_accept_url(token)
+  def invitation_accept_url(invitation)
     base =
       Rails.configuration.x.frontend_base_url ||
       ENV["FRONTEND_BASE_URL"] ||
       "http://localhost:5173"
 
-    "#{base}/invitations/accept?token=#{token}"
+    "#{base}/invitations/#{invitation.id}/accept?token=#{invitation.token}"
   end
 end
