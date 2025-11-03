@@ -1,4 +1,24 @@
 import type { AppRoute } from "../../../routes";
+import React from "react";
+import haruveIcon from "../../../assets/haruveIcon.svg";
+
+const HomeIcon = () => (
+  <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"/>
+  </svg>
+);
+
+const ReceiptIcon = () => (
+  <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 0 1 1h4M6 7H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-1M6 3v4a1 1 0 0 1-1 1H3m12 7h-6m3 3h-3"/>
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 9a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"/>
+  </svg>
+);
 
 type SidebarProps = {
   onLogout?: () => void;
@@ -6,48 +26,45 @@ type SidebarProps = {
   onNavigate: (route: AppRoute) => void;
   variant?: "desktop" | "mobile";
   onClose?: () => void;
+  isOpen?: boolean;
 };
 
 const mainNavigation: Array<{
   label: string;
-  icon: string;
+  icon: React.ReactNode;
   route: AppRoute;
 }> = [
-  { label: "概要", icon: "📊", route: "/dashboard" },
-  { label: "トランザクション", icon: "🗂️", route: "/transactions" },
+  { label: "ダッシュボード", icon: <HomeIcon />, route: "/dashboard" },
+  { label: "トランザクション", icon: <ReceiptIcon />, route: "/transactions" },
 ];
 
-const secondaryNavigation = [
-  { label: "アカウント", icon: "🏦" },
-  { label: "メンバー", icon: "👥" },
-  { label: "レポート", icon: "📈" },
-  { label: "セキュリティ", icon: "🔐" },
-  { label: "設定", icon: "⚙️" },
+const secondaryNavigation: Array<{
+  label: string;
+  icon: React.ReactNode;
+}> = [
+  { label: "アカウント", icon: <UserIcon /> },  
 ];
-
 const Sidebar = ({
   onLogout,
   currentRoute,
   onNavigate,
   variant = "desktop",
   onClose,
+  isOpen = true,
 }: SidebarProps) => {
   const baseClass =
-    "flex w-64 flex-col border-r border-slate-200 bg-white px-6 py-8";
-  const desktopClass = `${baseClass} hidden lg:flex`;
-  const mobileClass = `${baseClass} fixed inset-y-0 left-0 z-40 flex shadow-2xl shadow-slate-900/10`;
+    "flex w-64 flex-col bg-white px-6 py-8";
+  const desktopClass = `${baseClass} border-r border-slate-200 fixed inset-y-0 left-0 z-[60] hidden lg:flex h-screen`;
+  const mobileClass = `${baseClass} border-l border-slate-200 fixed inset-y-0 right-0 z-[60] flex shadow-2xl shadow-slate-900/10 h-screen transition-transform duration-300 ease-in-out ${
+    isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+  }`;
 
   return (
-    <aside className={variant === "desktop" ? desktopClass : mobileClass}>
+    <aside className={`${variant === "desktop" ? desktopClass : mobileClass} overflow-y-auto`}>
       <div className="mb-12 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-lg font-semibold text-white">
-            H
-          </div>
-          <div>
-            <p className="text-lg font-semibold text-slate-900">Haruve</p>
-            <p className="text-sm text-slate-500">財務ダッシュボード</p>
-          </div>
+          <img src={haruveIcon} alt="Haruve" className="h-10 w-10" />
+          <p className="text-lg font-semibold text-slate-900">Haruve</p>
         </div>
         {variant === "mobile" ? (
           <button

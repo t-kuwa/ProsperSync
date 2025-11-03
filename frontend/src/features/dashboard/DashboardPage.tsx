@@ -101,7 +101,7 @@ const DashboardPage = ({
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-stretch">
           <CalendarOverview
             entries={entries}
-            className="xl:col-span-2 h-full"
+            className="xl:col-span-2 h-fit"
             title="スケジュール"
           />
           <InsightsPanel

@@ -86,7 +86,7 @@ const CalendarOverview = ({
 
   return (
     <div
-      className={`flex h-full flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
+      className={`flex h-fit flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
     >
       <div className="flex items-center justify-between">
         <div>

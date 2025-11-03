@@ -40,24 +40,25 @@ const DashboardShell = ({
         onNavigate={handleNavigate}
       />
 
-      {mobileSidebarOpen ? (
-        <>
-          <div
-            role="presentation"
-            className="fixed inset-0 z-30 bg-slate-950/40 backdrop-blur-sm lg:hidden"
-            onClick={() => setMobileSidebarOpen(false)}
-          />
-          <Sidebar
-            variant="mobile"
-            onLogout={onLogout}
-            currentRoute={currentRoute}
-            onNavigate={handleNavigate}
-            onClose={() => setMobileSidebarOpen(false)}
-          />
-        </>
-      ) : null}
+      <>
+        <div
+          role="presentation"
+          className={`fixed inset-0 z-[59] bg-slate-950/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+            mobileSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+        <Sidebar
+          variant="mobile"
+          onLogout={onLogout}
+          currentRoute={currentRoute}
+          onNavigate={handleNavigate}
+          onClose={() => setMobileSidebarOpen(false)}
+          isOpen={mobileSidebarOpen}
+        />
+      </>
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col lg:ml-64">
         <DashboardHeader
           userName={userName}
           title={headerTitle}
@@ -65,7 +66,7 @@ const DashboardShell = ({
           actions={headerActions}
           onMenuClick={() => setMobileSidebarOpen(true)}
         />
-        <main className="flex-1 px-4 pb-6 pt-0 sm:px-6 lg:px-12">{children}</main>
+        <main className="flex-1 px-4 pb-6 pt-6 sm:px-6 lg:px-12">{children}</main>
       </div>
     </div>
   );

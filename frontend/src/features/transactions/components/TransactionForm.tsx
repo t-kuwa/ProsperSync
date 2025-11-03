@@ -14,7 +14,7 @@ const TransactionForm = ({
   onChange,
   onSubmit,
 }: TransactionFormProps) => (
-  <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+  <div className="h-fit rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
     <h2 className="text-lg font-semibold text-slate-900">新しい取引を登録</h2>
     <p className="mt-1 text-sm text-slate-500">
       収入または支出を記録し、キャッシュフローを常に最新に保ちましょう。
