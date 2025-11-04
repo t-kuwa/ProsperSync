@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import haruveIcon from "../../../assets/haruveIcon.svg";
+import HaruveIcon from "./HaruveIcon";
 
 type DashboardHeaderProps = {
   userName?: string;
@@ -58,7 +58,7 @@ const DashboardHeader = ({
     {/* モバイル版：サイトタイトル（左）とメニューボタン（右） */}
     <div className="flex items-center justify-between lg:hidden">
       <div className="flex items-center gap-2">
-        <img src={haruveIcon} alt="Haruve" className="h-6 w-6" />
+        <HaruveIcon className="h-6 w-6" />
         <p className="text-lg font-semibold text-slate-900">Haruve</p>
       </div>
       <button

@@ -1,6 +1,6 @@
 import type { AppRoute } from "../../../routes";
 import React from "react";
-import haruveIcon from "../../../assets/haruveIcon.svg";
+import HaruveIcon from "./HaruveIcon";
 
 const HomeIcon = () => (
   <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -63,7 +63,7 @@ const Sidebar = ({
     <aside className={`${variant === "desktop" ? desktopClass : mobileClass} overflow-y-auto`}>
       <div className="mb-12 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <img src={haruveIcon} alt="Haruve" className="h-10 w-10" />
+          <HaruveIcon className="h-10 w-10" />
           <p className="text-lg font-semibold text-slate-900">Haruve</p>
         </div>
         {variant === "mobile" ? (
