@@ -16,7 +16,7 @@ module Api
         if invitation.save
           render json: invitation, status: :created
         else
-          render json: { errors: invitation.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: invitation.errors.full_messages }, status: :unprocessable_content
         end
       end
 

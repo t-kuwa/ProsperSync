@@ -13,7 +13,7 @@ module Api
         @invitation.accept!(current_user)
         render json: { message: "招待を承諾しました。" }, status: :ok
       rescue StandardError => e
-        render json: { error: e.message }, status: :unprocessable_entity
+        render json: { error: e.message }, status: :unprocessable_content
       end
 
       private

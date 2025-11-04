@@ -11,10 +11,7 @@ class MembershipPolicy < ApplicationPolicy
   end
 
   def update?
-    return false unless account_owner?
-    return false if record.owner? && record.user_id == user.id
-
-    true
+    account_owner?
   end
 
   def destroy?

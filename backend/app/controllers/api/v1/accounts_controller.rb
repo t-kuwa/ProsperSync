@@ -23,9 +23,9 @@ module Api
 
         render json: account, status: :created
       rescue ActiveRecord::RecordInvalid => e
-        render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
+        render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
       rescue Accounts::Creator::PersonalAccountCreationError => e
-        render json: { errors: [e.message] }, status: :unprocessable_entity
+        render json: { errors: [e.message] }, status: :unprocessable_content
       end
 
       def update
@@ -34,7 +34,7 @@ module Api
         if @account.update(account_params.slice(:name, :description))
           render json: @account, status: :ok
         else
-          render json: { errors: @account.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: @account.errors.full_messages }, status: :unprocessable_content
         end
       end
 
@@ -44,7 +44,7 @@ module Api
         if @account.destroy
           head :no_content
         else
-          render json: { errors: @account.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: @account.errors.full_messages }, status: :unprocessable_content
         end
       end
 

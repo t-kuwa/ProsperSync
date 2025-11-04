@@ -32,7 +32,7 @@ RSpec.describe "API::V1::Members", type: :request do
     it "オーナーはメンバーを追加できる" do
       expect do
         post "/api/v1/accounts/#{account.id}/members", params: payload, headers: auth_headers(owner), as: :json
-      end.to change(Membership, :count).by(1)
+      end.to change { account.memberships.reload.count }.by(1)
 
       expect(response).to have_http_status(:created)
     end
@@ -42,7 +42,7 @@ RSpec.describe "API::V1::Members", type: :request do
 
       post "/api/v1/accounts/#{account.id}/members", params: duplicate_payload, headers: auth_headers(owner), as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "オーナー以外は拒否される" do
@@ -78,7 +78,7 @@ RSpec.describe "API::V1::Members", type: :request do
             headers: auth_headers(owner),
             as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(parsed_body["errors"]).to include("オーナーは最低1名必要です。")
     end
   end
@@ -87,7 +87,7 @@ RSpec.describe "API::V1::Members", type: :request do
     it "オーナーはメンバーを削除できる" do
       expect do
         delete "/api/v1/accounts/#{account.id}/members/#{member_membership.id}", headers: auth_headers(owner), as: :json
-      end.to change(Membership, :count).by(-1)
+      end.to change { account.memberships.reload.count }.by(-1)
 
       expect(response).to have_http_status(:no_content)
     end
@@ -95,7 +95,7 @@ RSpec.describe "API::V1::Members", type: :request do
     it "メンバーは退会できる" do
       expect do
         delete "/api/v1/accounts/#{account.id}/members/#{member_membership.id}", headers: auth_headers(member), as: :json
-      end.to change(Membership, :count).by(-1)
+      end.to change { account.memberships.reload.count }.by(-1)
 
       expect(response).to have_http_status(:no_content)
     end

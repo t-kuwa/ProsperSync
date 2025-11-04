@@ -3,9 +3,9 @@ require "rails_helper"
 RSpec.describe "API::V1::Accounts", type: :request do
   let(:user) do
     allow(Workspace::ProvisionPersonal).to receive(:call)
-    member = create(:membership)
+    user = create(:user)
     allow(Workspace::ProvisionPersonal).to receive(:call).and_call_original
-    member.user
+    user
   end
   let(:headers) { auth_headers(user) }
 
@@ -60,7 +60,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
 
       post "/api/v1/accounts", params: payload, headers:, as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
         delete "/api/v1/accounts/#{personal.id}", headers:, as: :json
       end.not_to change(Account, :count)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "forbids non-owner members" do

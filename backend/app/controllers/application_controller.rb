@@ -1,5 +1,10 @@
 class ApplicationController < ActionController::API
+  include Devise::Controllers::Helpers
   include Pundit::Authorization
+
+  alias_method :authenticate_user!, :authenticate_api_v1_user!
+  alias_method :current_user, :current_api_v1_user
+  alias_method :user_signed_in?, :api_v1_user_signed_in?
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 

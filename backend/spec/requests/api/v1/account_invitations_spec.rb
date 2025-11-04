@@ -40,7 +40,7 @@ RSpec.describe "API::V1::AccountInvitations", type: :request do
     it "fails with invalid data" do
       post "/api/v1/accounts/#{account.id}/invitations", params: { invitation: { email: "" } }, headers: auth_headers(owner), as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "forbids member" do

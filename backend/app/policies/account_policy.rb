@@ -19,7 +19,7 @@ class AccountPolicy < ApplicationPolicy
   end
 
   def destroy?
-    owner? && !record.personal?
+    owner?
   end
 
   def manage_members?

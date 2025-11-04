@@ -36,7 +36,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
 
       post "/api/v1/invitations/#{invitation.id}/accept", params: { token: invitation.token }, headers: auth_headers(invitee), as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "rejects duplicate membership" do
@@ -45,7 +45,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
 
       post "/api/v1/invitations/#{invitation.id}/accept", params: { token: invitation.token }, headers: auth_headers(invitee), as: :json
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end

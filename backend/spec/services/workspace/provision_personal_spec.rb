@@ -1,16 +1,16 @@
 require "rails_helper"
 
 RSpec.describe Workspace::ProvisionPersonal, type: :service do
+  around do |example|
+    User.skip_callback(:create, :after, :create_personal_workspace!)
+    example.run
+  ensure
+    User.set_callback(:create, :after, :create_personal_workspace!)
+  end
+
+  let(:user) { create(:user, primary_account: nil) }
+
   describe ".call" do
-    let(:user) do
-      allow(Workspace::ProvisionPersonal).to receive(:call)
-      create(:user)
-    end
-
-    before do
-      allow(Workspace::ProvisionPersonal).to receive(:call).and_call_original
-    end
-
     it "creates a personal account, membership, and sets primary_account" do
       expect do
         described_class.call(user: user)

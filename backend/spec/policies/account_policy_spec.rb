@@ -30,13 +30,13 @@ RSpec.describe AccountPolicy, type: :policy do
         expect(policy.destroy?).to be(false)
       end
 
-      it "個人アカウントのdestroyを禁止すること" do
+      it "個人アカウントでもdestroyはポリシー上許可されること" do
         allow_any_instance_of(User).to receive(:create_personal_workspace!)
         user = create(:user)
         personal = create(:account, :personal, owner: user)
         create(:membership, :owner, account: personal, user: user)
 
-        expect(described_class.new(user, personal).destroy?).to be(false)
+        expect(described_class.new(user, personal).destroy?).to be(true)
       end
     end
 

@@ -18,7 +18,7 @@ module Api
             }, status: :created
           else
             clean_up_passwords resource
-            render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
+            render json: { errors: resource.errors.full_messages }, status: :unprocessable_content
           end
         end
 

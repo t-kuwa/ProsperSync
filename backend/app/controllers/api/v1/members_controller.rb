@@ -18,7 +18,7 @@ module Api
         if membership.save
           render json: membership, status: :created
         else
-          render json: { errors: membership.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: membership.errors.full_messages }, status: :unprocessable_content
         end
       end
 
@@ -26,13 +26,13 @@ module Api
         authorize @membership
 
         if demoting_last_owner?(membership_params[:role])
-          return render json: { errors: ["オーナーは最低1名必要です。"] }, status: :unprocessable_entity
+          return render json: { errors: ["オーナーは最低1名必要です。"] }, status: :unprocessable_content
         end
 
         if @membership.update(role: membership_params[:role])
           render json: @membership, status: :ok
         else
-          render json: { errors: @membership.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: @membership.errors.full_messages }, status: :unprocessable_content
         end
       end
 
@@ -42,7 +42,7 @@ module Api
         if @membership.destroy
           head :no_content
         else
-          render json: { errors: @membership.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: @membership.errors.full_messages }, status: :unprocessable_content
         end
       end
 
