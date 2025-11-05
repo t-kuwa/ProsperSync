@@ -1,4 +1,5 @@
 import { apiClient } from "../../api/client";
+import type { AuthSuccess } from "./types";
 
 type LoginRequest = {
   email: string;
@@ -8,17 +9,31 @@ type LoginRequest = {
 type LoginResponse = {
   token: string;
   user: {
+    id: number;
     name: string;
     email: string;
+    primary_account_id?: number | null;
   };
 };
 
-export const loginUser = async (credentials: LoginRequest) => {
+const toAuthSuccess = (data: LoginResponse): AuthSuccess => ({
+  token: data.token,
+  user: {
+    id: data.user.id,
+    name: data.user.name,
+    email: data.user.email,
+    primaryAccountId: data.user.primary_account_id ?? null,
+  },
+});
+
+export const loginUser = async (
+  credentials: LoginRequest,
+): Promise<AuthSuccess> => {
   const { data } = await apiClient.post<LoginResponse>("/api/v1/login", {
     api_v1_user: credentials,
   });
 
-  return data;
+  return toAuthSuccess(data);
 };
 
 type SignupRequest = {
@@ -28,21 +43,13 @@ type SignupRequest = {
   passwordConfirmation: string;
 };
 
-type SignupResponse = {
-  token: string;
-  user: {
-    name: string;
-    email: string;
-  };
-};
-
 export const registerUser = async ({
   name,
   email,
   password,
   passwordConfirmation,
-}: SignupRequest) => {
-  const { data } = await apiClient.post<SignupResponse>("/api/v1/users", {
+}: SignupRequest): Promise<AuthSuccess> => {
+  await apiClient.post("/api/v1/users", {
     api_v1_user: {
       name,
       email,
@@ -51,5 +58,9 @@ export const registerUser = async ({
     },
   });
 
-  return data;
+  return loginUser({ email, password });
+};
+
+export const logoutUser = async () => {
+  await apiClient.delete("/api/v1/logout");
 };

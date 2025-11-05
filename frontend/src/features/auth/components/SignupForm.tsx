@@ -58,6 +58,7 @@ export const SignupForm = ({
       onChange={onChange}
       autoComplete="name"
       placeholder="山田 太郎"
+      disabled={loading}
       required
     />
 
@@ -69,6 +70,7 @@ export const SignupForm = ({
       onChange={onChange}
       autoComplete="email"
       placeholder="example@company.com"
+      disabled={loading}
       required
     />
 
@@ -91,6 +93,7 @@ export const SignupForm = ({
           autoComplete={autoComplete}
           placeholder={placeholder}
           minLength={minLength}
+          disabled={loading}
           required
         />
       ))}
@@ -100,6 +103,7 @@ export const SignupForm = ({
       name="acceptTerms"
       checked={values.acceptTerms}
       onChange={onChange}
+      disabled={loading}
       label={(
         <>
           <span className="font-medium text-slate-200">利用規約</span>と

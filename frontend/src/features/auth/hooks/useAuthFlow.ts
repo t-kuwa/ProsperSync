@@ -93,8 +93,9 @@ const useAuthFlow = (options?: UseAuthFlowOptions) => {
 
         setLoginStatus({
           type: "success",
-          message: `${data.user.name}としてログインしました。トークン: ${data.token}`,
+          message: `${data.user.name}としてログインしました。`,
         });
+        setLoginForm(initialLoginForm);
         onAuthenticated?.(data);
       } catch (error) {
         setLoginStatus({ type: "error", message: getErrorMessage(error) });
@@ -138,10 +139,9 @@ const useAuthFlow = (options?: UseAuthFlowOptions) => {
 
         setSignupStatus({
           type: "success",
-          message: `${data.user.name}さんのアカウントを作成しました。ログインして利用を開始してください。`,
+          message: `${data.user.name}さんのアカウントを作成し、ログインしました。`,
         });
         setSignupForm(initialSignupForm);
-        setActiveTab("login");
         onAuthenticated?.(data);
       } catch (error) {
         setSignupStatus({ type: "error", message: getErrorMessage(error) });

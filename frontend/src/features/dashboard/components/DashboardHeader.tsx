@@ -81,6 +81,11 @@ const DashboardHeader = ({
           <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">
             {title}
           </h1>
+          {userName ? (
+            <p className="mt-1 text-xs text-slate-400">
+              こんにちは、{userName} さん
+            </p>
+          ) : null}
         </div>
       </div>
 

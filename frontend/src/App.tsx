@@ -4,7 +4,17 @@ import DashboardPage from "./features/dashboard/DashboardPage";
 import type { AuthSuccess } from "./features/auth/types";
 import { DashboardProvider } from "./features/dashboard/hooks/useDashboardState";
 import TransactionsPage from "./features/transactions/TransactionsPage";
-import { APP_ROUTES, type AppRoute } from "./routes";
+import { AccountProvider } from "./features/accounts/hooks/useAccountState";
+import { apiClient } from "./api/client";
+import AccountCreatePage from "./features/accounts/components/AccountCreatePage";
+import AccountSettingsPage from "./features/accounts/components/AccountSettingsPage";
+import MembersPage from "./features/accounts/components/MembersPage";
+import {
+  APP_ROUTES,
+  matchAccountRoute,
+  type AppRoute,
+} from "./routes";
+import { logoutUser } from "./features/auth/api";
 
 const STORAGE_KEY = "haruve-auth";
 
@@ -20,14 +30,34 @@ const getInitialAuth = (): AuthSuccess | null => {
   }
 
   try {
-    return JSON.parse(stored) as AuthSuccess;
+    const parsed = JSON.parse(stored) as AuthSuccess;
+
+    if (!parsed?.user?.id || !parsed?.token) {
+      return null;
+    }
+
+    return parsed;
   } catch {
     return null;
   }
 };
 
-const isAppRoute = (path: string): path is AppRoute =>
-  path === APP_ROUTES.dashboard || path === APP_ROUTES.transactions;
+const resolveRoute = (path: string): AppRoute => {
+  if (
+    path === APP_ROUTES.dashboard ||
+    path === APP_ROUTES.transactions ||
+    path === APP_ROUTES.accountCreate
+  ) {
+    return path;
+  }
+
+  const accountRoute = matchAccountRoute(path);
+  if (accountRoute) {
+    return path as AppRoute;
+  }
+
+  return APP_ROUTES.dashboard;
+};
 
 const getInitialRoute = (): AppRoute => {
   if (typeof window === "undefined") {
@@ -35,7 +65,7 @@ const getInitialRoute = (): AppRoute => {
   }
 
   const path = window.location.pathname;
-  return isAppRoute(path) ? path : APP_ROUTES.dashboard;
+  return resolveRoute(path);
 };
 
 const App = () => {
@@ -62,10 +92,7 @@ const App = () => {
     }
 
     const handlePopState = () => {
-      const path = window.location.pathname;
-      if (isAppRoute(path)) {
-        setRoute(path);
-      }
+      setRoute(resolveRoute(window.location.pathname));
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -87,20 +114,49 @@ const App = () => {
   }, [auth, navigate]);
 
   useEffect(() => {
+    if (!auth) {
+      delete apiClient.defaults.headers.common.Authorization;
+    } else {
+      apiClient.defaults.headers.common.Authorization = `Bearer ${auth.token}`;
+    }
+  }, [auth]);
+
+  useEffect(() => {
     if (!auth || typeof window === "undefined") {
       return;
     }
 
-    document.title =
-      route === APP_ROUTES.dashboard
-        ? "ダッシュボード - Haruve"
-        : "トランザクション - Haruve";
+    const accountRoute = matchAccountRoute(route);
+
+    const title = (() => {
+      if (route === APP_ROUTES.dashboard) {
+        return "ダッシュボード - Haruve";
+      }
+      if (route === APP_ROUTES.transactions) {
+        return "トランザクション - Haruve";
+      }
+      if (route === APP_ROUTES.accountCreate) {
+        return "アカウント作成 - Haruve";
+      }
+      if (accountRoute?.type === "settings") {
+        return "アカウント設定 - Haruve";
+      }
+      if (accountRoute?.type === "members") {
+        return "メンバー管理 - Haruve";
+      }
+      return "Haruve";
+    })();
+
+    document.title = title;
   }, [auth, route]);
+
+  const accountRouteMatch = matchAccountRoute(route);
 
   if (!auth) {
     return (
       <AuthPage
         onAuthenticated={(authData) => {
+          apiClient.defaults.headers.common.Authorization = `Bearer ${authData.token}`;
           setAuth(authData);
           navigate(APP_ROUTES.dashboard);
         }}
@@ -108,29 +164,92 @@ const App = () => {
     );
   }
 
-  const handleLogout = () => {
-    setAuth(null);
-    setRoute(APP_ROUTES.dashboard);
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Failed to logout:", error);
+    } finally {
+      delete apiClient.defaults.headers.common.Authorization;
+      setAuth(null);
+      setRoute(APP_ROUTES.dashboard);
+    }
   };
 
-  return (
-    <DashboardProvider>
-      {route === APP_ROUTES.dashboard ? (
+  const renderPage = () => {
+    if (route === APP_ROUTES.dashboard) {
+      return (
         <DashboardPage
           userName={auth.user.name}
           currentRoute={route}
           onNavigate={navigate}
           onLogout={handleLogout}
         />
-      ) : (
+      );
+    }
+
+    if (route === APP_ROUTES.transactions) {
+      return (
         <TransactionsPage
           userName={auth.user.name}
           currentRoute={route}
           onNavigate={navigate}
           onLogout={handleLogout}
         />
-      )}
-    </DashboardProvider>
+      );
+    }
+
+    if (route === APP_ROUTES.accountCreate) {
+      return (
+        <AccountCreatePage
+          userName={auth.user.name}
+          currentRoute={route}
+          onNavigate={navigate}
+          onLogout={handleLogout}
+        />
+      );
+    }
+
+    if (accountRouteMatch?.type === "settings") {
+      return (
+        <AccountSettingsPage
+          userName={auth.user.name}
+          currentRoute={route}
+          onNavigate={navigate}
+          onLogout={handleLogout}
+        />
+      );
+    }
+
+    if (accountRouteMatch?.type === "members") {
+      return (
+        <MembersPage
+          userName={auth.user.name}
+          currentUserId={auth.user.id}
+          currentRoute={route}
+          onNavigate={navigate}
+          onLogout={handleLogout}
+        />
+      );
+    }
+
+    return (
+      <DashboardPage
+        userName={auth.user.name}
+        currentRoute={APP_ROUTES.dashboard}
+        onNavigate={navigate}
+        onLogout={handleLogout}
+      />
+    );
+  };
+
+  return (
+    <AccountProvider
+      key={auth.user.id}
+      initialAccountId={auth.user.primaryAccountId}
+    >
+      <DashboardProvider>{renderPage()}</DashboardProvider>
+    </AccountProvider>
   );
 };
 

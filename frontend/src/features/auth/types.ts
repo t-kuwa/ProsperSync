@@ -18,10 +18,14 @@ export type SignupFormValues = {
 
 export type ActiveTab = "signup" | "login";
 
+export type AuthUser = {
+  id: number;
+  name: string;
+  email: string;
+  primaryAccountId: number | null;
+};
+
 export type AuthSuccess = {
   token: string;
-  user: {
-    name: string;
-    email: string;
-  };
+  user: AuthUser;
 };
