@@ -25,15 +25,13 @@ module Api
       def update
         authorize @membership
 
-        if demoting_last_owner?(membership_params[:role])
-          return render json: { errors: ["オーナーは最低1名必要です。"] }, status: :unprocessable_content
-        end
+        Memberships::Updater.call(membership: @membership, new_role: membership_params[:role])
 
-        if @membership.update(role: membership_params[:role])
-          render json: @membership, status: :ok
-        else
-          render json: { errors: @membership.errors.full_messages }, status: :unprocessable_content
-        end
+        render json: @membership, status: :ok
+      rescue Memberships::Updater::LastOwnerError => e
+        render json: { errors: [e.message] }, status: :unprocessable_content
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
       end
 
       def destroy
@@ -60,13 +58,7 @@ module Api
         params.require(:member).permit(:user_id, :role)
       end
 
-      def demoting_last_owner?(new_role)
-        return false if new_role.blank?
-        return false unless @membership.owner?
-        return false if new_role.to_s == "owner"
 
-        !@account.memberships.where(role: Membership.roles[:owner]).where.not(id: @membership.id).exists?
-      end
     end
   end
 end

@@ -30,6 +30,10 @@ class AccountPolicy < ApplicationPolicy
     owner?
   end
 
+  def view_invitations?
+    owner?
+  end
+
   class Scope < Scope
     def resolve
       return scope.none unless user

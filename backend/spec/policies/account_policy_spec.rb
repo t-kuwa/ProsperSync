@@ -30,6 +30,15 @@ RSpec.describe AccountPolicy, type: :policy do
         expect(policy.destroy?).to be(false)
       end
 
+      it "オーナーによるview_invitations?を許可すること" do
+        member_membership.update!(role: :owner)
+        expect(policy.view_invitations?).to be(true)
+      end
+
+      it "オーナーでないメンバーによるview_invitations?を禁止すること" do
+        expect(policy.view_invitations?).to be(false)
+      end
+
       it "個人アカウントでもdestroyはポリシー上許可されること" do
         allow_any_instance_of(User).to receive(:create_personal_workspace!)
         user = create(:user)

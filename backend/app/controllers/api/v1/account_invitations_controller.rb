@@ -4,7 +4,7 @@ module Api
       before_action :set_account
 
       def index
-        authorize sample_invitation, :index?
+        authorize @account, :view_invitations?
         invitations = @account.account_invitations.order(created_at: :desc)
         render json: invitations, status: :ok
       end
@@ -30,9 +30,7 @@ module Api
         params.require(:invitation).permit(:email, :role)
       end
 
-      def sample_invitation
-        AccountInvitation.new(account: @account, inviter: current_user)
-      end
+
     end
   end
 end

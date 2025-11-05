@@ -31,8 +31,20 @@ RSpec.describe MembershipPolicy, type: :policy do
         expect(policy.destroy?).to be(true)
       end
 
-      it "自身のオーナーメンバーシップのdestroyを禁止すること" do
-        expect(described_class.new(user, owner_membership).destroy?).to be(false)
+      context "when the owner is the last owner" do
+        it "自身のオーナーメンバーシップのdestroyを禁止すること" do
+          expect(described_class.new(user, owner_membership).destroy?).to be(false)
+        end
+      end
+
+      context "when there are other owners" do
+        before do
+          create(:membership, :owner, account: account)
+        end
+
+        it "自身のオーナーメンバーシップのdestroyを許可すること" do
+          expect(described_class.new(user, owner_membership).destroy?).to be(true)
+        end
       end
     end
 

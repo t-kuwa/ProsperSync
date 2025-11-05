@@ -11,8 +11,13 @@ class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
   protected
+
+  def render_not_found
+    render json: { error: "リソースが見つかりません。" }, status: :not_found
+  end
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[name])

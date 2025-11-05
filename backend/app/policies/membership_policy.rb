@@ -16,9 +16,17 @@ class MembershipPolicy < ApplicationPolicy
 
   def destroy?
     return false unless account_member?
-    return false if record.owner? && record.user_id == user.id
 
-    account_owner? || record.user_id == user.id
+    # The user is trying to remove themselves
+    if record.user_id == user.id
+      # Prevent the last owner from leaving
+      return false if record.owner? && record.account.memberships.where(role: :owner).count == 1
+
+      return true
+    end
+
+    # An owner is trying to remove another member
+    account_owner?
   end
 
   private

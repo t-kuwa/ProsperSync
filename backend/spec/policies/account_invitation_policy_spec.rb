@@ -22,9 +22,6 @@ RSpec.describe AccountInvitationPolicy, type: :policy do
   end
 
   describe "accept" do
-    it "オーナーに承諾を許可すること" do
-      expect(described_class.new(owner, invitation).accept?).to be(true)
-    end
 
     it "メールアドレスが一致するユーザーに許可すること" do
       invitee = create(:user, email: invitation.email)

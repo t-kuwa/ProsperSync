@@ -86,23 +86,23 @@ end
       expect(membership.invited_by).to eq(inviter)
     end
 
-    it "メールアドレスが一致しない場合は拒否すること" do
+    it "メールアドレスが一致しない場合は EmailMismatchError を発生させること" do
       invitation = create(:account_invitation, account:, inviter:, email: "someone@example.com")
 
-      expect { invitation.accept!(invitee) }.to raise_error(StandardError, /一致しません/)
+      expect { invitation.accept!(invitee) }.to raise_error(AccountInvitation::EmailMismatchError, /一致しません/)
     end
 
-    it "期限切れの招待を拒否すること" do
+    it "期限切れの招待で InvalidInvitationError を発生させること" do
       invitation = create(:account_invitation, account:, inviter:, email: invitee.email, expires_at: 1.day.ago)
 
-      expect { invitation.accept!(invitee) }.to raise_error(StandardError, /招待が無効/)
+      expect { invitation.accept!(invitee) }.to raise_error(AccountInvitation::InvalidInvitationError, /招待が無効/)
     end
 
-    it "重複するメンバーシップを拒否すること" do
+    it "重複するメンバーシップで AlreadyMemberError を発生させること" do
       invitation = create(:account_invitation, account:, inviter:, email: invitee.email)
       create(:membership, account:, user: invitee)
 
-      expect { invitation.accept!(invitee) }.to raise_error(StandardError, /すでにメンバーです/)
+      expect { invitation.accept!(invitee) }.to raise_error(AccountInvitation::AlreadyMemberError, /すでにメンバーです/)
     end
   end
 end

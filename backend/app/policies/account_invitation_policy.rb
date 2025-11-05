@@ -11,7 +11,7 @@ class AccountInvitationPolicy < ApplicationPolicy
   end
 
   def accept?
-    user.present? && (owner? || email_matches_user?)
+    user.present? && email_matches_user?
   end
 
   private

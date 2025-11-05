@@ -30,12 +30,15 @@ class AccountInvitation < ApplicationRecord
     !expired? && !revoked? && accepted_at.blank?
   end
 
+  class InvitationError < StandardError; end
+  class InvalidInvitationError < InvitationError; end
+  class EmailMismatchError < InvitationError; end
+  class AlreadyMemberError < InvitationError; end
+
   def accept!(invitee_user)
-    raise StandardError, "招待が無効です。" unless acceptable?
-    unless email.casecmp?(invitee_user.email)
-      raise StandardError, "招待されたメールアドレスと一致しません。"
-    end
-    raise StandardError, "すでにメンバーです。" if account.memberships.exists?(user_id: invitee_user.id)
+    raise InvalidInvitationError, "招待が無効です。" unless acceptable?
+    raise EmailMismatchError, "招待されたメールアドレスと一致しません。" unless email.casecmp?(invitee_user.email)
+    raise AlreadyMemberError, "すでにメンバーです。" if account.memberships.exists?(user_id: invitee_user.id)
 
     ActiveRecord::Base.transaction do
       Membership.create!(
@@ -43,6 +46,7 @@ class AccountInvitation < ApplicationRecord
         user: invitee_user,
         role: role,
         invited_by: inviter,
+        joined_at: Time.current
       )
 
       update!(accepted_at: Time.current)
