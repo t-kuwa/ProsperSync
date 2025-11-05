@@ -5,7 +5,7 @@ import type { AuthSuccess } from "./features/auth/types";
 import { DashboardProvider } from "./features/dashboard/hooks/useDashboardState";
 import TransactionsPage from "./features/transactions/TransactionsPage";
 import { AccountProvider } from "./features/accounts/hooks/useAccountState";
-import { apiClient } from "./api/client";
+import { apiClient, AUTH_ERROR_EVENT } from "./api/client";
 import AccountCreatePage from "./features/accounts/components/AccountCreatePage";
 import AccountSettingsPage from "./features/accounts/components/AccountSettingsPage";
 import MembersPage from "./features/accounts/components/MembersPage";
@@ -120,6 +120,21 @@ const App = () => {
       apiClient.defaults.headers.common.Authorization = `Bearer ${auth.token}`;
     }
   }, [auth]);
+
+  // 401エラー時の自動ログアウト処理
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleAuthError = () => {
+      delete apiClient.defaults.headers.common.Authorization;
+      setAuth(null);
+    };
+
+    window.addEventListener(AUTH_ERROR_EVENT, handleAuthError);
+    return () => window.removeEventListener(AUTH_ERROR_EVENT, handleAuthError);
+  }, []);
 
   useEffect(() => {
     if (!auth || typeof window === "undefined") {
