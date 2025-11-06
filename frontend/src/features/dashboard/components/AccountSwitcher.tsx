@@ -7,7 +7,7 @@ type AccountSwitcherProps = {
 };
 
 const accountTypeLabel = (account: AccountSummary) =>
-  account.accountType === "personal" ? "個人ワークスペース" : "チームワークスペース";
+  account.accountType === "personal" ? "個人" : "チーム";
 
 const AccountBadge = ({ account }: { account: AccountSummary }) => (
   <span
@@ -52,11 +52,8 @@ const AccountSwitcher = ({ onSelect }: AccountSwitcherProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  const otherAccounts = useMemo(
-    () =>
-      accounts.filter((account) => account.id !== currentAccount?.id),
-    [accounts, currentAccount?.id],
-  );
+  // 全てのワークスペースを表示（現在のワークスペースも含む）
+  const allAccounts = useMemo(() => accounts, [accounts]);
 
   if (loading) {
     return (
@@ -111,53 +108,42 @@ const AccountSwitcher = ({ onSelect }: AccountSwitcherProps) => {
 
       {open ? (
         <div className="absolute inset-x-0 top-[110%] z-20 overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-slate-200">
-          <div className="border-b border-slate-100 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              現在のワークスペース
-            </p>
-            <div className="mt-2 flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
-              <div>
-                <p className="text-sm font-medium text-slate-900">
-                  {currentAccount.name}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {currentAccount.slug}
-                </p>
-              </div>
-              <AccountBadge account={currentAccount} />
-            </div>
-          </div>
-
           <div className="max-h-60 overflow-y-auto px-4 py-3">
-            {otherAccounts.length ? (
+            {allAccounts.length ? (
               <ul className="space-y-2">
-                {otherAccounts.map((account) => (
-                  <li key={account.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        selectAccount(account.id);
-                        onSelect?.(account);
-                        setOpen(false);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition hover:bg-slate-50"
-                    >
-                      <div>
-                        <p className="font-medium text-slate-900">
-                          {account.name}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {account.slug}
-                        </p>
-                      </div>
-                      <AccountBadge account={account} />
-                    </button>
-                  </li>
-                ))}
+                {allAccounts.map((account) => {
+                  const isCurrent = account.id === currentAccount?.id;
+                  return (
+                    <li key={account.id}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!isCurrent) {
+                            selectAccount(account.id);
+                            onSelect?.(account);
+                          }
+                          setOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition ${
+                          isCurrent
+                            ? "bg-slate-50 cursor-default"
+                            : "hover:bg-slate-50 cursor-pointer"
+                        }`}
+                      >
+                        <div>
+                          <p className="font-medium text-slate-900">
+                            {account.name}
+                          </p>
+                        </div>
+                        <AccountBadge account={account} />
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <p className="text-xs text-slate-500">
-                切り替え可能なワークスペースはありません。
+                ワークスペースがありません。
               </p>
             )}
           </div>

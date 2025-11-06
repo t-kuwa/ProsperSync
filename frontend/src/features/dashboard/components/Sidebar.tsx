@@ -60,17 +60,12 @@ const Sidebar = ({
   isOpen = true,
 }: SidebarProps) => {
   const baseClass =
-    "flex w-64 flex-col bg-white px-6 py-8";
-  const desktopClass = `${baseClass} border-r border-slate-200 fixed inset-y-0 left-0 z-[60] hidden lg:flex h-screen`;
-  const mobileClass = `${baseClass} border-l border-slate-200 fixed inset-y-0 right-0 z-[60] flex shadow-2xl shadow-slate-900/10 h-screen transition-transform duration-300 ease-in-out ${
+    "flex flex-col bg-white px-6 py-8";
+  const desktopClass = `${baseClass} w-full max-w-sm border-r border-slate-200 fixed inset-y-0 left-0 z-[60] hidden lg:flex h-screen`;
+  const mobileClass = `${baseClass} w-[90%] max-w-sm border-l border-slate-200 fixed inset-y-0 right-0 z-[60] flex shadow-2xl shadow-slate-900/10 h-screen transition-transform duration-300 ease-in-out ${
     isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
   }`;
-  const { accounts, currentAccount, selectAccount } = useAccountState();
-
-  const personalAccount = useMemo(
-    () => accounts.find((account) => account.accountType === "personal"),
-    [accounts],
-  );
+  const { currentAccount, selectAccount } = useAccountState();
 
   const accountNavigation = useMemo<
     Array<{ label: string; icon: React.ReactNode; route: AppRoute }>
@@ -214,31 +209,6 @@ const Sidebar = ({
                 </button>
               </li>
             </ul>
-          </div>
-        ) : null}
-
-        {personalAccount ? (
-          <div>
-            <p className="mb-2 text-xs uppercase tracking-wide text-slate-400">
-              ワークスペース
-            </p>
-            <div className="rounded-2xl bg-slate-900 px-4 py-3 text-sm text-slate-100 shadow-sm shadow-slate-900/30">
-              <p className="text-xs text-slate-300">個人ワークスペース</p>
-              <p className="mt-1 text-sm font-semibold text-white">
-                {personalAccount.name}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  selectAccount(personalAccount.id);
-                  onNavigate(APP_ROUTES.dashboard);
-                  onClose?.();
-                }}
-                className="mt-3 inline-flex items-center justify-center rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
-              >
-                このワークスペースに切り替え
-              </button>
-            </div>
           </div>
         ) : null}
       </nav>
