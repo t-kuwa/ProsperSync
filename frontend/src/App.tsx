@@ -71,6 +71,7 @@ const getInitialRoute = (): AppRoute => {
 const App = () => {
   const [auth, setAuth] = useState<AuthSuccess | null>(() => getInitialAuth());
   const [route, setRoute] = useState<AppRoute>(() => getInitialRoute());
+  const [isAuthHeaderReady, setIsAuthHeaderReady] = useState(false);
 
   const navigate = useCallback(
     (nextRoute: AppRoute, options?: { replace?: boolean }) => {
@@ -116,8 +117,12 @@ const App = () => {
   useEffect(() => {
     if (!auth) {
       delete apiClient.defaults.headers.common.Authorization;
+      setIsAuthHeaderReady(false);
     } else {
       apiClient.defaults.headers.common.Authorization = `Bearer ${auth.token}`;
+      // Authorizationヘッダーが設定されたことを示すフラグを設定
+      // 次のレンダリングサイクルで確実に反映されるようにする
+      setTimeout(() => setIsAuthHeaderReady(true), 0);
     }
   }, [auth]);
 
@@ -257,6 +262,11 @@ const App = () => {
       />
     );
   };
+
+  // Authorizationヘッダーが設定されるまでAccountProviderのマウントを遅延
+  if (!isAuthHeaderReady) {
+    return null; // またはローディング表示
+  }
 
   return (
     <AccountProvider
