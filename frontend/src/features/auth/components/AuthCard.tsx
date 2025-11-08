@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { ActiveTab } from "../types";
 import AuthTabs from "./AuthTabs";
@@ -20,78 +20,92 @@ export const AuthCard = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
 
+  const hasValidRefs = useCallback(() => {
+    return contentRef.current !== null && containerRef.current !== null;
+  }, []);
+
+  const calculateHeight = useCallback((): number | null => {
+    if (!hasValidRefs()) {
+      return null;
+    }
+
+    const contentHeight = contentRef.current!.scrollHeight;
+    const computedStyle = window.getComputedStyle(containerRef.current!);
+    const paddingTop = parseFloat(computedStyle.paddingTop) || 0;
+    const paddingBottom = parseFloat(computedStyle.paddingBottom) || 0;
+    const newHeight = contentHeight + paddingTop + paddingBottom;
+
+    return newHeight > 0 ? newHeight : null;
+  }, [hasValidRefs]);
+
+  const updateHeight = useCallback(() => {
+    const newHeight = calculateHeight();
+    if (newHeight !== null) {
+      setHeight(newHeight);
+    }
+  }, [calculateHeight]);
+
+  // NOTE: useLayoutEffectはDOMの変更を同期的に処理するため、
+  // タブ切り替え時に高さを即座に計算してレイアウトシフトを防ぐために使用
   useLayoutEffect(() => {
-    if (contentRef.current && containerRef.current) {
-      const updateHeight = () => {
-        if (contentRef.current && containerRef.current) {
-          const contentHeight = contentRef.current.scrollHeight;
-          const computedStyle = window.getComputedStyle(containerRef.current);
-          const paddingTop = parseFloat(computedStyle.paddingTop) || 0;
-          const paddingBottom = parseFloat(computedStyle.paddingBottom) || 0;
-          const newHeight = contentHeight + paddingTop + paddingBottom;
-          if (newHeight > 0) {
-            setHeight(newHeight);
-          }
-        }
-      };
-
-      requestAnimationFrame(() => {
-        updateHeight();
-      });
+    if (!hasValidRefs()) {
+      return;
     }
-  }, [activeTab, children]);
 
+    requestAnimationFrame(() => {
+      updateHeight();
+    });
+  }, [activeTab, children, hasValidRefs, updateHeight]);
+
+  // NOTE: ResizeObserverを設定して、コンテンツサイズの変更を監視し、動的に高さを更新するために使用
   useEffect(() => {
-    if (contentRef.current && containerRef.current) {
-      const updateHeight = () => {
-        if (contentRef.current && containerRef.current) {
-          const contentHeight = contentRef.current.scrollHeight;
-          const computedStyle = window.getComputedStyle(containerRef.current);
-          const paddingTop = parseFloat(computedStyle.paddingTop) || 0;
-          const paddingBottom = parseFloat(computedStyle.paddingBottom) || 0;
-          const newHeight = contentHeight + paddingTop + paddingBottom;
-          if (newHeight > 0) {
-            setHeight(newHeight);
-          }
-        }
-      };
-
-      const resizeObserver = new ResizeObserver(() => {
-        requestAnimationFrame(updateHeight);
-      });
-
-      resizeObserver.observe(contentRef.current);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
+    if (!hasValidRefs()) {
+      return;
     }
-  }, [activeTab, children]);
 
+    const resizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(updateHeight);
+    });
+
+    resizeObserver.observe(contentRef.current!);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [activeTab, children, hasValidRefs, updateHeight]);
+
+  // NOTE: タブ切り替えや高さ変更時に、カードを画面中央にスクロールするために使用
   useEffect(() => {
-    if (containerRef.current && typeof height === "number") {
-      const scrollToCenter = () => {
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect();
-          const windowHeight = window.innerHeight;
-          const scrollY = window.scrollY + rect.top - windowHeight / 2 + rect.height / 2;
-          window.scrollTo({
-            top: Math.max(0, scrollY),
-            behavior: "smooth",
-          });
-        }
-      };
-
-      const timeoutId = setTimeout(() => {
-        requestAnimationFrame(() => {
-          scrollToCenter();
-        });
-      }, 100);
-
-      return () => {
-        clearTimeout(timeoutId);
-      };
+    if (!containerRef.current) {
+      return;
     }
+
+    if (typeof height !== "number") {
+      return;
+    }
+
+    const scrollToCenter = () => {
+      if (!containerRef.current) {
+        return;
+      }
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const scrollY = window.scrollY + rect.top - windowHeight / 2 + rect.height / 2;
+
+      window.scrollTo({
+        top: Math.max(0, scrollY),
+        behavior: "smooth",
+      });
+    };
+
+    const timeoutId = setTimeout(() => {
+      requestAnimationFrame(scrollToCenter);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [activeTab, height]);
 
   return (
