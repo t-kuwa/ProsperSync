@@ -13,7 +13,7 @@ module Api
             return
           end
 
-          sign_in(test_user, scope: :api_v1_user)
+          sign_in(:api_v1_user, test_user, store: false)
 
           render json: {
             user: test_user.as_json(only: %i[id name email primary_account_id]),
@@ -36,4 +36,3 @@ module Api
     end
   end
 end
-
