@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import AuthCard from "./components/AuthCard";
 import { DesktopHero, MobileHero } from "./components/HeroContent";
 import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
@@ -34,43 +33,75 @@ const AuthPage = ({ onAuthenticated }: AuthPageProps) => {
     }
   }, [activeTab]);
 
-  return (
-    <main className="min-h-screen bg-slate-950 md:flex md:items-center md:justify-center md:px-6 md:py-10">
-      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col overflow-y-auto bg-slate-950 md:h-[90vh] md:min-h-0 md:flex-row md:items-stretch md:rounded-3xl md:bg-slate-900 md:shadow-2xl md:shadow-slate-950/60 md:ring-1 md:ring-slate-800">
-        <MobileHero />
-        <DesktopHero />
+  const isSignup = activeTab === "signup";
 
-        <div className="relative flex flex-1 flex-col overflow-y-auto bg-transparent text-slate-100 md:bg-slate-950/40 md:p-6 lg:p-8 xl:p-10">
-          <AuthCard
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            heading={activeTab === "signup" ? "新しいアカウントを作成" : "おかえりなさい"}
-            subheading={
-              activeTab === "signup"
-                ? "まずはアカウントを作成して、体験をはじめましょう。"
-                : "アカウントにサインインして、体験を続けましょう。"
-            }
-          >
-            {activeTab === "signup" ? (
-              <SignupForm
-                values={signupForm}
-                loading={signupLoading}
-                status={signupStatus}
-                onChange={handleSignupChange}
-                onSubmit={handleSignupSubmit}
-              />
-            ) : (
-              <LoginForm
-                values={loginForm}
-                loading={loginLoading}
-                status={loginStatus}
-                onChange={handleLoginChange}
-                onSubmit={handleLoginSubmit}
-              />
-            )}
-          </AuthCard>
+  return (
+    <main className="flex min-h-screen flex-col bg-slate-950 lg:flex-row">
+      <section className="relative flex w-full flex-1 flex-col overflow-hidden bg-white text-slate-900">
+        <MobileHero />
+
+        <div className="flex flex-1 flex-col gap-12 px-6 pb-12 pt-10 sm:px-12 lg:max-w-xl lg:px-16 xl:max-w-2xl">
+          <header className="flex items-center justify-between">
+            <span className="text-2xl font-semibold tracking-tight text-slate-900">Haruve</span>
+            <button
+              type="button"
+              onClick={() => handleTabChange(isSignup ? "login" : "signup")}
+              className="text-sm font-semibold text-indigo-500 transition hover:text-indigo-400"
+            >
+              {isSignup ? "ログイン" : "アカウントを作成"}
+            </button>
+          </header>
+
+          <div className="flex flex-1 flex-col justify-center">
+            <div className="max-w-md space-y-8">
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.4em] text-indigo-500/80">
+                  {isSignup ? "Create account" : "Login"}
+                </p>
+                <h1 className="text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
+                  {isSignup ? "Haruveで新しいはじまりを" : "Haruveにログイン"}
+                </h1>
+                <p className="text-sm leading-relaxed text-slate-500 sm:text-base">
+                  {isSignup
+                    ? "数分で家計管理をスタート。共同作業に最適なスペースで、チーム全員が同じページを共有できます。"
+                    : "暮らしをより良くする家計管理を続けましょう。保存された支出や共有ノートへすぐにアクセスできます。"}
+                </p>
+              </div>
+
+              {isSignup ? (
+                <SignupForm
+                  values={signupForm}
+                  loading={signupLoading}
+                  status={signupStatus}
+                  onChange={handleSignupChange}
+                  onSubmit={handleSignupSubmit}
+                />
+              ) : (
+                <LoginForm
+                  values={loginForm}
+                  loading={loginLoading}
+                  status={loginStatus}
+                  onChange={handleLoginChange}
+                  onSubmit={handleLoginSubmit}
+                />
+              )}
+            </div>
+          </div>
+
+          <footer className="text-xs text-slate-400">
+            {isSignup ? "すでにアカウントをお持ちですか？" : "アカウントをまだお持ちではありませんか？"}{" "}
+            <button
+              type="button"
+              onClick={() => handleTabChange(isSignup ? "login" : "signup")}
+              className="font-medium text-indigo-500 hover:text-indigo-400"
+            >
+              {isSignup ? "ログイン" : "アカウントを作成"}
+            </button>
+          </footer>
         </div>
       </section>
+
+      <DesktopHero />
     </main>
   );
 };

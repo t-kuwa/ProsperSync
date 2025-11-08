@@ -22,7 +22,7 @@ export const LoginForm = ({
   onChange,
   onSubmit,
 }: LoginFormProps) => (
-  <form onSubmit={onSubmit} className="mt-8 space-y-6">
+  <form onSubmit={onSubmit} className="space-y-6">
     <FormField
       label="メールアドレス"
       type="email"
@@ -47,7 +47,7 @@ export const LoginForm = ({
       required
     />
 
-    <div className="flex items-center justify-between text-xs text-slate-400">
+    <div className="flex items-center justify-between text-xs text-slate-500">
       <FormCheckbox
         name="rememberLogin"
         containerClassName="flex items-center gap-2"
@@ -55,7 +55,7 @@ export const LoginForm = ({
         label="ログイン情報を保存"
         disabled={loading}
       />
-      <button type="button" className="hidden font-semibold text-indigo-300 hover:text-indigo-200">
+      <button type="button" className="hidden font-semibold text-indigo-400 hover:text-indigo-500">
         パスワードをお忘れですか？
       </button>
     </div>

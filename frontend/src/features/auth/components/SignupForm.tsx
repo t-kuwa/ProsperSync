@@ -50,7 +50,7 @@ export const SignupForm = ({
   onChange,
   onSubmit,
 }: SignupFormProps) => (
-  <form onSubmit={onSubmit} className="mt-8 space-y-6">
+  <form onSubmit={onSubmit} className="space-y-6">
     <FormField
       label="名前"
       name="name"
@@ -106,8 +106,8 @@ export const SignupForm = ({
       disabled={loading}
       label={(
         <>
-          <span className="font-medium text-slate-200">利用規約</span>と
-          <span className="font-medium text-slate-200">プライバシーポリシー</span>に同意します。
+          <span className="font-semibold text-slate-700">利用規約</span>と
+          <span className="font-semibold text-slate-700">プライバシーポリシー</span>に同意します。
         </>
       )}
     />

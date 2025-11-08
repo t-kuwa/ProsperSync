@@ -4,7 +4,7 @@ const mergeClassNames = (...classNames: Array<string | false | undefined>) =>
   classNames.filter(Boolean).join(" ");
 
 export const inputBaseClassName =
-  "rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40";
+  "rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200/80";
 
 type FormFieldProps = {
   label: string;
@@ -22,9 +22,9 @@ export const FormField = ({
   return (
     <label
       htmlFor={controlId}
-      className="flex flex-col text-sm text-slate-300"
+      className="flex flex-col text-sm text-slate-600"
     >
-      <span className="mb-2 font-medium">{label}</span>
+      <span className="mb-2 font-semibold">{label}</span>
       <input
         id={controlId}
         name={name}
@@ -54,7 +54,7 @@ export const FormCheckbox = ({
     <label
       htmlFor={controlId}
       className={mergeClassNames(
-        "flex items-start gap-3 text-xs text-slate-400",
+        "flex items-start gap-3 text-xs text-slate-500",
         containerClassName,
       )}
     >
@@ -63,7 +63,7 @@ export const FormCheckbox = ({
         name={name}
         type="checkbox"
         className={mergeClassNames(
-          "mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500",
+          "mt-1 h-4 w-4 rounded border-slate-300 bg-white text-indigo-500 focus:ring-indigo-400",
           className,
         )}
         {...props}
@@ -91,7 +91,7 @@ export const FormSubmitButton = ({
   <button
     type={type ?? "submit"}
     className={mergeClassNames(
-      "flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50",
+      "flex w-full items-center justify-center rounded-2xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-300",
       className,
     )}
     disabled={loading || disabled}
