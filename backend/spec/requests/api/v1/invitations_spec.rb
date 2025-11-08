@@ -47,5 +47,22 @@ RSpec.describe "API::V1::Invitations", type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it "rejects when owner tries to accept invitation for someone else" do
+      invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email)
+
+      post "/api/v1/invitations/#{invitation.id}/accept", params: { token: invitation.token }, headers: auth_headers(owner), as: :json
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "rejects when user email does not match invitation email" do
+      other_user = create(:user, email: "other@example.com")
+      invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email)
+
+      post "/api/v1/invitations/#{invitation.id}/accept", params: { token: invitation.token }, headers: auth_headers(other_user), as: :json
+
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 end

@@ -22,7 +22,6 @@ RSpec.describe AccountInvitationPolicy, type: :policy do
   end
 
   describe "accept" do
-
     it "メールアドレスが一致するユーザーに許可すること" do
       invitee = create(:user, email: invitation.email)
       expect(described_class.new(invitee, invitation).accept?).to be(true)
@@ -31,6 +30,10 @@ RSpec.describe AccountInvitationPolicy, type: :policy do
     it "メールアドレスが一致しないユーザーに禁止すること" do
       invitee = create(:user, email: "other@example.com")
       expect(described_class.new(invitee, invitation).accept?).to be(false)
+    end
+
+    it "オーナーでもメールアドレスが一致しない場合は禁止すること" do
+      expect(described_class.new(owner, invitation).accept?).to be(false)
     end
   end
 end
