@@ -80,14 +80,17 @@ const AccountProvider = ({
       return;
     }
 
+    // initialAccountIdが設定されていて、現在のアカウントIDが設定されていない場合のみ初期化
     if (
       initialAccountId &&
+      !currentAccountId &&
       accounts.some((account) => account.id === initialAccountId)
     ) {
       setCurrentAccountId(initialAccountId);
       return;
     }
 
+    // 現在のアカウントIDが有効なアカウントに存在する場合は何もしない
     if (
       currentAccountId &&
       accounts.some((account) => account.id === currentAccountId)
@@ -95,6 +98,7 @@ const AccountProvider = ({
       return;
     }
 
+    // 現在のアカウントIDが無効な場合、最初のアカウントを選択
     setCurrentAccountId(accounts[0]?.id ?? null);
   }, [accounts, currentAccountId, initialAccountId]);
 

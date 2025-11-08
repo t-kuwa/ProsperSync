@@ -27,7 +27,6 @@ const AccountSwitcher = ({ onSelect }: AccountSwitcherProps) => {
     currentAccount,
     loading,
     error,
-    selectAccount,
     refreshAccounts,
   } = useAccountState();
   const [open, setOpen] = useState(false);
@@ -118,10 +117,9 @@ const AccountSwitcher = ({ onSelect }: AccountSwitcherProps) => {
                       <button
                         type="button"
                         onClick={() => {
-                          if (!isCurrent) {
-                            selectAccount(account.id);
-                            onSelect?.(account);
-                          }
+                          // onSelectコールバック内でselectAccountが呼び出されるので、
+                          // ここではonSelectのみを呼び出す
+                          onSelect?.(account);
                           setOpen(false);
                         }}
                         className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition ${
