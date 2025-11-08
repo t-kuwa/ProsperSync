@@ -240,19 +240,7 @@ const MembersPage = ({
                       onClick={() => setIsModalOpen(true)}
                       className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-300 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-400"
                     >
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4v16m8-8H4"
-                        />
-                      </svg>
+                      <span className="material-icons text-lg">add</span>
                     </button>
                   )}
                 </header>

@@ -6,42 +6,6 @@ import HaruveIcon from "./HaruveIcon";
 import useAccountState from "../../accounts/hooks/useAccountState";
 import type { AccountSummary } from "../../accounts/types";
 
-const HomeIcon = () => (
-  <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"/>
-  </svg>
-);
-
-const ReceiptIcon = () => (
-  <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 9h6m-6 3h6m-6 3h6M6.996 9h.01m-.01 3h.01m-.01 3h.01M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
-  </svg>
-);
-
-const SettingsIcon = () => (
-  <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
-  </svg>
-);
-
-const MembersIcon = () => (
-  <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-    <path fill-rule="evenodd" d="M12 6a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm-1.5 8a4 4 0 0 0-4 4 2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 4 4 0 0 0-4-4h-3Zm6.82-3.096a5.51 5.51 0 0 0-2.797-6.293 3.5 3.5 0 1 1 2.796 6.292ZM19.5 18h.5a2 2 0 0 0 2-2 4 4 0 0 0-4-4h-1.1a5.503 5.503 0 0 1-.471.762A5.998 5.998 0 0 1 19.5 18ZM4 7.5a3.5 3.5 0 0 1 5.477-2.889 5.5 5.5 0 0 0-2.796 6.293A3.501 3.501 0 0 1 4 7.5ZM7.1 12H6a4 4 0 0 0-4 4 2 2 0 0 0 2 2h.5a5.998 5.998 0 0 1 3.071-5.238A5.505 5.505 0 0 1 7.1 12Z" clip-rule="evenodd"/>
-  </svg>
-);
-
-const PlusIcon = () => (
-  <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-    <path
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      d="M12 5v14m7-7H5"
-    />
-  </svg>
-);
-
 type SidebarProps = {
   onLogout?: () => void;
   currentRoute: AppRoute;
@@ -68,7 +32,7 @@ const Sidebar = ({
   const { currentAccount, selectAccount } = useAccountState();
 
   const accountNavigation = useMemo<
-    Array<{ label: string; icon: React.ReactNode; route: AppRoute }>
+    Array<{ label: string; icon: string; route: AppRoute }>
   >(() => {
     if (!currentAccount) {
       return [];
@@ -77,12 +41,12 @@ const Sidebar = ({
     return [
       {
         label: "アカウント設定",
-        icon: <SettingsIcon />,
+        icon: "settings",
         route: APP_ROUTES.accountSettings(currentAccount.id),
       },
       {
         label: "メンバー管理",
-        icon: <MembersIcon />,
+        icon: "people",
         route: APP_ROUTES.accountMembers(currentAccount.id),
       },
     ];
@@ -118,7 +82,7 @@ const Sidebar = ({
             onClick={onClose}
             className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
           >
-            ✕
+            <span className="material-icons text-lg">close</span>
           </button>
         ) : null}
       </div>
@@ -134,8 +98,8 @@ const Sidebar = ({
           </p>
           <ul className="space-y-1">
             {[
-              { label: "ダッシュボード", icon: <HomeIcon />, route: APP_ROUTES.dashboard },
-              { label: "トランザクション", icon: <ReceiptIcon />, route: APP_ROUTES.transactions },
+              { label: "ダッシュボード", icon: "home", route: APP_ROUTES.dashboard },
+              { label: "トランザクション", icon: "receipt", route: APP_ROUTES.transactions },
             ].map((item) => {
               const active = currentRoute === item.route;
               return (
@@ -152,7 +116,7 @@ const Sidebar = ({
                         : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                     }`}
                   >
-                    <span className="text-lg">{item.icon}</span>
+                    <span className="material-icons text-lg">{item.icon}</span>
                     {item.label}
                   </button>
                 </li>
@@ -183,7 +147,7 @@ const Sidebar = ({
                           : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                       }`}
                     >
-                      <span className="text-lg">{item.icon}</span>
+                      <span className="material-icons text-lg">{item.icon}</span>
                       {item.label}
                     </button>
                   </li>
@@ -202,9 +166,7 @@ const Sidebar = ({
                       : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                   }`}
                 >
-                  <span className="text-lg text-indigo-500">
-                    <PlusIcon />
-                  </span>
+                  <span className="material-icons text-lg text-indigo-500">add</span>
                   新しいアカウントを作成
                 </button>
               </li>
