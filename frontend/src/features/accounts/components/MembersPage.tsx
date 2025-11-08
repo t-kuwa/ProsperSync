@@ -238,7 +238,7 @@ const MembersPage = ({
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(true)}
-                      className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-300 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-400"
                     >
                       <svg
                         className="h-5 w-5"
