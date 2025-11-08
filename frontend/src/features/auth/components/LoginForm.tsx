@@ -31,6 +31,7 @@ export const LoginForm = ({
       onChange={onChange}
       autoComplete="email"
       placeholder="example@company.com"
+      disabled={loading}
       required
     />
 
@@ -42,6 +43,7 @@ export const LoginForm = ({
       onChange={onChange}
       autoComplete="current-password"
       placeholder="••••••••"
+      disabled={loading}
       required
     />
 
@@ -51,6 +53,7 @@ export const LoginForm = ({
         containerClassName="flex items-center gap-2"
         className="mt-0"
         label="ログイン情報を保存"
+        disabled={loading}
       />
       <button type="button" className="hidden font-semibold text-indigo-300 hover:text-indigo-200">
         パスワードをお忘れですか？

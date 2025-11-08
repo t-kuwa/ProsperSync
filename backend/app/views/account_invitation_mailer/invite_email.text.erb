@@ -1,0 +1,7 @@
+<%= @invitation.inviter.name %>さんが、<%= @invitation.account.name %>にあなたを招待しています。
+
+以下のリンクから招待を承諾してください（有効期限: <%= I18n.l(@invitation.expires_at, format: :long) %>）。
+
+<%= @accept_url %>
+
+このメールに心当たりがない場合は破棄してください。

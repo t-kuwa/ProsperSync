@@ -10,7 +10,12 @@ module Api
           build_resource(sign_up_params)
 
           if resource.save
-            render json: { user: resource }, status: :created
+            resource.reload
+
+            render json: {
+              user: resource.as_json(only: %i[id name email primary_account_id]),
+              primary_account: resource.personal_account&.as_json(only: %i[id name slug account_type])
+            }, status: :created
           else
             clean_up_passwords resource
             render json: { errors: resource.errors.full_messages }, status: :unprocessable_content
