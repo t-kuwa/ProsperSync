@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       devise_scope :user do
         post "/login", to: "users/sessions#create", defaults: { format: :json }
         delete "/logout", to: "users/sessions#destroy", defaults: { format: :json }
+        post "/quick_login", to: "users/quick_login#create", defaults: { format: :json }
       end
 
       resources :accounts, defaults: { format: :json } do

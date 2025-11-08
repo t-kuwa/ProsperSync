@@ -64,3 +64,9 @@ export const registerUser = async ({
 export const logoutUser = async () => {
   await apiClient.delete("/api/v1/logout");
 };
+
+export const quickLogin = async (): Promise<AuthSuccess> => {
+  const { data } = await apiClient.post<LoginResponse>("/api/v1/users/quick_login");
+
+  return toAuthSuccess(data);
+};

@@ -13,7 +13,10 @@ type LoginFormProps = {
   status: Status | null;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: FormEventHandler<HTMLFormElement>;
+  onQuickLogin?: () => void;
 };
+
+const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === "development";
 
 export const LoginForm = ({
   values,
@@ -21,6 +24,7 @@ export const LoginForm = ({
   status,
   onChange,
   onSubmit,
+  onQuickLogin,
 }: LoginFormProps) => (
   <form onSubmit={onSubmit} className="mt-8 space-y-6">
     <FormField
@@ -65,6 +69,17 @@ export const LoginForm = ({
       loadingLabel="サインイン中..."
       idleLabel="サインイン"
     />
+
+    {isDevelopment && onQuickLogin && (
+      <button
+        type="button"
+        onClick={onQuickLogin}
+        disabled={loading}
+        className="flex w-full items-center justify-center rounded-xl bg-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200/50"
+      >
+        開発環境クイックログイン
+      </button>
+    )}
 
     {status && <StatusMessage status={status} />}
   </form>

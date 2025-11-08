@@ -5,7 +5,7 @@ import {
   useState,
 } from "react";
 import { getErrorMessage } from "../../../api/client";
-import { loginUser, registerUser } from "../api";
+import { loginUser, quickLogin, registerUser } from "../api";
 import type {
   ActiveTab,
   AuthSuccess,
@@ -159,6 +159,26 @@ const useAuthFlow = (options?: UseAuthFlowOptions) => {
     ],
   );
 
+  const handleQuickLogin = useCallback(async () => {
+    setLoginLoading(true);
+    setLoginStatus(null);
+
+    try {
+      const data = await quickLogin();
+
+      setLoginStatus({
+        type: "success",
+        message: `${data.user.name}としてログインしました。`,
+      });
+      setLoginForm(initialLoginForm);
+      onAuthenticated?.(data);
+    } catch (error) {
+      setLoginStatus({ type: "error", message: getErrorMessage(error) });
+    } finally {
+      setLoginLoading(false);
+    }
+  }, [onAuthenticated]);
+
   return {
     activeTab,
     loginForm,
@@ -172,6 +192,7 @@ const useAuthFlow = (options?: UseAuthFlowOptions) => {
     handleSignupChange,
     handleLoginSubmit,
     handleSignupSubmit,
+    handleQuickLogin,
   };
 };
 

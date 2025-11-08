@@ -24,6 +24,7 @@ const AuthPage = ({ onAuthenticated }: AuthPageProps) => {
     handleSignupChange,
     handleLoginSubmit,
     handleSignupSubmit,
+    handleQuickLogin,
   } = useAuthFlow({ onAuthenticated });
 
   useEffect(() => {
@@ -66,6 +67,7 @@ const AuthPage = ({ onAuthenticated }: AuthPageProps) => {
               status={loginStatus}
               onChange={handleLoginChange}
               onSubmit={handleLoginSubmit}
+              onQuickLogin={handleQuickLogin}
             />
           )}
         </AuthCard>
