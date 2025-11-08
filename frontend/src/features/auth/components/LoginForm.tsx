@@ -47,7 +47,7 @@ export const LoginForm = ({
       required
     />
 
-    <div className="flex items-center justify-between text-xs text-slate-400">
+    <div className="flex items-center justify-between text-xs text-slate-600">
       <FormCheckbox
         name="rememberLogin"
         containerClassName="flex items-center gap-2"

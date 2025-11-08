@@ -106,8 +106,8 @@ export const SignupForm = ({
       disabled={loading}
       label={(
         <>
-          <span className="font-medium text-slate-200">利用規約</span>と
-          <span className="font-medium text-slate-200">プライバシーポリシー</span>に同意します。
+          <span className="font-medium text-slate-700">利用規約</span>と
+          <span className="font-medium text-slate-700">プライバシーポリシー</span>に同意します。
         </>
       )}
     />

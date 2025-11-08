@@ -4,7 +4,7 @@ const mergeClassNames = (...classNames: Array<string | false | undefined>) =>
   classNames.filter(Boolean).join(" ");
 
 export const inputBaseClassName =
-  "rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-base text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/40";
+  "rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
 
 type FormFieldProps = {
   label: string;
@@ -22,7 +22,7 @@ export const FormField = ({
   return (
     <label
       htmlFor={controlId}
-      className="flex flex-col text-sm text-slate-300"
+      className="flex flex-col text-sm text-slate-700"
     >
       <span className="mb-2 font-medium">{label}</span>
       <input
@@ -54,7 +54,7 @@ export const FormCheckbox = ({
     <label
       htmlFor={controlId}
       className={mergeClassNames(
-        "flex items-start gap-3 text-xs text-slate-400",
+        "flex items-center gap-3 text-xs text-slate-600",
         containerClassName,
       )}
     >
@@ -63,7 +63,7 @@ export const FormCheckbox = ({
         name={name}
         type="checkbox"
         className={mergeClassNames(
-          "mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-indigo-500 focus:ring-indigo-500",
+          "h-4 w-4 rounded border-slate-300 bg-white text-indigo-600 focus:ring-indigo-500",
           className,
         )}
         {...props}
