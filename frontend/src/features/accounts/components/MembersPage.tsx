@@ -10,8 +10,7 @@ import type { AppRoute } from "../../../routes";
 import DashboardShell from "../../dashboard/components/DashboardShell";
 import useAccountState from "../hooks/useAccountState";
 import type { Membership, MembershipRole } from "../types";
-import AccountCard from "./AccountCard";
-import MemberCard from "./MemberCard";
+import AddMemberModal from "./AddMemberModal";
 
 type MembersPageProps = {
   userName?: string;
@@ -47,6 +46,7 @@ const MembersPage = ({
     useState<MemberFormState>(initialFormState);
   const [formError, setFormError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [updatingMemberId, setUpdatingMemberId] = useState<number | null>(null);
   const [removingMemberId, setRemovingMemberId] = useState<number | null>(null);
 
@@ -99,7 +99,8 @@ const MembersPage = ({
 
   const isOwner = currentUserMembership?.role === "owner";
 
-  const handleCreateMember = async () => {
+  const handleCreateMember = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!currentAccount) {
       return;
     }
@@ -128,6 +129,7 @@ const MembersPage = ({
       setMembers((prev) => [...prev, member]);
       setFormState(initialFormState);
       setStatus("メンバーを追加しました。");
+      setIsModalOpen(false);
     } catch (err) {
       setFormError(getErrorMessage(err));
     } finally {
@@ -206,82 +208,8 @@ const MembersPage = ({
           アカウントが選択されていません。サイドバーからワークスペースを選択してください。
         </div>
       ) : (
-        <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-          <div className="flex flex-col gap-6">
-            <AccountCard account={currentAccount} />
-
-            <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-              <h2 className="text-lg font-semibold text-slate-900">
-                メンバーを追加
-              </h2>
-              <p className="text-sm text-slate-500">
-                既存ユーザーのIDを指定して招待します。オーナーのみが追加できます。
-              </p>
-
-              {!isOwner ? (
-                <div className="mt-4 rounded-xl bg-slate-100 px-3 py-2 text-xs text-slate-500">
-                  メンバーを追加するにはオーナー権限が必要です。
-                </div>
-              ) : null}
-
-              <div className="mt-4 flex flex-col gap-4">
-                <label className="text-sm font-medium text-slate-700">
-                  ユーザーID
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={formState.userId}
-                    onChange={(event) =>
-                      setFormState((prev) => ({
-                        ...prev,
-                        userId: event.target.value,
-                      }))
-                    }
-                    disabled={!isOwner || creating}
-                    className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-                    placeholder="例: 42"
-                  />
-                </label>
-
-                <label className="text-sm font-medium text-slate-700">
-                  ロール
-                  <select
-                    value={formState.role}
-                    onChange={(event) =>
-                      setFormState((prev) => ({
-                        ...prev,
-                        role: event.target.value as MembershipRole,
-                      }))
-                    }
-                    disabled={!isOwner || creating}
-                    className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-                  >
-                    <option value="member">メンバー</option>
-                    <option value="owner">オーナー</option>
-                  </select>
-                </label>
-
-                {formError ? (
-                  <div className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-600">
-                    {formError}
-                  </div>
-                ) : null}
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    void handleCreateMember();
-                  }}
-                  disabled={!isOwner || creating}
-                  className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-300"
-                >
-                  {creating ? "追加中..." : "メンバーを追加"}
-                </button>
-              </div>
-            </section>
-          </div>
-
-          <section className="flex flex-col gap-4">
+        <>
+          <div className="flex w-full flex-col gap-4">
             {status ? (
               <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-600 ring-1 ring-emerald-200">
                 {status}
@@ -303,44 +231,192 @@ const MembersPage = ({
                 登録されているメンバーはいません。
               </div>
             ) : (
-              members.map((member) => {
-                const isSelf = member.userId === currentUserId;
-                const isOwnerMember = member.role === "owner";
-                const canEditRole =
-                  isOwner &&
-                  (!isOwnerMember || ownerCount > 1 || member.userId !== currentUserId);
-                const canRemove =
-                  (isOwner && member.userId !== currentUserId) ||
-                  (!isOwner && isSelf);
+              <div className="w-full rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+                <header className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+                  <h2 className="text-lg font-semibold text-slate-900">メンバー</h2>
+                  {isOwner && (
+                    <button
+                      type="button"
+                      onClick={() => setIsModalOpen(true)}
+                      className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </header>
+                <div className="overflow-x-scroll">
+                  <table className="min-w-full">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          アイコン
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          名前
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          メールアドレス
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          ロール
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          参加日
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          最終ログイン日
+                        </th>
+                        <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          アクション
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      {members.map((member) => {
+                        const isSelf = member.userId === currentUserId;
+                        const isOwnerMember = member.role === "owner";
+                        const canEditRole =
+                          isOwner &&
+                          (!isOwnerMember ||
+                            ownerCount > 1 ||
+                            member.userId !== currentUserId);
+                        const canRemove =
+                          (isOwner && member.userId !== currentUserId) ||
+                          (!isOwner && isSelf);
+                        const canRemoveFinal =
+                          canRemove &&
+                          !(isOwnerMember && member.userId === currentUserId);
+                        const memberName =
+                          member.user?.name ?? `ユーザー#${member.userId}`;
+                        const memberEmail =
+                          member.user?.email ?? "メールアドレス未取得";
+                        const initials = memberName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                          .slice(0, 2) || "?";
+                        const joinedDate = member.joinedAt
+                          ? new Date(member.joinedAt).toLocaleString("ja-JP")
+                          : "未設定";
+                        const lastLoginDate = joinedDate;
 
-                return (
-                  <MemberCard
-                    key={member.id}
-                    member={member}
-                    loading={
-                      updatingMemberId === member.id ||
-                      removingMemberId === member.id
-                    }
-                    canEditRole={canEditRole}
-                    canRemove={
-                      canRemove && !(isOwnerMember && member.userId === currentUserId)
-                    }
-                    onRoleChange={(role) => {
-                      void handleRoleChange(member, role);
-                    }}
-                    onRemove={
-                      canRemove
-                        ? () => {
-                            void handleRemoveMember(member);
-                          }
-                        : undefined
-                    }
-                  />
-                );
-              })
+                        return (
+                          <tr
+                            key={member.id}
+                            className="transition hover:bg-slate-50"
+                          >
+                            <td className="whitespace-nowrap px-6 py-4">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600">
+                                {initials}
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
+                              {memberName}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+                              {memberEmail}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4">
+                              <span
+                                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                                  member.role === "owner"
+                                    ? "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100"
+                                    : "bg-slate-100 text-slate-600 ring-1 ring-slate-200"
+                                }`}
+                              >
+                                {member.role === "owner" ? "オーナー" : "メンバー"}
+                              </span>
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+                              {joinedDate}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+                              {lastLoginDate}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                {canEditRole && (
+                                  <select
+                                    value={member.role}
+                                    disabled={
+                                      updatingMemberId === member.id ||
+                                      removingMemberId === member.id
+                                    }
+                                    onChange={(event) => {
+                                      void handleRoleChange(
+                                        member,
+                                        event.target.value as MembershipRole,
+                                      );
+                                    }}
+                                    className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-50"
+                                  >
+                                    <option value="member">メンバー</option>
+                                    <option value="owner">オーナー</option>
+                                  </select>
+                                )}
+                                {canRemoveFinal && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      void handleRemoveMember(member);
+                                    }}
+                                    disabled={
+                                      updatingMemberId === member.id ||
+                                      removingMemberId === member.id
+                                    }
+                                    className="inline-flex items-center justify-center rounded-xl border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+                                  >
+                                    {removingMemberId === member.id
+                                      ? "削除中..."
+                                      : "削除"}
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
-          </section>
-        </div>
+          </div>
+
+          <AddMemberModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setFormState(initialFormState);
+              setFormError(null);
+            }}
+            onSubmit={handleCreateMember}
+            userId={formState.userId}
+            role={formState.role}
+            onUserIdChange={(value) =>
+              setFormState((prev) => ({ ...prev, userId: value }))
+            }
+            onRoleChange={(role) =>
+              setFormState((prev) => ({ ...prev, role }))
+            }
+            isOwner={isOwner}
+            creating={creating}
+            error={formError}
+          />
+        </>
       )}
     </DashboardShell>
   );

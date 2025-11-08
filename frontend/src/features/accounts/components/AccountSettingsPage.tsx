@@ -1,14 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getErrorMessage } from "../../../api/client";
 import type { AppRoute } from "../../../routes";
 import { APP_ROUTES } from "../../../routes";
 import DashboardShell from "../../dashboard/components/DashboardShell";
+import { getMembers } from "../../../api/accounts";
 import useAccountState from "../hooks/useAccountState";
-import AccountCard from "./AccountCard";
-import AccountForm, { type AccountFormValues } from "./AccountForm";
+import type { Membership } from "../types";
+
+type AccountFormValues = {
+  name: string;
+  description: string;
+};
 
 type AccountSettingsPageProps = {
   userName?: string;
+  currentUserId: number;
   onLogout?: () => void;
   currentRoute: AppRoute;
   onNavigate: (route: AppRoute) => void;
@@ -16,6 +22,7 @@ type AccountSettingsPageProps = {
 
 const AccountSettingsPage = ({
   userName,
+  currentUserId,
   onLogout,
   currentRoute,
   onNavigate,
@@ -26,6 +33,9 @@ const AccountSettingsPage = ({
     updateAccountDetails,
     deleteAccountById,
   } = useAccountState();
+  const [members, setMembers] = useState<Membership[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [formValues, setFormValues] = useState<AccountFormValues>({
     name: "",
     description: "",
@@ -34,6 +44,39 @@ const AccountSettingsPage = ({
   const [error, setError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+    if (!currentAccount) {
+      setMembers([]);
+      setLoadingMembers(false);
+      return;
+    }
+
+    setLoadingMembers(true);
+    getMembers(currentAccount.id)
+      .then((data) => {
+        if (!isActive) {
+          return;
+        }
+        setMembers(data);
+      })
+      .catch((err) => {
+        if (!isActive) {
+          return;
+        }
+        console.error("Failed to fetch members:", err);
+      })
+      .finally(() => {
+        if (isActive) {
+          setLoadingMembers(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [currentAccount?.id]);
 
   useEffect(() => {
     if (!currentAccount) {
@@ -46,7 +89,15 @@ const AccountSettingsPage = ({
     });
     setStatus(null);
     setError(null);
-  }, [currentAccount?.id]);
+  }, [currentAccount?.id, isEditing]);
+
+  const currentUserMembership = useMemo(
+    () =>
+      members.find((member) => member.userId === currentUserId) ?? null,
+    [members, currentUserId],
+  );
+
+  const isOwner = currentUserMembership?.role === "owner";
 
   const handleSubmit = async () => {
     if (!currentAccount) {
@@ -62,9 +113,23 @@ const AccountSettingsPage = ({
         description: formValues.description.trim() || null,
       });
       setStatus("アカウント情報を更新しました。");
+      setIsEditing(false);
     } catch (err) {
       setError(getErrorMessage(err));
     }
+  };
+
+  const handleCancelEdit = () => {
+    if (!currentAccount) {
+      return;
+    }
+
+    setFormValues({
+      name: currentAccount.name,
+      description: currentAccount.description ?? "",
+    });
+    setIsEditing(false);
+    setError(null);
   };
 
   const handleDelete = async () => {
@@ -111,62 +176,147 @@ const AccountSettingsPage = ({
           アカウントが選択されていません。サイドバーからワークスペースを選択してください。
         </div>
       ) : (
-        <div className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
-          <AccountForm
-            values={formValues}
-            onChange={(field, value) => {
-              setFormValues((prev) => ({
-                ...prev,
-                [field]: value,
-              }));
-            }}
-            onSubmit={handleSubmit}
-            loading={processing}
-            submitLabel="アカウントを更新"
-            error={error}
-            footer={
-              currentAccount.accountType === "team" ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    void handleDelete();
-                  }}
-                  disabled={deleting}
-                  className="inline-flex items-center justify-center rounded-xl border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
-                >
-                  {deleting ? "削除中..." : "チームアカウントを削除"}
-                </button>
-              ) : (
-                <p className="text-xs text-slate-400">
-                  個人アカウントは削除できません。
-                </p>
-              )
-            }
-          />
+        <div className="flex flex-col gap-4">
+          {status ? (
+            <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-600 ring-1 ring-emerald-200">
+              {status}
+            </div>
+          ) : null}
+          {deleteError ? (
+            <div className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600 ring-1 ring-rose-200">
+              {deleteError}
+            </div>
+          ) : null}
+          {error ? (
+            <div className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600 ring-1 ring-rose-200">
+              {error}
+            </div>
+          ) : null}
 
-          <div className="flex flex-col gap-4">
-            {status ? (
-              <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-600 ring-1 ring-emerald-200">
-                {status}
+          <article className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <header className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={formValues.name}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, name: e.target.value }))
+                    }
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-lg font-semibold text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    placeholder="アカウント名"
+                    maxLength={80}
+                    required
+                  />
+                ) : (
+                  <h2 className="text-lg font-semibold text-slate-900">
+                    {currentAccount.name}
+                  </h2>
+                )}
               </div>
-            ) : null}
-            {deleteError ? (
-              <div className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600 ring-1 ring-rose-200">
-                {deleteError}
-              </div>
-            ) : null}
-            <AccountCard account={currentAccount} />
-            <section className="rounded-3xl bg-white p-6 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
-              <h2 className="text-lg font-semibold text-slate-900">
-                アカウントタイプ
-              </h2>
-              <p className="mt-2 text-sm text-slate-600">
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 ring-1 ring-emerald-100">
                 {currentAccount.accountType === "personal"
-                  ? "このワークスペースは個人用です。他のメンバーは追加できません。"
-                  : "このワークスペースはチーム用です。メンバー管理ページから招待できます。"}
-              </p>
-            </section>
-          </div>
+                  ? "個人アカウント"
+                  : "チームアカウント"}
+              </span>
+            </header>
+
+            <dl className="grid grid-cols-1 gap-3 text-sm text-slate-600 md:grid-cols-2">
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-slate-400">
+                  説明
+                </dt>
+                <dd className="mt-1 text-slate-700">
+                  {isEditing ? (
+                    <textarea
+                      value={formValues.description}
+                      onChange={(e) =>
+                        setFormValues((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
+                      className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                      placeholder="説明を入力してください"
+                    />
+                  ) : (
+                    currentAccount.description || "説明は設定されていません。"
+                  )}
+                </dd>
+              </div>
+
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-slate-400">
+                  オーナー
+                </dt>
+                <dd className="mt-1 text-slate-700">
+                  {currentAccount.owner
+                    ? `${currentAccount.owner.name}（${currentAccount.owner.email}）`
+                    : "不明"}
+                </dd>
+              </div>
+
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-slate-400">
+                  作成日
+                </dt>
+                <dd className="mt-1 text-slate-700">
+                  {new Date(currentAccount.createdAt).toLocaleString("ja-JP")}
+                </dd>
+              </div>
+
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-slate-400">
+                  最終更新日
+                </dt>
+                <dd className="mt-1 text-slate-700">
+                  {new Date(currentAccount.updatedAt).toLocaleString("ja-JP")}
+                </dd>
+              </div>
+            </dl>
+
+            {isOwner && (
+              <div className="flex gap-3 pt-2">
+                {isEditing ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      disabled={processing}
+                      className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-300"
+                    >
+                      {processing ? "処理中..." : "保存"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCancelEdit}
+                      disabled={processing}
+                      className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+                    >
+                      キャンセル
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                    className="inline-flex items-center justify-center rounded-xl border border-indigo-200 px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-50"
+                  >
+                    編集
+                  </button>
+                )}
+              </div>
+            )}
+          </article>
+
+          <section className="rounded-3xl bg-white p-6 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
+            <h2 className="text-lg font-semibold text-slate-900">あなたの役職</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              {isOwner
+                ? "あなたはこのワークスペースのオーナーです。"
+                : "あなたはこのワークスペースのメンバーです。アカウント情報を編集できません。"}
+            </p>
+          </section>
         </div>
       )}
     </DashboardShell>

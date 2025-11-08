@@ -234,6 +234,7 @@ const App = () => {
       return (
         <AccountSettingsPage
           userName={auth.user.name}
+          currentUserId={auth.user.id}
           currentRoute={route}
           onNavigate={navigate}
           onLogout={handleLogout}
