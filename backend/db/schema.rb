@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_04_120000) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_09_015601) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -43,7 +43,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_04_120000) do
   create_table "expenses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "支出", force: :cascade do |t|
     t.bigint "account_id", null: false, comment: "アカウント"
     t.bigint "user_id", null: false, comment: "ユーザー"
-    t.string "title", null: false, comment: "カテゴリ"
+    t.string "title", null: false, comment: "支出の内容"
     t.integer "amount", null: false, comment: "金額"
     t.date "spent_on", null: false, comment: "支出日"
     t.text "memo", comment: "メモ"
@@ -56,7 +56,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_04_120000) do
   create_table "incomes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "収入", force: :cascade do |t|
     t.bigint "account_id", null: false, comment: "アカウント"
     t.bigint "user_id", null: false, comment: "ユーザー"
-    t.string "title", null: false, comment: "カテゴリ"
+    t.string "title", null: false, comment: "収入の内容"
     t.integer "amount", null: false, comment: "金額"
     t.date "received_on", null: false, comment: "収入日"
     t.text "memo", comment: "メモ"
