@@ -58,7 +58,7 @@ const DashboardShell = ({
         />
       </>
 
-      <div className="flex flex-1 flex-col lg:ml-64">
+      <div className="flex flex-1 flex-col lg:ml-24">
         <DashboardHeader
           userName={userName}
           title={headerTitle}
