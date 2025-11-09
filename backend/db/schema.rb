@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_09_015601) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_09_064826) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -40,6 +40,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_015601) do
     t.index ["slug"], name: "index_accounts_on_slug", unique: true
   end
 
+  create_table "categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "収支のカテゴリ", force: :cascade do |t|
+    t.bigint "account_id", null: false, comment: "アカウント"
+    t.string "name", null: false, comment: "カテゴリ名"
+    t.integer "type", null: false, comment: "種別 0:expense 1:income"
+    t.string "color", comment: "表示色（HEXコード）"
+    t.string "icon", comment: "アイコン名"
+    t.integer "position", default: 0, null: false, comment: "表示順序"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "type", "name"], name: "index_categories_on_account_type_name", unique: true
+    t.index ["account_id"], name: "index_categories_on_account_id"
+  end
+
   create_table "expenses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "支出", force: :cascade do |t|
     t.bigint "account_id", null: false, comment: "アカウント"
     t.bigint "user_id", null: false, comment: "ユーザー"
@@ -49,7 +62,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_015601) do
     t.text "memo", comment: "メモ"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "category_id", null: false, comment: "カテゴリ"
     t.index ["account_id"], name: "index_expenses_on_account_id"
+    t.index ["category_id"], name: "index_expenses_on_category_id"
     t.index ["user_id"], name: "index_expenses_on_user_id"
   end
 
@@ -62,7 +77,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_015601) do
     t.text "memo", comment: "メモ"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "category_id", null: false, comment: "カテゴリ"
     t.index ["account_id"], name: "index_incomes_on_account_id"
+    t.index ["category_id"], name: "index_incomes_on_category_id"
     t.index ["user_id"], name: "index_incomes_on_user_id"
   end
 
@@ -99,9 +116,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_015601) do
   add_foreign_key "account_invitations", "accounts"
   add_foreign_key "account_invitations", "users", column: "inviter_id"
   add_foreign_key "accounts", "users", column: "owner_id"
+  add_foreign_key "categories", "accounts"
   add_foreign_key "expenses", "accounts"
+  add_foreign_key "expenses", "categories"
   add_foreign_key "expenses", "users"
   add_foreign_key "incomes", "accounts"
+  add_foreign_key "incomes", "categories"
   add_foreign_key "incomes", "users"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
