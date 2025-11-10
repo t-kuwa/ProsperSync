@@ -131,7 +131,7 @@ const RecentTransactions = ({ entries }: RecentTransactionsProps) => (
   <div className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
     <div className="flex items-center justify-between">
       <h2 className="text-lg font-semibold text-slate-900">
-        最近のトランザクション
+        最近の収支一覧
       </h2>
       <span className="text-xs font-medium text-indigo-600">
         過去6件を表示

@@ -96,8 +96,8 @@ const TransactionsPage = ({
         onLogout={onLogout}
         currentRoute={currentRoute}
         onNavigate={onNavigate}
-        headerTitle="トランザクション管理"
-        headerSubtitle="アカウントを選択するとトランザクションを表示できます。"
+        headerTitle="収支登録"
+        headerSubtitle="アカウントを選択すると収支を登録できます。"
       >
         <div className="rounded-3xl bg-white p-8 text-center text-slate-500 shadow-sm ring-1 ring-slate-200">
           ワークスペースが選択されていません。サイドバーからアカウントを選択してください。
@@ -112,7 +112,7 @@ const TransactionsPage = ({
       onLogout={onLogout}
       currentRoute={currentRoute}
       onNavigate={onNavigate}
-      headerTitle="トランザクション管理"
+      headerTitle="収支を登録"
       headerSubtitle={`${currentAccount.name} の実データを管理できます。`}
       headerActions={headerActions}
     >

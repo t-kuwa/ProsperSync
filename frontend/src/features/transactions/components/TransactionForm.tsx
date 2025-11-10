@@ -232,7 +232,7 @@ const TransactionForm = ({
     <div className="h-fit rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">トランザクション</h2>
+          <h2 className="text-lg font-semibold text-slate-900">収支を登録</h2>
           <p className="text-sm text-slate-500">
             実際の収支データを登録し、ダッシュボードへ即時反映させます。
           </p>
@@ -422,7 +422,7 @@ const TransactionForm = ({
               : "bg-indigo-600 hover:bg-indigo-500"
           }`}
         >
-          {editingTransaction ? "トランザクションを更新" : "トランザクションを登録"}
+          {editingTransaction ? "収支を更新" : "収支を登録"}
         </button>
       </form>
     </div>

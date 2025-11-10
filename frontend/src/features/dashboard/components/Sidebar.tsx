@@ -8,7 +8,7 @@ import type { AccountSummary } from "../../accounts/types";
 
 const MAIN_NAVIGATION: Array<{ label: string; icon: string; route: AppRoute }> = [
   { label: "ダッシュボード", icon: "home", route: APP_ROUTES.dashboard },
-  { label: "トランザクション", icon: "receipt", route: APP_ROUTES.transactions },
+  { label: "収支を登録", icon: "receipt", route: APP_ROUTES.transactions },
 ];
 
 const accountTypeLabel = (account: AccountSummary | null) =>

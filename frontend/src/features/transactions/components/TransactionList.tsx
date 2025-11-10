@@ -110,7 +110,7 @@ const TransactionList = ({
         <div>
           <h2 className="text-lg font-semibold text-slate-900">取引履歴</h2>
           <p className="text-sm text-slate-500">
-            フィルタや並び替えを活用してトランザクションを探しましょう。
+            フィルタや並び替えを活用して収支を探しましょう。
           </p>
         </div>
         <div className="flex flex-wrap gap-2 text-xs font-medium">

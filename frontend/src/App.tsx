@@ -153,7 +153,7 @@ const App = () => {
         return "ダッシュボード - Haruve";
       }
       if (route === APP_ROUTES.transactions) {
-        return "トランザクション - Haruve";
+        return "収支登録 - Haruve";
       }
       if (route === APP_ROUTES.accountCreate) {
         return "アカウント作成 - Haruve";
