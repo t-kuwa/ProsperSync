@@ -120,14 +120,11 @@ const CategoryManager = forwardRef<CategoryManagerHandle, CategoryManagerProps>(
             <h3 className="text-lg font-semibold text-slate-900">
               カテゴリマネージャー
             </h3>
-            <p className="text-sm text-slate-500">
-              色とアイコンを整えて、取引入力をもっと直感的に。
-            </p>
           </div>
           <div className="flex gap-2 text-xs font-semibold">
             <button
               type="button"
-              className={`rounded-full px-3 py-1 ${
+              className={`whitespace-nowrap rounded-full px-3 py-1 ${
                 activeType === "expense"
                   ? "bg-rose-100 text-rose-700"
                   : "text-slate-500 hover:text-rose-600"
@@ -138,7 +135,7 @@ const CategoryManager = forwardRef<CategoryManagerHandle, CategoryManagerProps>(
             </button>
             <button
               type="button"
-              className={`rounded-full px-3 py-1 ${
+              className={`whitespace-nowrap rounded-full px-3 py-1 ${
                 activeType === "income"
                   ? "bg-emerald-100 text-emerald-700"
                   : "text-slate-500 hover:text-emerald-600"

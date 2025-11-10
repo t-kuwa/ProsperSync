@@ -233,9 +233,6 @@ const TransactionForm = ({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">収支を登録</h2>
-          <p className="text-sm text-slate-500">
-            実際の収支データを登録し、ダッシュボードへ即時反映させます。
-          </p>
         </div>
         <div className="text-right text-xs text-slate-400">
           今回の入力金額
