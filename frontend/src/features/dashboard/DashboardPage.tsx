@@ -5,9 +5,8 @@ import DashboardShell from "./components/DashboardShell";
 import FinancialOverview from "./components/FinancialOverview";
 import InsightsPanel from "./components/InsightsPanel";
 import SummaryCards from "./components/SummaryCards";
-import useDashboardState, {
-  type FinancialEntry,
-} from "./hooks/useDashboardState";
+import useDashboardState from "./hooks/useDashboardState";
+import type { FinancialEntry } from "./types";
 import formatCurrency from "./utils/formatCurrency";
 
 type DashboardPageProps = {

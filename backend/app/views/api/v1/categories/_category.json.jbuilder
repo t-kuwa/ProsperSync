@@ -1,0 +1,9 @@
+json.id category.id
+json.account_id category.account_id
+json.name category.name
+json.type category.type
+json.color category.color
+json.icon category.icon
+json.position category.position
+json.created_at category.created_at
+json.updated_at category.updated_at

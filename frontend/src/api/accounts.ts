@@ -73,6 +73,13 @@ const mapMembership = (membership: ApiMembership): Membership => ({
 
 export const getAccounts = async (): Promise<AccountSummary[]> => {
   const { data } = await apiClient.get<ApiAccount[]>("/api/v1/accounts");
+  
+  // データが配列でない場合（エラーレスポンスなど）の処理
+  if (!Array.isArray(data)) {
+    console.error("getAccounts: Expected array but got:", data);
+    return [];
+  }
+
   return data.map(mapAccount);
 };
 
@@ -121,6 +128,13 @@ export const getMembers = async (
   const { data } = await apiClient.get<ApiMembership[]>(
     `/api/v1/accounts/${accountId}/members`,
   );
+  
+  // データが配列でない場合（エラーレスポンスなど）の処理
+  if (!Array.isArray(data)) {
+    console.error("getMembers: Expected array but got:", data);
+    return [];
+  }
+
   return data.map(mapMembership);
 };
 

@@ -26,6 +26,9 @@ Rails.application.routes.draw do
                   controller: :account_invitations,
                   only: %i[index create],
                   defaults: { format: :json }
+        resources :categories, only: %i[index create update destroy], defaults: { format: :json }
+        resources :expenses, only: %i[index show create update destroy], defaults: { format: :json }
+        resources :incomes, only: %i[index show create update destroy], defaults: { format: :json }
       end
 
       resources :invitations, only: [], defaults: { format: :json } do

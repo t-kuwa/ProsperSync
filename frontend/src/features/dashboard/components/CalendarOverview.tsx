@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { FinancialEntry } from "../hooks/useDashboardState";
+import type { FinancialEntry } from "../types";
 import formatCurrency from "../utils/formatCurrency";
 
 type CalendarOverviewProps = {

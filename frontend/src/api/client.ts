@@ -109,7 +109,10 @@ export type ApiErrorResponse = {
 export const getErrorMessage = (error: unknown) => {
   if (axios.isAxiosError<ApiErrorResponse>(error)) {
     const data = error.response?.data;
+    const status = error.response?.status;
+    const code = error.code;
 
+    // サーバーから返されたエラーメッセージを優先的に使用
     if (data?.errors?.length) {
       return data.errors.join("\n");
     }
@@ -122,8 +125,62 @@ export const getErrorMessage = (error: unknown) => {
       return data.message;
     }
 
-    return error.message;
+    // HTTPステータスコードに応じたメッセージ
+    if (status) {
+      switch (status) {
+        case 400:
+          return "リクエストが不正です。入力内容を確認してください。";
+        case 401:
+          return "認証に失敗しました。再度ログインしてください。";
+        case 403:
+          return "この操作を実行する権限がありません。";
+        case 404:
+          return "リソースが見つかりませんでした。";
+        case 422:
+          return "入力内容に問題があります。確認してください。";
+        case 500:
+          return "サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。";
+        case 503:
+          return "サービスが一時的に利用できません。しばらく時間をおいて再度お試しください。";
+        default:
+          if (status >= 500) {
+            return "サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。";
+          }
+          if (status >= 400) {
+            return "リクエストエラーが発生しました。";
+          }
+      }
+    }
+
+    // ネットワークエラーやタイムアウトの検出
+    if (code === "ECONNABORTED" || code === "ETIMEDOUT") {
+      return "リクエストがタイムアウトしました。ネットワーク接続を確認してください。";
+    }
+
+    if (code === "ERR_NETWORK" || code === "ECONNREFUSED") {
+      return "ネットワークエラーが発生しました。接続を確認してください。";
+    }
+
+    if (code === "ERR_CANCELED") {
+      return "リクエストがキャンセルされました。";
+    }
+
+    // Axiosエラーメッセージがある場合は使用
+    if (error.message) {
+      return error.message;
+    }
+
+    // レスポンスがない場合（ネットワークエラーなど）
+    if (!error.response) {
+      return "サーバーに接続できませんでした。ネットワーク接続を確認してください。";
+    }
   }
 
+  // Errorオブジェクトの場合
+  if (error instanceof Error) {
+    return error.message || "エラーが発生しました。";
+  }
+
+  // その他の予期しないエラー
   return "予期しないエラーが発生しました。";
 };
