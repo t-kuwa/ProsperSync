@@ -116,7 +116,7 @@ const TransactionsPage = ({
       headerSubtitle={`${currentAccount.name} の実データを管理できます。`}
       headerActions={headerActions}
     >
-      <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <div className="space-y-6">
           <TransactionForm
             categories={categories}
@@ -143,7 +143,13 @@ const TransactionsPage = ({
         </div>
 
         <div className="space-y-6">
-          <CalendarOverview entries={calendarEntries} />
+          <CalendarOverview
+            calendarEntries={calendarEntries}
+            monthlyBreakdown={[]}
+            loading={loading}
+            error={error}
+            showTrendChart={false}
+          />
           <TransactionList
             transactions={transactions}
             totals={totals}

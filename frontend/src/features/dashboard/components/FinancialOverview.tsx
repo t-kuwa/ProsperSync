@@ -1,116 +1,139 @@
 import { useMemo } from "react";
-import type { FinancialEntry } from "../types";
-import formatCurrency from "../utils/formatCurrency";
+import { Bar } from "react-chartjs-2";
+import type { MonthlyStat } from "../types";
+import "../../../lib/registerCharts";
 
 type FinancialOverviewProps = {
-  entries: FinancialEntry[];
+  monthlyBreakdown: MonthlyStat[];
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
   className?: string;
 };
 
-const FinancialOverview = ({ entries, className }: FinancialOverviewProps) => (
-  <div
-    className={`rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
-  >
-    <div className="flex items-center justify-between">
-      <h2 className="text-lg font-semibold text-slate-900">収支の推移</h2>
-      <button
-        type="button"
-        className="rounded-lg px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50"
-      >
-        月別を見る
-      </button>
-    </div>
-    <p className="mt-1 text-sm text-slate-500">
-      最新のデータから推計した月次トレンド
-    </p>
+const FinancialOverview = ({
+  monthlyBreakdown,
+  loading = false,
+  error = null,
+  onRetry,
+  className,
+}: FinancialOverviewProps) => {
+  const chartData = useMemo(() => {
+    const labels = monthlyBreakdown.map((month) => month.label);
+    const incomeData = monthlyBreakdown.map((month) => month.income);
+    const expenseData = monthlyBreakdown.map((month) => month.expense);
 
-    <TrendChart entries={entries} />
-  </div>
-);
+    return {
+      labels,
+      datasets: [
+        {
+          label: "収入",
+          data: incomeData,
+          backgroundColor: "rgba(16, 185, 129, 0.7)",
+          borderRadius: 12,
+          borderSkipped: false,
+        },
+        {
+          label: "支出",
+          data: expenseData,
+          backgroundColor: "rgba(244, 63, 94, 0.7)",
+          borderRadius: 12,
+          borderSkipped: false,
+        },
+      ],
+    };
+  }, [monthlyBreakdown]);
 
-type TrendChartProps = {
-  entries: FinancialEntry[];
-};
-
-const TrendChart = ({ entries }: TrendChartProps) => {
-  const monthly = useMemo(() => {
-    const result: Record<
-      string,
-      {
-        income: number;
-        expense: number;
-      }
-    > = {};
-
-    entries.forEach((entry) => {
-      const month = entry.date.slice(0, 7);
-      if (!result[month]) {
-        result[month] = { income: 0, expense: 0 };
-      }
-
-      if (entry.type === "income") {
-        result[month].income += entry.amount;
-      } else {
-        result[month].expense += entry.amount;
-      }
-    });
-
-    return Object.entries(result)
-      .sort(([a], [b]) => (a < b ? -1 : 1))
-      .slice(-6);
-  }, [entries]);
-
-  if (!monthly.length) {
-    return (
-      <div className="mt-8 rounded-2xl bg-slate-50 py-12 text-center text-sm text-slate-500">
-        データがまだありません。収入または支出を追加すると推移が表示されます。
-      </div>
-    );
-  }
-
-  const maxValue = Math.max(
-    ...monthly.flatMap(([, values]) => [values.income, values.expense]),
-  );
+  const hasData = monthlyBreakdown.length > 0;
 
   return (
-    <div className="mt-8 flex flex-col gap-6">
-      <div className="flex items-center gap-6 text-xs text-slate-500">
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-indigo-500" />
-          <span>収入</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-rose-500" />
-          <span>支出</span>
+    <div
+      className={`rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
+      aria-busy={loading}
+      aria-live="polite"
+    >
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-slate-900">収支の推移</h2>
+        <div className="flex items-center gap-2 text-xs text-slate-500">
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+            収入
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full bg-rose-500" aria-hidden />
+            支出
+          </span>
         </div>
       </div>
-      <div className="flex items-end gap-6">
-        {monthly.map(([month, values]) => {
-          const incomeHeight = maxValue === 0 ? 0 : (values.income / maxValue) * 180;
-          const expenseHeight =
-            maxValue === 0 ? 0 : (values.expense / maxValue) * 180;
+      <p className="mt-1 text-sm text-slate-500">
+        過去6ヶ月の月次データをChart.jsで可視化しています。
+      </p>
 
-          return (
-            <div key={month} className="flex flex-1 flex-col items-center gap-3">
-              <div className="flex h-48 w-full items-end justify-center gap-2 rounded-2xl bg-slate-50 px-3 pb-3">
-                <div
-                  className="w-3 rounded-full bg-indigo-500 transition-all duration-500"
-                  style={{ height: `${incomeHeight || 4}px` }}
-                  title={`${month} 収入: ${formatCurrency(values.income)}`}
-                />
-                <div
-                  className="w-3 rounded-full bg-rose-500 transition-all duration-500"
-                  style={{ height: `${expenseHeight || 4}px` }}
-                  title={`${month} 支出: ${formatCurrency(values.expense)}`}
-                />
-              </div>
-              <span className="text-xs font-medium text-slate-500">
-                {month}
-              </span>
+      {loading ? (
+        <div className="mt-8 animate-pulse rounded-2xl bg-slate-50 py-16 text-center text-sm text-slate-400">
+          データを読み込んでいます…
+        </div>
+      ) : error ? (
+        <div className="mt-8 rounded-2xl bg-rose-50 px-4 py-6 text-center text-sm text-rose-600">
+          {error}
+          {onRetry ? (
+            <div>
+              <button
+                type="button"
+                className="mt-3 rounded-full border border-rose-200 px-4 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-100"
+                onClick={() => {
+                  void onRetry();
+                }}
+              >
+                再試行
+              </button>
             </div>
-          );
-        })}
-      </div>
+          ) : null}
+        </div>
+      ) : hasData ? (
+        <div className="mt-8 h-72" role="img" aria-label="過去6ヶ月の収支推移">
+          <Bar
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              interaction: { intersect: false, mode: "index" },
+              plugins: {
+                legend: {
+                  display: false,
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => {
+                      const value = context.parsed.y ?? 0;
+                      return `${context.dataset.label}: ¥${value.toLocaleString("ja-JP")}`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { color: "#94a3b8" },
+                },
+                y: {
+                  beginAtZero: true,
+                  grid: { color: "rgba(226, 232, 240, 0.6)" },
+                  ticks: {
+                    color: "#94a3b8",
+                    callback: (value) => `¥${Number(value).toLocaleString("ja-JP")}`,
+                  },
+                },
+              },
+            }}
+            aria-label="収支の棒グラフ"
+          />
+        </div>
+      ) : (
+        <div className="mt-8 rounded-2xl bg-slate-50 py-12 text-center text-sm text-slate-500">
+          データがまだありません。収入または支出を追加すると推移が表示されます。
+        </div>
+      )}
     </div>
   );
 };

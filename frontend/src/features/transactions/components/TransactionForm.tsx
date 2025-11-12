@@ -229,7 +229,7 @@ const TransactionForm = ({
   const disableSubmit = submitting || processing || loadingCategories;
 
   return (
-    <div className="h-fit rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+    <div className="h-fit rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">収支を登録</h2>
@@ -364,7 +364,7 @@ const TransactionForm = ({
             </div>
           ) : (
             <div
-              className={`mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3 ${
+              className={`mt-1 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 ${
                 errors.categoryId ? "rounded-xl border border-rose-300 p-1" : ""
               }`}
             >

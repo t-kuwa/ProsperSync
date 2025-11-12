@@ -1,19 +1,31 @@
 import { useMemo, useState } from "react";
-import type { FinancialEntry } from "../types";
+import { Line } from "react-chartjs-2";
+import type { CalendarEntry, MonthlyStat } from "../types";
+import "../../../lib/registerCharts";
 import formatCurrency from "../utils/formatCurrency";
 
 type CalendarOverviewProps = {
-  entries: FinancialEntry[];
+  calendarEntries: CalendarEntry[];
+  monthlyBreakdown?: MonthlyStat[];
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
   className?: string;
   title?: string;
+  showTrendChart?: boolean;
 };
 
 const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
 const CalendarOverview = ({
-  entries,
+  calendarEntries,
+  monthlyBreakdown = [],
+  loading = false,
+  error = null,
+  onRetry,
   className,
   title = "カレンダー",
+  showTrendChart = true,
 }: CalendarOverviewProps) => {
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const now = new Date();
@@ -25,24 +37,43 @@ const CalendarOverview = ({
   ).padStart(2, "0")}`;
 
   const entriesByDate = useMemo(() => {
-    return entries.reduce<Record<string, { income: number; expense: number }>>(
-      (acc, entry) => {
-        const key = entry.date;
-        if (!acc[key]) {
-          acc[key] = { income: 0, expense: 0 };
-        }
+    const monthPrefix = monthKey;
+    return calendarEntries
+      .filter((entry) => entry.date.startsWith(monthPrefix))
+      .reduce<Record<string, { income: number; expense: number }>>(
+        (acc, entry) => {
+          if (!acc[entry.date]) {
+            acc[entry.date] = { income: 0, expense: 0 };
+          }
+          acc[entry.date].income += entry.income;
+          acc[entry.date].expense += entry.expense;
+          return acc;
+        },
+        {},
+      );
+  }, [calendarEntries, monthKey]);
 
-        if (entry.type === "income") {
-          acc[key].income += entry.amount;
-        } else {
-          acc[key].expense += entry.amount;
-        }
-
-        return acc;
+  const trendChartData = useMemo(() => ({
+    labels: monthlyBreakdown.map((month) => month.label),
+    datasets: [
+      {
+        label: "収入",
+        data: monthlyBreakdown.map((month) => month.income),
+        borderColor: "rgba(16, 185, 129, 1)",
+        backgroundColor: "rgba(16, 185, 129, 0.2)",
+        tension: 0.4,
+        fill: true,
       },
-      {},
-    );
-  }, [entries]);
+      {
+        label: "支出",
+        data: monthlyBreakdown.map((month) => month.expense),
+        borderColor: "rgba(244, 63, 94, 1)",
+        backgroundColor: "rgba(244, 63, 94, 0.2)",
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  }), [monthlyBreakdown]);
 
   const calendar = useMemo(() => {
     const year = visibleMonth.getFullYear();
@@ -151,11 +182,6 @@ const CalendarOverview = ({
             >
               <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
                 <span>{date.getDate()}</span>
-                {hasData ? (
-                  <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
-                    活動あり
-                  </span>
-                ) : null}
               </div>
               {hasData ? (
                 <div className="space-y-1 text-[11px]">
@@ -181,6 +207,66 @@ const CalendarOverview = ({
           );
         })}
       </div>
+
+      {loading ? (
+        <div className="mt-6 animate-pulse rounded-2xl bg-slate-50 py-10 text-center text-sm text-slate-400">
+          カレンダーデータを読み込んでいます…
+        </div>
+      ) : error ? (
+        <div className="mt-6 rounded-2xl bg-rose-50 px-4 py-6 text-center text-sm text-rose-600">
+          {error}
+          {onRetry ? (
+            <div>
+              <button
+                type="button"
+                className="mt-3 rounded-full border border-rose-200 px-4 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-100"
+                onClick={() => {
+                  void onRetry();
+                }}
+              >
+                再試行
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {showTrendChart && monthlyBreakdown.length ? (
+        <div className="mt-6 h-48" role="img" aria-label="月次収支トレンド">
+          <Line
+            data={trendChartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: "bottom" },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => {
+                      const value = context.parsed.y ?? 0;
+                      return `${context.dataset.label}: ¥${value.toLocaleString("ja-JP")}`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { color: "#94a3b8" },
+                },
+                y: {
+                  beginAtZero: true,
+                  grid: { color: "rgba(226, 232, 240, 0.5)" },
+                  ticks: {
+                    color: "#94a3b8",
+                    callback: (value) => `¥${Number(value).toLocaleString("ja-JP")}`,
+                  },
+                },
+              },
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

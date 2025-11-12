@@ -29,6 +29,9 @@ Rails.application.routes.draw do
         resources :categories, only: %i[index create update destroy], defaults: { format: :json }
         resources :expenses, only: %i[index show create update destroy], defaults: { format: :json }
         resources :incomes, only: %i[index show create update destroy], defaults: { format: :json }
+        resource :dashboard, only: [], controller: :dashboard, defaults: { format: :json } do
+          get :stats
+        end
       end
 
       resources :invitations, only: [], defaults: { format: :json } do

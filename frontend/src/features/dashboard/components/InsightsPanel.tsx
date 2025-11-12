@@ -29,16 +29,6 @@ const InsightsPanel = ({
 
     <div className="space-y-3 text-sm">
       <InsightItem
-        label="経費の増加"
-        value="+18.3%"
-        description="マーケティング費用が前月比で増加しています。"
-      />
-      <InsightItem
-        label="安定した収入"
-        value="+9.1%"
-        description="継続課金が順調に増加しています。"
-      />
-      <InsightItem
         label="キャッシュ残高"
         value={formatCurrency(totalAccountBalance)}
         description="全アカウント合算の現在残高"

@@ -13,7 +13,8 @@ import {
 } from "../../../api/incomes";
 import { getErrorMessage } from "../../../api/client";
 import useAccountState from "../../accounts/hooks/useAccountState";
-import type { FinancialEntry } from "../../dashboard/types";
+import type { CalendarEntry } from "../../dashboard/types";
+import { TRANSACTIONS_UPDATED_EVENT } from "../../../constants/events";
 import type {
   Expense,
   Income,
@@ -254,18 +255,33 @@ const useTransactions = () => {
     return sortedTransactions.slice(start, start + pagination.pageSize);
   }, [sortedTransactions, pagination.page, pagination.pageSize]);
 
-  const calendarEntries = useMemo<FinancialEntry[]>(
-    () =>
-      transactions.map((transaction) => ({
-        id: transaction.resourceId,
-        type: transaction.resourceType,
-        category: transaction.category.name,
-        amount: transaction.amount,
-        date: transaction.date,
-        note: transaction.memo ?? undefined,
-      })),
-    [transactions],
-  );
+  const calendarEntries = useMemo<CalendarEntry[]>(() => {
+    const summary = transactions.reduce<Record<string, { income: number; expense: number }>>(
+      (acc, transaction) => {
+        if (!acc[transaction.date]) {
+          acc[transaction.date] = { income: 0, expense: 0 };
+        }
+        acc[transaction.date][transaction.resourceType] += transaction.amount;
+        return acc;
+      },
+      {},
+    );
+
+    return Object.entries(summary)
+      .map(([date, totals]) => ({
+        date,
+        income: totals.income,
+        expense: totals.expense,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }, [transactions]);
+
+  const notifyTransactionsUpdated = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.dispatchEvent(new CustomEvent(TRANSACTIONS_UPDATED_EVENT));
+  };
 
   const createTransactionEntry = useCallback(
     async (payload: TransactionPayload) => {
@@ -284,6 +300,7 @@ const useTransactions = () => {
         }
 
         await fetchTransactions();
+        notifyTransactionsUpdated();
       } catch (err) {
         setError(getErrorMessage(err));
         throw err;
@@ -311,6 +328,7 @@ const useTransactions = () => {
         }
 
         await fetchTransactions();
+        notifyTransactionsUpdated();
       } catch (err) {
         setError(getErrorMessage(err));
         throw err;
@@ -338,6 +356,7 @@ const useTransactions = () => {
         }
 
         await fetchTransactions();
+        notifyTransactionsUpdated();
       } catch (err) {
         setError(getErrorMessage(err));
         throw err;
