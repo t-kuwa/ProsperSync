@@ -176,6 +176,7 @@ const DashboardPage = ({
 
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-stretch">
           <CalendarOverview
+            accountId={stats.account.id}
             calendarEntries={calendarEntries}
             monthlyBreakdown={monthlyBreakdown}
             loading={loading}

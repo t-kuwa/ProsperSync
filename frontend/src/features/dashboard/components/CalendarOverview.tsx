@@ -1,7 +1,12 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
 import type { CalendarEntry, MonthlyStat } from "../types";
 import "../../../lib/registerCharts";
+import { getExpenses } from "../../../api/expenses";
+import { getIncomes } from "../../../api/incomes";
+import { getErrorMessage } from "../../../api/client";
+import BottomSheet from "./BottomSheet";
+import DateTransactionList, { type DayTransaction } from "./DateTransactionList";
 import formatCurrency from "../utils/formatCurrency";
 
 type CalendarOverviewProps = {
@@ -11,8 +16,13 @@ type CalendarOverviewProps = {
   error?: string | null;
   onRetry?: () => void;
   className?: string;
-  title?: string;
   showTrendChart?: boolean;
+  accountId?: number;
+};
+
+type DayDetails = {
+  incomes: DayTransaction[];
+  expenses: DayTransaction[];
 };
 
 const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
@@ -24,13 +34,20 @@ const CalendarOverview = ({
   error = null,
   onRetry,
   className,
-  title = "カレンダー",
   showTrendChart = true,
+  accountId,
 }: CalendarOverviewProps) => {
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [dayDetails, setDayDetails] = useState<DayDetails | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [detailsCache, setDetailsCache] = useState<Record<string, DayDetails>>({});
+  const calendarRef = useRef<HTMLDivElement | null>(null);
 
   const monthKey = `${visibleMonth.getFullYear()}-${String(
     visibleMonth.getMonth() + 1,
@@ -53,27 +70,30 @@ const CalendarOverview = ({
       );
   }, [calendarEntries, monthKey]);
 
-  const trendChartData = useMemo(() => ({
-    labels: monthlyBreakdown.map((month) => month.label),
-    datasets: [
-      {
-        label: "収入",
-        data: monthlyBreakdown.map((month) => month.income),
-        borderColor: "rgba(16, 185, 129, 1)",
-        backgroundColor: "rgba(16, 185, 129, 0.2)",
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: "支出",
-        data: monthlyBreakdown.map((month) => month.expense),
-        borderColor: "rgba(244, 63, 94, 1)",
-        backgroundColor: "rgba(244, 63, 94, 0.2)",
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  }), [monthlyBreakdown]);
+  const trendChartData = useMemo(
+    () => ({
+      labels: monthlyBreakdown.map((month) => month.label),
+      datasets: [
+        {
+          label: "収入",
+          data: monthlyBreakdown.map((month) => month.income),
+          borderColor: "rgba(16, 185, 129, 1)",
+          backgroundColor: "rgba(16, 185, 129, 0.2)",
+          tension: 0.4,
+          fill: true,
+        },
+        {
+          label: "支出",
+          data: monthlyBreakdown.map((month) => month.expense),
+          borderColor: "rgba(244, 63, 94, 1)",
+          backgroundColor: "rgba(244, 63, 94, 0.2)",
+          tension: 0.4,
+          fill: true,
+        },
+      ],
+    }),
+    [monthlyBreakdown],
+  );
 
   const calendar = useMemo(() => {
     const year = visibleMonth.getFullYear();
@@ -81,14 +101,12 @@ const CalendarOverview = ({
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
-
     const leadingDays = firstDay.getDay();
     const trailingDays = (7 - ((leadingDays + daysInMonth) % 7)) % 7;
 
     const cells: Array<
       | {
           date: Date;
-          inCurrentMonth: boolean;
           key: string;
         }
       | null
@@ -100,11 +118,9 @@ const CalendarOverview = ({
 
     for (let day = 1; day <= daysInMonth; day += 1) {
       const current = new Date(year, month, day);
-      const key = toDateKey(current);
       cells.push({
         date: current,
-        inCurrentMonth: true,
-        key,
+        key: toDateKey(current),
       });
     }
 
@@ -115,16 +131,124 @@ const CalendarOverview = ({
     return cells;
   }, [visibleMonth]);
 
+  const fetchDayDetails = useCallback(
+    async (dateKey: string) => {
+      if (!accountId) {
+        setDayDetails(null);
+        setDetailsError("アカウントが選択されていません。");
+        setDetailsLoading(false);
+        return;
+      }
+
+      setDetailsLoading(true);
+      setDetailsError(null);
+
+      try {
+        const [expenses, incomes] = await Promise.all([
+          getExpenses(accountId, { startDate: dateKey, endDate: dateKey }),
+          getIncomes(accountId, { startDate: dateKey, endDate: dateKey }),
+        ]);
+
+        const mapped: DayDetails = {
+          expenses: expenses.map((expense) => ({
+            id: expense.id,
+            title: expense.title,
+            amount: expense.amount,
+            category: expense.category?.name ?? "未分類",
+            type: "expense",
+            color: expense.category?.color ?? null,
+          })),
+          incomes: incomes.map((income) => ({
+            id: income.id,
+            title: income.title,
+            amount: income.amount,
+            category: income.category?.name ?? "未分類",
+            type: "income",
+            color: income.category?.color ?? null,
+          })),
+        };
+
+        setDetailsCache((prev) => ({ ...prev, [dateKey]: mapped }));
+        setDayDetails(mapped);
+      } catch (err) {
+        setDetailsError(getErrorMessage(err));
+        setDayDetails(null);
+      } finally {
+        setDetailsLoading(false);
+      }
+    },
+    [accountId],
+  );
+
+  const handleDateClick = (dateKey: string) => {
+    const data = entriesByDate[dateKey];
+    const hasDataForDate = data ? data.income > 0 || data.expense > 0 : false;
+
+    if (!hasDataForDate) {
+      setIsBottomSheetOpen(false);
+      setSelectedDate(null);
+      return;
+    }
+
+    if (selectedDate === dateKey && isBottomSheetOpen) {
+      setIsBottomSheetOpen(false);
+      setSelectedDate(null);
+      return;
+    }
+
+    setSelectedDate(dateKey);
+    setIsBottomSheetOpen(true);
+    setDetailsError(null);
+
+    if (detailsCache[dateKey]) {
+      setDayDetails(detailsCache[dateKey]);
+      return;
+    }
+
+    void fetchDayDetails(dateKey);
+  };
+
+  useEffect(() => {
+    if (!isBottomSheetOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
+        setIsBottomSheetOpen(false);
+        setSelectedDate(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isBottomSheetOpen]);
+
+  const closeBottomSheet = () => {
+    setIsBottomSheetOpen(false);
+    setSelectedDate(null);
+  };
+
+  const selectedSummary =
+    (selectedDate ? entriesByDate[selectedDate] : undefined) ?? {
+      income: 0,
+      expense: 0,
+    };
+
+  const selectedDateLabel = selectedDate
+    ? formatDateToJapanese(selectedDate)
+    : "";
+
   return (
     <div
       className={`flex h-fit flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
     >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <p className="text-sm text-slate-500">
-            {monthKey} の収支スケジュール
-          </p>
+          <h2 className="text-lg font-semibold text-slate-900">{monthKey} の収支</h2> 
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -162,7 +286,10 @@ const CalendarOverview = ({
         ))}
       </div>
 
-      <div className="mt-2 grid grid-cols-7 gap-2 text-xs">
+      <div
+        ref={calendarRef}
+        className="mt-2 grid grid-cols-7 gap-1 text-xs sm:gap-2"
+      >
         {calendar.map((cell, index) => {
           if (!cell) {
             return <div key={`empty-${index}`} className="py-6" />;
@@ -170,39 +297,80 @@ const CalendarOverview = ({
 
           const { key, date } = cell;
           const data = entriesByDate[key];
-          const hasData = Boolean(data);
+          const hasData = data ? data.income > 0 || data.expense > 0 : false;
           const isToday = key === toDateKey(new Date());
+          const canInteract = hasData && Boolean(accountId);
 
           return (
             <div
               key={key}
-              className={`flex flex-col gap-1 rounded-2xl border border-transparent p-3 text-left transition hover:border-indigo-200 ${
+              role={canInteract ? "button" : undefined}
+              tabIndex={canInteract ? 0 : -1}
+              className={`flex flex-col gap-1 rounded-2xl border border-transparent p-2 text-left transition md:p-3 ${
+                canInteract
+                  ? "cursor-pointer hover:border-indigo-200"
+                  : "cursor-default opacity-60"
+              } ${
                 isToday ? "border-indigo-200 bg-indigo-50/70" : "bg-slate-50"
               } ${hasData ? "shadow-sm shadow-indigo-50" : ""}`}
+              onClick={
+                hasData
+                  ? canInteract
+                    ? () => {
+                        handleDateClick(key);
+                      }
+                    : undefined
+                  : () => {
+                      setIsBottomSheetOpen(false);
+                      setSelectedDate(null);
+                    }
+              }
+              onKeyDown={
+                canInteract
+                  ? (event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        handleDateClick(key);
+                      }
+                    }
+                  : undefined
+              }
             >
               <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
                 <span>{date.getDate()}</span>
               </div>
               {hasData ? (
-                <div className="space-y-1 text-[11px]">
-                  {data.income ? (
-                    <div className="flex items-center justify-between rounded-lg bg-white px-2 py-1 text-emerald-600">
-                      <span>収入</span>
-                      <span>{formatCurrency(data.income).replace("￥", "")}</span>
-                    </div>
-                  ) : null}
-                  {data.expense ? (
-                    <div className="flex items-center justify-between rounded-lg bg-white px-2 py-1 text-rose-600">
-                      <span>支出</span>
-                      <span>{formatCurrency(data.expense).replace("￥", "")}</span>
-                    </div>
-                  ) : null}
-                </div>
-              ) : (
-                <p className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-white py-4 text-[10px] text-slate-300">
-                  予定なし
-                </p>
-              )}
+                <>
+                  <div className="flex gap-1 md:hidden">
+                    {data.income ? (
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                        aria-label="収入あり"
+                      />
+                    ) : null}
+                    {data.expense ? (
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-rose-500"
+                        aria-label="支出あり"
+                      />
+                    ) : null}
+                  </div>
+                  <div className="hidden space-y-1 text-[11px] md:block">
+                    {data.income ? (
+                      <div className="flex items-center justify-between rounded-lg bg-white px-2 py-1 text-emerald-600">
+                        <span>収入</span>
+                        <span>{formatCurrency(data.income).replace("￥", "")}</span>
+                      </div>
+                    ) : null}
+                    {data.expense ? (
+                      <div className="flex items-center justify-between rounded-lg bg-white px-2 py-1 text-rose-600">
+                        <span>支出</span>
+                        <span>{formatCurrency(data.expense).replace("￥", "")}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                </>
+              ) : null}
             </div>
           );
         })}
@@ -267,11 +435,45 @@ const CalendarOverview = ({
           />
         </div>
       ) : null}
+
+      <BottomSheet
+        isOpen={isBottomSheetOpen && Boolean(selectedDate)}
+        onClose={closeBottomSheet}
+        title="日別の収支"
+      >
+        {selectedDate ? (
+          <DateTransactionList
+            dateLabel={selectedDateLabel}
+            incomes={dayDetails?.incomes ?? []}
+            expenses={dayDetails?.expenses ?? []}
+            summary={selectedSummary}
+            loading={detailsLoading && Boolean(accountId)}
+            error={detailsError}
+            onRetry={
+              selectedDate
+                ? () => {
+                    void fetchDayDetails(selectedDate);
+                  }
+                : undefined
+            }
+          />
+        ) : null}
+      </BottomSheet>
     </div>
   );
 };
 
 const toDateKey = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+const formatDateToJapanese = (isoDate: string) => {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  });
+};
 
 export default CalendarOverview;

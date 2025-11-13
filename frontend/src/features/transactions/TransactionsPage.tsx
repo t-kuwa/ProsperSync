@@ -47,6 +47,7 @@ const TransactionsPage = ({
     processing,
     error,
     calendarEntries,
+    refreshTransactions,
     updateFilter,
     resetFilters,
     toggleSort,
@@ -144,10 +145,12 @@ const TransactionsPage = ({
 
         <div className="space-y-6">
           <CalendarOverview
+            accountId={currentAccount.id}
             calendarEntries={calendarEntries}
             monthlyBreakdown={[]}
             loading={loading}
             error={error}
+            onRetry={refreshTransactions}
             showTrendChart={false}
           />
           <TransactionList
