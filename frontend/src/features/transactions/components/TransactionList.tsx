@@ -158,7 +158,7 @@ const TransactionList = ({
               onClick={onResetFilters}
               className="text-xs font-semibold text-slate-500 underline-offset-4 hover:underline"
             >
-              条件をリセット
+              リセット
             </button>
           </div>
         </div>
@@ -252,17 +252,17 @@ const TransactionList = ({
               ] as const).map((column) => (
                 <th
                   key={column.field}
-                  className="cursor-pointer px-3 py-2"
+                  className="cursor-pointer whitespace-nowrap px-3 py-2"
                   onClick={() => onSortChange(column.field)}
                 >
-                  <span className="inline-flex items-center">
+                  <span className="inline-flex items-center whitespace-nowrap">
                     {column.label}
                     {renderSortBadge(column.field)}
                   </span>
                 </th>
               ))}
-              <th className="px-3 py-2">詳細</th>
-              <th className="px-3 py-2 text-center">操作</th>
+              <th className="whitespace-nowrap px-3 py-2">詳細</th>
+              <th className="whitespace-nowrap px-3 py-2 text-center">操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -290,7 +290,7 @@ const TransactionList = ({
                   key={transaction.uid}
                   className="transition hover:bg-slate-50/80"
                 >
-                  <td className="px-3 py-3 text-sm text-slate-500">
+                  <td className="whitespace-nowrap px-3 py-3 text-sm text-slate-500">
                     {transaction.date}
                   </td>
                   <td className="px-3 py-3">
@@ -303,7 +303,7 @@ const TransactionList = ({
                         }}
                       />
                       <div>
-                        <p className="text-sm font-semibold text-slate-900">
+                        <p className="whitespace-nowrap text-sm font-semibold text-slate-900">
                           {transaction.category.name}
                         </p>
                         <p className="text-xs text-slate-500">
@@ -312,7 +312,7 @@ const TransactionList = ({
                       </div>
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-right font-semibold">
+                  <td className="whitespace-nowrap px-3 py-3 text-right font-semibold">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold ${
                         transaction.resourceType === "income"
@@ -324,10 +324,10 @@ const TransactionList = ({
                       {formatCurrency(transaction.amount).replace("￥", "")}
                     </span>
                   </td>
-                  <td className="px-3 py-3 text-sm text-slate-500">
+                  <td className="min-w-[120px] max-w-xs break-normal px-3 py-3 text-sm text-slate-500">
                     {transaction.memo ?? "メモなし"}
                   </td>
-                  <td className="px-3 py-3 text-center text-xs font-semibold text-indigo-600">
+                  <td className="whitespace-nowrap px-3 py-3 text-center text-xs font-semibold text-indigo-600">
                     <button
                       type="button"
                       className="rounded-full px-3 py-1 hover:bg-indigo-50"

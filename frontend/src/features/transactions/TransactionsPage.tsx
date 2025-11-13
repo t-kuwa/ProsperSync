@@ -130,17 +130,19 @@ const TransactionsPage = ({
               categoryManagerRef.current?.openCreateModal(type)
             }
           />
-          <CategoryManager
-            ref={categoryManagerRef}
-            categories={categories}
-            loading={loadingCategories}
-            processing={processingCategories}
-            error={categoryError}
-            onCreate={createCategory}
-            onUpdate={updateCategory}
-            onDelete={deleteCategory}
-            onRefresh={refreshCategories}
-          />
+          <div className="hidden md:block">
+            <CategoryManager
+              ref={categoryManagerRef}
+              categories={categories}
+              loading={loadingCategories}
+              processing={processingCategories}
+              error={categoryError}
+              onCreate={createCategory}
+              onUpdate={updateCategory}
+              onDelete={deleteCategory}
+              onRefresh={refreshCategories}
+            />
+          </div>
         </div>
 
         <div className="space-y-6">
