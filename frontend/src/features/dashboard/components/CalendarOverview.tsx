@@ -7,7 +7,6 @@ import { getIncomes } from "../../../api/incomes";
 import { getErrorMessage } from "../../../api/client";
 import BottomSheet from "./BottomSheet";
 import DateTransactionList, { type DayTransaction } from "./DateTransactionList";
-import formatCurrency from "../utils/formatCurrency";
 
 type CalendarOverviewProps = {
   calendarEntries: CalendarEntry[];
@@ -244,11 +243,15 @@ const CalendarOverview = ({
 
   return (
     <div
-      className={`flex h-fit flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
+      className={`relative flex h-fit flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-xl shadow-slate-900/10 ring-1 ring-white/60 ${className ?? ""}`}
     >
+      <div
+        className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/40 blur-3xl"
+        aria-hidden
+      />
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">{monthKey} の収支</h2> 
+          <h2 className="text-lg font-semibold text-slate-900">{monthKey}</h2>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -278,7 +281,7 @@ const CalendarOverview = ({
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
+      <div className="-mx-6 mt-6 grid grid-cols-7 gap-0 px-0 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
         {weekdays.map((weekday) => (
           <span key={weekday} className="py-2">
             {weekday}
@@ -288,11 +291,13 @@ const CalendarOverview = ({
 
       <div
         ref={calendarRef}
-        className="mt-2 grid grid-cols-7 gap-1 text-xs sm:gap-2"
+        className="-mx-6 mt-2 grid grid-cols-7 gap-0 px-0 text-xs"
       >
         {calendar.map((cell, index) => {
           if (!cell) {
-            return <div key={`empty-${index}`} className="py-6" />;
+            return (
+              <div key={`empty-${index}`} className="h-20 min-h-[80px]" aria-hidden />
+            );
           }
 
           const { key, date } = cell;
@@ -306,7 +311,7 @@ const CalendarOverview = ({
               key={key}
               role={canInteract ? "button" : undefined}
               tabIndex={canInteract ? 0 : -1}
-              className={`flex flex-col gap-1 rounded-2xl border border-transparent p-2 text-left transition md:p-3 ${
+              className={`flex h-20 min-h-[80px] flex-col justify-between rounded-2xl border border-transparent p-2 text-left transition md:p-3 ${
                 canInteract
                   ? "cursor-pointer hover:border-indigo-200"
                   : "cursor-default opacity-60"
@@ -336,41 +341,35 @@ const CalendarOverview = ({
                   : undefined
               }
             >
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
+              <div className="flex items-center justify-center text-xs font-semibold text-slate-700">
                 <span>{date.getDate()}</span>
               </div>
-              {hasData ? (
-                <>
-                  <div className="flex gap-1 md:hidden">
-                    {data.income ? (
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-emerald-500"
-                        aria-label="収入あり"
-                      />
-                    ) : null}
-                    {data.expense ? (
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-rose-500"
-                        aria-label="支出あり"
-                      />
-                    ) : null}
-                  </div>
-                  <div className="hidden space-y-1 text-[11px] md:block">
-                    {data.income ? (
-                      <div className="flex items-center justify-between rounded-lg bg-white px-2 py-1 text-emerald-600">
-                        <span>収入</span>
-                        <span>{formatCurrency(data.income).replace("￥", "")}</span>
-                      </div>
-                    ) : null}
-                    {data.expense ? (
-                      <div className="flex items-center justify-between rounded-lg bg-white px-2 py-1 text-rose-600">
-                        <span>支出</span>
-                        <span>{formatCurrency(data.expense).replace("￥", "")}</span>
-                      </div>
-                    ) : null}
-                  </div>
-                </>
-              ) : null}
+              <div className="space-y-0.5 text-right">
+                <div className="flex min-h-[14px] flex-col gap-0.5 text-[7px] font-semibold md:hidden">
+                  {data?.income ? (
+                    <div className="text-emerald-600">
+                      {formatCompactCurrency(data.income)}
+                    </div>
+                  ) : null}
+                  {data?.expense ? (
+                    <div className="text-rose-600">
+                      {formatCompactCurrency(data.expense)}
+                    </div>
+                  ) : null}
+                </div>
+                <div className="hidden min-h-[20px] flex-col space-y-0.5 text-[10px] font-semibold md:flex">
+                  {data?.income ? (
+                    <div className="text-emerald-600">
+                      {formatCompactCurrency(data.income)}
+                    </div>
+                  ) : null}
+                  {data?.expense ? (
+                    <div className="text-rose-600">
+                      {formatCompactCurrency(data.expense)}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
             </div>
           );
         })}
@@ -465,6 +464,10 @@ const CalendarOverview = ({
 
 const toDateKey = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+const formatCompactCurrency = (amount: number): string => {
+  return amount.toLocaleString("ja-JP");
+};
 
 const formatDateToJapanese = (isoDate: string) => {
   const date = new Date(isoDate);

@@ -75,6 +75,13 @@ const DashboardPage = ({
   const summaryCards = useMemo(
     () => [
       {
+        title: "キャッシュフロー",
+        value: formatCurrency(netCashflow),
+        trendLabel: "先月比",
+        trendValue: cashflowTrend.value,
+        trendPositive: cashflowTrend.positive,
+      },
+      {
         title: "今月の収入",
         value: formatCurrency(currentTotals.income),
         trendLabel: "先月比",
@@ -87,13 +94,6 @@ const DashboardPage = ({
         trendLabel: "先月比",
         trendValue: expenseTrend.value,
         trendPositive: expenseTrend.positive,
-      },
-      {
-        title: "キャッシュフロー",
-        value: formatCurrency(netCashflow),
-        trendLabel: "先月比",
-        trendValue: cashflowTrend.value,
-        trendPositive: cashflowTrend.positive,
       },
       {
         title: "推定ランレート",
@@ -183,7 +183,6 @@ const DashboardPage = ({
             error={error}
             onRetry={refresh}
             className="xl:col-span-2 h-fit"
-            title="スケジュール"
           />
           <InsightsPanel
             inflowOutflowRatio={inflowOutflowRatio}
@@ -227,7 +226,11 @@ type RecentTransactionsProps = {
 };
 
 const RecentTransactions = ({ entries, loading = false }: RecentTransactionsProps) => (
-  <div className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+  <div className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-xl shadow-slate-900/10 ring-1 ring-white/60">
+    <div
+      className="pointer-events-none absolute -right-12 -top-10 h-36 w-36 rounded-full bg-white/40 blur-3xl"
+      aria-hidden
+    />
     <div className="flex items-center justify-between">
       <h2 className="text-lg font-semibold text-slate-900">
         最近の収支一覧

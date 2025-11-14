@@ -48,10 +48,14 @@ const FinancialOverview = ({
 
   return (
     <div
-      className={`rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
+      className={`relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-xl shadow-slate-900/10 ring-1 ring-white/60 ${className ?? ""}`}
       aria-busy={loading}
       aria-live="polite"
     >
+      <div
+        className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-white/35 blur-3xl"
+        aria-hidden
+      />
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">収支の推移</h2>
         <div className="flex items-center gap-2 text-xs text-slate-500">

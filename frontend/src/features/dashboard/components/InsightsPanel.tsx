@@ -12,11 +12,15 @@ const InsightsPanel = ({
   className,
 }: InsightsPanelProps) => (
   <div
-    className={`flex h-full flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}
+    className={`relative flex h-full flex-col gap-4 overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-xl shadow-slate-900/10 ring-1 ring-white/60 ${className ?? ""}`}
   >
+    <div
+      className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-white/40 blur-3xl"
+      aria-hidden
+    />
     <h2 className="text-lg font-semibold text-slate-900">インサイト</h2>
 
-    <div className="flex flex-1 flex-col items-center justify-center gap-6 rounded-2xl bg-slate-50 p-6">
+    <div className="flex flex-1 flex-col items-center justify-center gap-6 rounded-2xl bg-white/70 p-6 shadow-inner">
       <DonutMeter
         label="支出率"
         percentage={inflowOutflowRatio}
@@ -100,7 +104,7 @@ type InsightItemProps = {
 };
 
 const InsightItem = ({ label, value, description }: InsightItemProps) => (
-  <div className="rounded-2xl border border-slate-200 px-4 py-3">
+  <div className="rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-inner shadow-slate-900/5">
     <div className="flex items-center justify-between text-sm font-semibold text-slate-900">
       <span>{label}</span>
       <span>{value}</span>
