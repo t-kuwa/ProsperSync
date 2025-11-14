@@ -6,7 +6,7 @@ RSpec.describe MembershipPolicy, type: :policy do
   let!(:member_membership) { create(:membership, account:) }
 
   describe "permissions" do
-  context "ユーザーがオーナーの場合" do
+    context "ユーザーがオーナーの場合" do
       let(:user) { owner_membership.user }
       subject(:policy) { described_class.new(user, member_membership) }
 
@@ -48,7 +48,7 @@ RSpec.describe MembershipPolicy, type: :policy do
       end
     end
 
-  context "ユーザーが一般メンバーの場合" do
+    context "ユーザーが一般メンバーの場合" do
       let(:user) { member_membership.user }
 
       it "createとupdateを禁止すること" do
@@ -68,7 +68,7 @@ RSpec.describe MembershipPolicy, type: :policy do
       end
     end
 
-  context "ユーザーがメンバーでない場合" do
+    context "ユーザーがメンバーでない場合" do
       let(:user) { create(:user) }
 
       it "すべてのアクションを禁止すること" do
