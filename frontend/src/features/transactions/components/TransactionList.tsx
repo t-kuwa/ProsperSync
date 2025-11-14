@@ -105,8 +105,8 @@ const TransactionList = ({
   };
 
   return (
-    <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="rounded-3xl bg-white py-6 shadow-sm ring-1 ring-slate-200">
+      <div className="mx-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">取引履歴</h2>
           <p className="text-sm text-slate-500">
@@ -241,7 +241,7 @@ const TransactionList = ({
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
+      <div className="mx-6 mt-4 overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 text-sm">
           <thead>
             <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -353,12 +353,12 @@ const TransactionList = ({
       </div>
 
       {error ? (
-        <p className="mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-600">
+        <p className="mx-6 mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-600">
           {error}
         </p>
       ) : null}
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+      <div className="mx-6 mt-6 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
         <span>
           ページ {pagination.page} / {totalPages}
         </span>
