@@ -13,7 +13,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
   end
 
   describe "POST /api/v1/invitations/:id/accept" do
-    it "accepts valid invitation" do
+    it "有効な招待を承諾できること" do
       invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email)
 
       expect do
@@ -23,7 +23,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "rejects invalid token" do
+    it "無効なトークンは拒否されること" do
       invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email)
 
       post "/api/v1/invitations/#{invitation.id}/accept", params: { token: "invalid" }, headers: auth_headers(invitee), as: :json
@@ -31,7 +31,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
       expect(response).to have_http_status(:unauthorized)
     end
 
-    it "rejects expired invitation" do
+    it "期限切れの招待は拒否されること" do
       invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email, expires_at: 1.day.ago)
 
       post "/api/v1/invitations/#{invitation.id}/accept", params: { token: invitation.token }, headers: auth_headers(invitee), as: :json
@@ -39,7 +39,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "rejects duplicate membership" do
+    it "既存メンバーシップでは拒否されること" do
       invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email)
       create(:membership, account:, user: invitee)
 
@@ -48,7 +48,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "rejects when owner tries to accept invitation for someone else" do
+    it "オーナーが他人の招待を受けると拒否されること" do
       invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email)
 
       post "/api/v1/invitations/#{invitation.id}/accept", params: { token: invitation.token }, headers: auth_headers(owner), as: :json
@@ -56,7 +56,7 @@ RSpec.describe "API::V1::Invitations", type: :request do
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "rejects when user email does not match invitation email" do
+    it "ユーザーのメールが招待と異なると拒否されること" do
       other_user = create(:user, email: "other@example.com")
       invitation = create(:account_invitation, account:, inviter: owner, email: invitee.email)
 

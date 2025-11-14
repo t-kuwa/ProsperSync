@@ -15,7 +15,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
       create(:expense, account:, user:, category:, spent_on: Date.new(2025, 1, 1), amount: 1000)
     end
 
-    it "returns serialized expenses ordered by date" do
+    it "日付順の支出がシリアライズされて返ること" do
       get "/api/v1/accounts/#{account.id}/expenses", headers: auth_headers(user)
 
       expect(response).to have_http_status(:ok)
@@ -26,7 +26,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
       )
     end
 
-    it "filters by month parameter" do
+    it "monthパラメータで絞り込めること" do
       get "/api/v1/accounts/#{account.id}/expenses",
           params: { month: "2025-02" },
           headers: auth_headers(user)
@@ -35,7 +35,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
       expect(parsed_body.map { |item| item["id"] }).to eq([recent_expense.id])
     end
 
-    it "returns 422 for invalid month format" do
+    it "month形式が不正な場合422を返すこと" do
       get "/api/v1/accounts/#{account.id}/expenses",
           params: { month: "invalid" },
           headers: auth_headers(user)
@@ -44,7 +44,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
       expect(parsed_body["errors"]).to include("monthパラメータはYYYY-MM形式で指定してください。")
     end
 
-    it "denies non members" do
+    it "非メンバーは拒否されること" do
       get "/api/v1/accounts/#{account.id}/expenses", headers: auth_headers(other_user)
       expect(response).to have_http_status(:forbidden)
     end
@@ -63,7 +63,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
       }
     end
 
-    it "creates an expense and returns serialized payload" do
+    it "支出を作成してシリアライズされた結果を返すこと" do
       expect do
         post "/api/v1/accounts/#{account.id}/expenses", params: payload, headers: auth_headers(user), as: :json
       end.to change { account.expenses.reload.count }.by(1)
@@ -72,7 +72,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
       expect(parsed_body).to include("title" => "クラウド利用料", "user_id" => user.id, "category_id" => category.id)
     end
 
-    it "returns 422 when category does not belong to the account" do
+    it "カテゴリがアカウント外なら422を返すこと" do
       post "/api/v1/accounts/#{account.id}/expenses",
            params: { expense: payload[:expense].merge(category_id: 0) },
            headers: auth_headers(user),
@@ -86,7 +86,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
   describe "PATCH /api/v1/accounts/:account_id/expenses/:id" do
     let!(:expense) { create(:expense, account:, user:, category:, title: "旧タイトル") }
 
-    it "updates the expense" do
+    it "支出を更新できること" do
       patch "/api/v1/accounts/#{account.id}/expenses/#{expense.id}",
             params: { expense: { title: "新タイトル", amount: 8888 } },
             headers: auth_headers(user),
@@ -100,7 +100,7 @@ RSpec.describe "API::V1::Expenses", type: :request do
   describe "DELETE /api/v1/accounts/:account_id/expenses/:id" do
     let!(:expense) { create(:expense, account:, user:, category:) }
 
-    it "removes the expense" do
+    it "支出を削除できること" do
       expect do
         delete "/api/v1/accounts/#{account.id}/expenses/#{expense.id}", headers: auth_headers(user), as: :json
       end.to change { account.expenses.reload.count }.by(-1)

@@ -10,21 +10,21 @@ RSpec.describe "API::V1::Categories", type: :request do
     let!(:expense_category) { create(:category, :expense, account:, name: "ランチ") }
     let!(:income_category) { create(:category, :income, account:, name: "給料") }
 
-    it "returns categories that belong to the account" do
+    it "アカウント所属のカテゴリを返すこと" do
       get "/api/v1/accounts/#{account.id}/categories", headers: auth_headers(user)
 
       expect(response).to have_http_status(:ok)
       expect(parsed_body.pluck("name")).to include("ランチ", "給料")
     end
 
-    it "filters by category type when type param is given" do
+    it "typeパラメータ指定時にカテゴリ種別で絞り込むこと" do
       get "/api/v1/accounts/#{account.id}/categories", params: { type: "income" }, headers: auth_headers(user)
 
       expect(response).to have_http_status(:ok)
       expect(parsed_body.map { |item| item["name"] }).to eq(["給料"])
     end
 
-    it "rejects users who are not members of the account" do
+    it "アカウント非所属ユーザーは拒否されること" do
       get "/api/v1/accounts/#{account.id}/categories", headers: auth_headers(other_user)
 
       expect(response).to have_http_status(:forbidden)
@@ -44,7 +44,7 @@ RSpec.describe "API::V1::Categories", type: :request do
       }
     end
 
-    it "creates a category for account members" do
+    it "アカウントメンバーがカテゴリを作成できること" do
       expect do
         post "/api/v1/accounts/#{account.id}/categories", params: payload, headers: auth_headers(user), as: :json
       end.to change { account.categories.reload.count }.by(1)
@@ -53,7 +53,7 @@ RSpec.describe "API::V1::Categories", type: :request do
       expect(parsed_body).to include("name" => "交通費", "type" => "expense", "color" => "#123456")
     end
 
-    it "prevents non members from creating categories" do
+    it "非メンバーはカテゴリを作成できないこと" do
       post "/api/v1/accounts/#{account.id}/categories", params: payload, headers: auth_headers(other_user), as: :json
 
       expect(response).to have_http_status(:forbidden)
@@ -63,7 +63,7 @@ RSpec.describe "API::V1::Categories", type: :request do
   describe "PATCH /api/v1/accounts/:account_id/categories/:id" do
     let!(:category) { create(:category, :expense, account:, name: "旧カテゴリ") }
 
-    it "updates the category attributes" do
+    it "カテゴリ属性を更新できること" do
       patch "/api/v1/accounts/#{account.id}/categories/#{category.id}",
             params: { category: { name: "新カテゴリ", color: "#abcdef" } },
             headers: auth_headers(user),
@@ -75,10 +75,10 @@ RSpec.describe "API::V1::Categories", type: :request do
   end
 
   describe "DELETE /api/v1/accounts/:account_id/categories/:id" do
-    context "when the category is unused" do
+    context "カテゴリが未使用の場合" do
       let!(:category) { create(:category, :income, account:, name: "特別収入") }
 
-      it "removes the category" do
+      it "カテゴリを削除できること" do
         expect do
           delete "/api/v1/accounts/#{account.id}/categories/#{category.id}", headers: auth_headers(user), as: :json
         end.to change { account.categories.reload.count }.by(-1)
@@ -87,11 +87,11 @@ RSpec.describe "API::V1::Categories", type: :request do
       end
     end
 
-    context "when the category is referenced by transactions" do
+    context "カテゴリが取引で参照されている場合" do
       let!(:category) { create(:category, :expense, account:) }
       let!(:expense) { create(:expense, account:, user:, category:) }
 
-      it "returns an error" do
+      it "エラーが返ること" do
         delete "/api/v1/accounts/#{account.id}/categories/#{category.id}", headers: auth_headers(user), as: :json
 
         expect(response).to have_http_status(:unprocessable_content)

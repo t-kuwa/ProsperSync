@@ -11,7 +11,7 @@ RSpec.describe Workspace::ProvisionPersonal, type: :service do
   let(:user) { create(:user, primary_account: nil) }
 
   describe ".call" do
-    it "creates a personal account, membership, and sets primary_account" do
+    it "個人アカウントとメンバーシップを作成し primary_account を設定すること" do
       expect do
         described_class.call(user: user)
       end.to change(Account, :count).by(1).and change(Membership, :count).by(1)
@@ -23,7 +23,7 @@ RSpec.describe Workspace::ProvisionPersonal, type: :service do
       expect(membership).to be_owner
     end
 
-    it "is idempotent and returns existing account" do
+    it "冪等で既存アカウントを返すこと" do
       first = described_class.call(user: user)
 
       expect do

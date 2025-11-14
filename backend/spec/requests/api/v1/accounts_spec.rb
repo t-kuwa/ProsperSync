@@ -10,7 +10,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
   let(:headers) { auth_headers(user) }
 
   describe "GET /api/v1/accounts" do
-    it "returns only accounts the user belongs to" do
+    it "ユーザーが所属するアカウントのみ返すこと" do
       accessible = create(:account)
       create(:membership, account: accessible, user: user)
       create(:account) # inaccessible
@@ -24,7 +24,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
   end
 
   describe "GET /api/v1/accounts/:id" do
-    it "allows members" do
+    it "メンバーは許可されること" do
       account = create(:account)
       create(:membership, account:, user: user)
 
@@ -34,7 +34,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
       expect(parsed_body["id"]).to eq(account.id)
     end
 
-    it "forbids non-members" do
+    it "非メンバーは拒否されること" do
       account = create(:account)
 
       get "/api/v1/accounts/#{account.id}", headers:, as: :json
@@ -44,7 +44,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
   end
 
   describe "POST /api/v1/accounts" do
-    it "creates a team account" do
+    it "チームアカウントを作成できること" do
       payload = { account: { name: "新規チーム" } }
 
       expect do
@@ -55,7 +55,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
       expect(parsed_body["name"]).to eq("新規チーム")
     end
 
-    it "rejects personal account type" do
+    it "個人アカウント種別は拒否されること" do
       payload = { account: { name: "個人", account_type: :personal } }
 
       post "/api/v1/accounts", params: payload, headers:, as: :json
@@ -65,7 +65,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
   end
 
   describe "PATCH /api/v1/accounts/:id" do
-    it "allows members" do
+    it "メンバーは許可されること" do
       account = create(:account)
       create(:membership, account:, user: user)
 
@@ -75,7 +75,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
       expect(account.reload.name).to eq("更新")
     end
 
-    it "forbids non-members" do
+    it "非メンバーは拒否されること" do
       account = create(:account)
 
       patch "/api/v1/accounts/#{account.id}", params: { account: { name: "更新" } }, headers:, as: :json
@@ -85,7 +85,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
   end
 
   describe "DELETE /api/v1/accounts/:id" do
-    it "allows owner to delete team account" do
+    it "オーナーはチームアカウントを削除できること" do
       account = create(:account)
       membership = create(:membership, :owner, account:, user: user)
 
@@ -97,7 +97,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
       expect(Membership.exists?(membership.id)).to be_falsey
     end
 
-    it "rejects personal account deletion" do
+    it "個人アカウントの削除は拒否されること" do
       personal = create(:account, :personal, owner: user)
       create(:membership, :owner, account: personal, user: user)
 
@@ -108,7 +108,7 @@ RSpec.describe "API::V1::Accounts", type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "forbids non-owner members" do
+    it "非オーナーメンバーは削除できないこと" do
       account = create(:account)
       create(:membership, account:, user: user)
 

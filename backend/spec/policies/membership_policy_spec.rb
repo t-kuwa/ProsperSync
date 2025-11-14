@@ -6,7 +6,7 @@ RSpec.describe MembershipPolicy, type: :policy do
   let!(:member_membership) { create(:membership, account:) }
 
   describe "permissions" do
-    context "when user is owner" do
+  context "ユーザーがオーナーの場合" do
       let(:user) { owner_membership.user }
       subject(:policy) { described_class.new(user, member_membership) }
 
@@ -31,13 +31,13 @@ RSpec.describe MembershipPolicy, type: :policy do
         expect(policy.destroy?).to be(true)
       end
 
-      context "when the owner is the last owner" do
+      context "対象が最後のオーナーの場合" do
         it "自身のオーナーメンバーシップのdestroyを禁止すること" do
           expect(described_class.new(user, owner_membership).destroy?).to be(false)
         end
       end
 
-      context "when there are other owners" do
+      context "他にオーナーがいる場合" do
         before do
           create(:membership, :owner, account: account)
         end
@@ -48,7 +48,7 @@ RSpec.describe MembershipPolicy, type: :policy do
       end
     end
 
-    context "when user is a regular member" do
+  context "ユーザーが一般メンバーの場合" do
       let(:user) { member_membership.user }
 
       it "createとupdateを禁止すること" do
@@ -68,7 +68,7 @@ RSpec.describe MembershipPolicy, type: :policy do
       end
     end
 
-    context "when user is not a member" do
+  context "ユーザーがメンバーでない場合" do
       let(:user) { create(:user) }
 
       it "すべてのアクションを禁止すること" do
