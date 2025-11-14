@@ -5,6 +5,7 @@ import DashboardShell from "./components/DashboardShell";
 import FinancialOverview from "./components/FinancialOverview";
 import InsightsPanel from "./components/InsightsPanel";
 import SummaryCards from "./components/SummaryCards";
+import BudgetHighlights from "./components/BudgetHighlights";
 import useDashboardState from "./hooks/useDashboardState";
 import type { FinancialEntry } from "./types";
 import formatCurrency from "./utils/formatCurrency";
@@ -36,6 +37,7 @@ const DashboardPage = ({
     monthlyBreakdown,
     calendarEntries,
     balance,
+    budgetSummary,
   } = useDashboardState();
 
   const totalAccountBalance = balance.net;
@@ -102,6 +104,16 @@ const DashboardPage = ({
         trendValue: formatCurrency(averageMonthlyNet),
         trendPositive: averageMonthlyNet >= 0,
       },
+      {
+        title: "予算の進捗",
+        value: formatCurrency(budgetSummary.totalSpent),
+        trendLabel: `予算 ${formatCurrency(budgetSummary.totalBudget)}`,
+        trendValue:
+          budgetSummary.overruns > 0
+            ? `${budgetSummary.overruns} 件超過`
+            : "順調です",
+        trendPositive: budgetSummary.overruns === 0,
+      },
     ],
     [
       currentTotals.income,
@@ -115,6 +127,9 @@ const DashboardPage = ({
       cashflowTrend.value,
       cashflowTrend.positive,
       averageMonthlyNet,
+      budgetSummary.totalSpent,
+      budgetSummary.totalBudget,
+      budgetSummary.overruns,
     ],
   );
 
@@ -184,11 +199,14 @@ const DashboardPage = ({
             onRetry={refresh}
             className="xl:col-span-2 h-fit"
           />
-          <InsightsPanel
-            inflowOutflowRatio={inflowOutflowRatio}
-            totalAccountBalance={totalAccountBalance}
-            className="xl:col-span-1 h-full"
-          />
+          <div className="flex flex-col gap-4 xl:col-span-1">
+            <InsightsPanel
+              inflowOutflowRatio={inflowOutflowRatio}
+              totalAccountBalance={totalAccountBalance}
+              className="h-full"
+            />
+            <BudgetHighlights summary={budgetSummary} />
+          </div>
         </section>
 
         <FinancialOverview

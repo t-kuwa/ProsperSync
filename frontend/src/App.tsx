@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import AuthPage from "./features/auth/AuthPage";
 import DashboardPage from "./features/dashboard/DashboardPage";
+import BudgetsPage from "./features/budgets/BudgetsPage";
 import type { AuthSuccess } from "./features/auth/types";
 import { DashboardProvider } from "./features/dashboard/hooks/useDashboardState";
 import TransactionsPage from "./features/transactions/TransactionsPage";
@@ -46,6 +47,7 @@ const resolveRoute = (path: string): AppRoute => {
   if (
     path === APP_ROUTES.dashboard ||
     path === APP_ROUTES.transactions ||
+    path === APP_ROUTES.budgets ||
     path === APP_ROUTES.accountCreate
   ) {
     return path;
@@ -158,6 +160,9 @@ const App = () => {
       if (route === APP_ROUTES.accountCreate) {
         return "アカウント作成 - Haruve";
       }
+      if (route === APP_ROUTES.budgets) {
+        return "予算管理 - Haruve";
+      }
       if (accountRoute?.type === "settings") {
         return "アカウント設定 - Haruve";
       }
@@ -211,6 +216,17 @@ const App = () => {
     if (route === APP_ROUTES.transactions) {
       return (
         <TransactionsPage
+          userName={auth.user.name}
+          currentRoute={route}
+          onNavigate={navigate}
+          onLogout={handleLogout}
+        />
+      );
+    }
+
+    if (route === APP_ROUTES.budgets) {
+      return (
+        <BudgetsPage
           userName={auth.user.name}
           currentRoute={route}
           onNavigate={navigate}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_09_064826) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_09_064840) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -51,6 +51,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_064826) do
     t.datetime "updated_at", null: false
     t.index ["account_id", "type", "name"], name: "index_categories_on_account_type_name", unique: true
     t.index ["account_id"], name: "index_categories_on_account_id"
+  end
+
+  create_table "budgets", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "予算", force: :cascade do |t|
+    t.bigint "account_id", null: false, comment: "アカウント"
+    t.bigint "category_id", comment: "カテゴリ"
+    t.integer "amount", null: false, comment: "予算金額"
+    t.integer "period_type", default: 0, null: false, comment: "期間タイプ"
+    t.integer "period_month", comment: "月"
+    t.integer "period_year", null: false, comment: "年"
+    t.string "name", comment: "予算名"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "category_id", "period_type", "period_year", "period_month"], name: "index_budgets_on_account_and_period", unique: true
+    t.index ["account_id"], name: "index_budgets_on_account_id"
+    t.index ["category_id"], name: "index_budgets_on_category_id"
   end
 
   create_table "expenses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "支出", force: :cascade do |t|
@@ -117,6 +132,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_064826) do
   add_foreign_key "account_invitations", "users", column: "inviter_id"
   add_foreign_key "accounts", "users", column: "owner_id"
   add_foreign_key "categories", "accounts"
+  add_foreign_key "budgets", "accounts"
+  add_foreign_key "budgets", "categories"
   add_foreign_key "expenses", "accounts"
   add_foreign_key "expenses", "categories"
   add_foreign_key "expenses", "users"

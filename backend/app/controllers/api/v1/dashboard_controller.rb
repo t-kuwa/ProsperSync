@@ -102,6 +102,53 @@ module Api
           recent_transactions: recent_transactions,
           calendar_entries: calendar_entries,
           balance: balance_payload,
+          budget_summary: budget_summary_payload,
+        }
+      end
+
+      def budget_summary_payload
+        decorated = decorated_budgets_for_current_month
+
+        return default_budget_summary if decorated.empty?
+
+        total_budget = decorated.sum { |entry| entry[:budget].amount }
+        total_spent = decorated.sum { |entry| entry[:current_spent] }
+        overruns = decorated.count { |entry| entry[:current_spent] > entry[:budget].amount }
+        top_budgets = decorated.sort_by { |entry| -entry[:percentage].to_f }.first(3)
+
+        {
+          total_budget:,
+          total_spent:,
+          overruns:,
+          top_budgets: BudgetSerializer.collection(top_budgets),
+        }
+      end
+
+      def decorated_budgets_for_current_month
+        budgets = policy_scope(@account.budgets.includes(:category))
+        return [] unless budgets.exists?
+
+        relevant_budgets = budgets.where(period_year: today.year)
+                                   .where(
+                                     Budget.arel_table[:period_type].eq(Budget.period_types[:yearly])
+                                     .or(Budget.arel_table[:period_month].eq(today.month)),
+                                   )
+
+        return [] unless relevant_budgets.exists?
+
+        Budgets::ProgressCalculator.call(
+          account: @account,
+          budgets: relevant_budgets.ordered,
+          date: today,
+        )
+      end
+
+      def default_budget_summary
+        {
+          total_budget: 0,
+          total_spent: 0,
+          overruns: 0,
+          top_budgets: [],
         }
       end
 
