@@ -4,7 +4,7 @@ RSpec.describe AccountInvitationMailer, type: :mailer do
   describe "#invite_email" do
     let(:invitation) { create(:account_invitation) }
 
-    it "includes invitation id and token in accept URL" do
+    it "承諾URLに招待IDとトークンを含めること" do
       mail = described_class.with(invitation: invitation).invite_email
 
       expect(mail.to).to eq([invitation.email])

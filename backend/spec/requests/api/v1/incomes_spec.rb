@@ -15,7 +15,7 @@ RSpec.describe "API::V1::Incomes", type: :request do
       create(:income, account:, user:, category:, received_on: Date.new(2025, 1, 10), amount: 150_000)
     end
 
-    it "returns serialized incomes for the account" do
+    it "アカウントの収入がシリアライズされて返ること" do
       get "/api/v1/accounts/#{account.id}/incomes", headers: auth_headers(user)
 
       expect(response).to have_http_status(:ok)
@@ -26,7 +26,7 @@ RSpec.describe "API::V1::Incomes", type: :request do
       )
     end
 
-    it "supports date range filters" do
+    it "日付範囲で絞り込めること" do
       get "/api/v1/accounts/#{account.id}/incomes",
           params: { start_date: "2025-02-01", end_date: "2025-02-28" },
           headers: auth_headers(user)
@@ -35,7 +35,7 @@ RSpec.describe "API::V1::Incomes", type: :request do
       expect(parsed_body.map { |item| item["id"] }).to eq([feb_income.id])
     end
 
-    it "returns error on malformed date params" do
+    it "日付指定が不正な場合エラーになること" do
       get "/api/v1/accounts/#{account.id}/incomes",
           params: { start_date: "invalid-date" },
           headers: auth_headers(user)
@@ -44,7 +44,7 @@ RSpec.describe "API::V1::Incomes", type: :request do
       expect(parsed_body["errors"]).to include("日付はYYYY-MM-DD形式で指定してください。")
     end
 
-    it "denies users outside the account" do
+    it "アカウント外ユーザーは拒否されること" do
       get "/api/v1/accounts/#{account.id}/incomes", headers: auth_headers(other_user)
       expect(response).to have_http_status(:forbidden)
     end
@@ -63,7 +63,7 @@ RSpec.describe "API::V1::Incomes", type: :request do
       }
     end
 
-    it "creates an income" do
+    it "収入を作成できること" do
       expect do
         post "/api/v1/accounts/#{account.id}/incomes", params: payload, headers: auth_headers(user), as: :json
       end.to change { account.incomes.reload.count }.by(1)
@@ -76,7 +76,7 @@ RSpec.describe "API::V1::Incomes", type: :request do
   describe "PATCH /api/v1/accounts/:account_id/incomes/:id" do
     let!(:income) { create(:income, account:, user:, category:, title: "旧称") }
 
-    it "updates the income" do
+    it "収入を更新できること" do
       patch "/api/v1/accounts/#{account.id}/incomes/#{income.id}",
             params: { income: { title: "新称", memo: "updated" } },
             headers: auth_headers(user),
@@ -90,7 +90,7 @@ RSpec.describe "API::V1::Incomes", type: :request do
   describe "DELETE /api/v1/accounts/:account_id/incomes/:id" do
     let!(:income) { create(:income, account:, user:, category:) }
 
-    it "removes the income" do
+    it "収入を削除できること" do
       expect do
         delete "/api/v1/accounts/#{account.id}/incomes/#{income.id}", headers: auth_headers(user), as: :json
       end.to change { account.incomes.reload.count }.by(-1)

@@ -9,7 +9,7 @@ RSpec.describe AccountPolicy, type: :policy do
   let(:non_member) { create(:user) }
 
   describe "permissions" do
-    context "when user is a member" do
+    context "ユーザーがメンバーの場合" do
       let(:user) { member_user }
 
       it "indexを許可すること" do
@@ -49,7 +49,7 @@ RSpec.describe AccountPolicy, type: :policy do
       end
     end
 
-    context "when user is not a member" do
+    context "ユーザーがメンバーでない場合" do
       let(:user) { non_member }
 
       it "保護されたアクションを禁止すること" do
@@ -59,7 +59,7 @@ RSpec.describe AccountPolicy, type: :policy do
       end
     end
 
-    context "when creating" do
+    context "作成時" do
       it "認証済みユーザーに許可すること" do
         expect(described_class.new(member_user, Account).create?).to be(true)
       end

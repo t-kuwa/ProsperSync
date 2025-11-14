@@ -13,13 +13,13 @@ RSpec.describe "API::V1::AccountInvitations", type: :request do
   end
 
   describe "GET /api/v1/accounts/:account_id/invitations" do
-    it "allows owner" do
+    it "オーナーは許可されること" do
       get "/api/v1/accounts/#{account.id}/invitations", headers: auth_headers(owner), as: :json
 
       expect(response).to have_http_status(:ok)
     end
 
-    it "forbids member" do
+    it "メンバーは拒否されること" do
       get "/api/v1/accounts/#{account.id}/invitations", headers: auth_headers(member), as: :json
 
       expect(response).to have_http_status(:forbidden)
@@ -29,7 +29,7 @@ RSpec.describe "API::V1::AccountInvitations", type: :request do
   describe "POST /api/v1/accounts/:account_id/invitations" do
     let(:payload) { { invitation: { email: "invitee@example.com" } } }
 
-    it "allows owner" do
+    it "オーナーは許可されること" do
       expect do
         post "/api/v1/accounts/#{account.id}/invitations", params: payload, headers: auth_headers(owner), as: :json
       end.to change(AccountInvitation, :count).by(1)
@@ -37,13 +37,13 @@ RSpec.describe "API::V1::AccountInvitations", type: :request do
       expect(response).to have_http_status(:created)
     end
 
-    it "fails with invalid data" do
+    it "不正なデータでは失敗すること" do
       post "/api/v1/accounts/#{account.id}/invitations", params: { invitation: { email: "" } }, headers: auth_headers(owner), as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "forbids member" do
+    it "メンバーは拒否されること" do
       post "/api/v1/accounts/#{account.id}/invitations", params: payload, headers: auth_headers(member), as: :json
 
       expect(response).to have_http_status(:forbidden)

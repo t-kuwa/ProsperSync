@@ -27,7 +27,7 @@ RSpec.describe "API::V1::Dashboard", type: :request do
       create(:income, account:, user:, amount: 100_000, received_on: Date.new(2024, 11, 1))
     end
 
-    it "returns dashboard statistics for account members" do
+    it "アカウントメンバー向けにダッシュボード統計が返ること" do
       get "/api/v1/accounts/#{account.id}/dashboard/stats", headers: auth_headers(user)
 
       expect(response).to have_http_status(:ok)
@@ -44,7 +44,7 @@ RSpec.describe "API::V1::Dashboard", type: :request do
       expect(body["balance"]).to include("total_income", "net")
     end
 
-    it "rejects users outside of the account" do
+    it "アカウント外ユーザーは拒否されること" do
       get "/api/v1/accounts/#{account.id}/dashboard/stats", headers: auth_headers(other_user)
       expect(response).to have_http_status(:forbidden)
     end
