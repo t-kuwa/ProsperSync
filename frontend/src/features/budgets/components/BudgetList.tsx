@@ -45,7 +45,7 @@ const BudgetList: FC<BudgetListProps> = ({
   if (budgets.length === 0) {
     return (
       <div className="rounded-3xl bg-white p-8 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-200">
-        まだ予算が登録されていません。右側のフォームから作成できます。
+        まだ予算が登録されていません。左側のフォームから作成できます。
       </div>
     );
   }

@@ -111,8 +111,16 @@ const BudgetsPage = ({
         </div>
       }
     >
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
         <div className="space-y-4">
+          <BudgetForm
+            categories={categories}
+            processing={processing || loadingCategories}
+            editing={editing}
+            onSubmit={handleSubmit}
+            onCancel={() => setEditing(null)}
+          />
+
           <div className="flex flex-wrap items-center gap-3 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
             <label className="flex flex-col text-xs text-slate-500">
               期間タイプ
@@ -154,7 +162,9 @@ const BudgetsPage = ({
               </label>
             ) : null}
           </div>
+        </div>
 
+        <div className="space-y-4">
           <BudgetList
             budgets={budgets}
             loading={loading}
@@ -164,14 +174,6 @@ const BudgetsPage = ({
             onDelete={handleDelete}
           />
         </div>
-
-        <BudgetForm
-          categories={categories}
-          processing={processing || loadingCategories}
-          editing={editing}
-          onSubmit={handleSubmit}
-          onCancel={() => setEditing(null)}
-        />
       </div>
     </DashboardShell>
   );

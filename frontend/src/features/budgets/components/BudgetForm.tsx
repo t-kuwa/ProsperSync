@@ -76,7 +76,7 @@ const BudgetForm = ({
       onSubmit={handleSubmit}
       className="space-y-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
     >
-      <div>
+      <div className="text-left">
         <h2 className="text-lg font-semibold text-slate-900">
           {editing ? "予算を編集" : "新しい予算を作成"}
         </h2>

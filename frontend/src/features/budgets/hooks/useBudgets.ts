@@ -24,22 +24,22 @@ const buildDefaultFilters = (): BudgetFilters => {
 
 const useBudgets = () => {
   const { currentAccountId } = useAccountState();
-  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [allBudgets, setAllBudgets] = useState<Budget[]>([]);
   const [filters, setFilters] = useState<BudgetFilters>(() => buildDefaultFilters());
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const buildDateParam = useCallback(() => {
-    if (filters.periodType === "monthly" && filters.month) {
-      return `${filters.year}-${String(filters.month).padStart(2, "0")}-01`;
+  const buildDateParam = useCallback((filterValues: BudgetFilters) => {
+    if (filterValues.periodType === "monthly" && filterValues.month) {
+      return `${filterValues.year}-${String(filterValues.month).padStart(2, "0")}-01`;
     }
-    return `${filters.year}-01-01`;
-  }, [filters]);
+    return `${filterValues.year}-01-01`;
+  }, []);
 
-  const fetchBudgets = useCallback(async () => {
+  const fetchBudgets = useCallback(async (filterValues: BudgetFilters) => {
     if (!currentAccountId) {
-      setBudgets([]);
+      setAllBudgets([]);
       return;
     }
 
@@ -47,11 +47,11 @@ const useBudgets = () => {
     setError(null);
 
     try {
-      const dateParam = buildDateParam();
+      const dateParam = buildDateParam(filterValues);
       const data = await getBudgets(currentAccountId, { date: dateParam });
-      setBudgets(data);
+      setAllBudgets(data);
     } catch (err) {
-      setBudgets([]);
+      setAllBudgets([]);
       setError(getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -59,8 +59,8 @@ const useBudgets = () => {
   }, [currentAccountId, buildDateParam]);
 
   useEffect(() => {
-    void fetchBudgets();
-  }, [fetchBudgets]);
+    void fetchBudgets(filters);
+  }, [fetchBudgets, filters]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -68,7 +68,7 @@ const useBudgets = () => {
     }
 
     const handler = () => {
-      void fetchBudgets();
+      void fetchBudgets(filters);
     };
 
     window.addEventListener(TRANSACTIONS_UPDATED_EVENT, handler);
@@ -78,7 +78,7 @@ const useBudgets = () => {
       window.removeEventListener(TRANSACTIONS_UPDATED_EVENT, handler);
       window.removeEventListener(BUDGETS_UPDATED_EVENT, handler);
     };
-  }, [fetchBudgets]);
+  }, [fetchBudgets, filters]);
 
   const updateFilters = useCallback((partial: Partial<BudgetFilters>) => {
     setFilters((prev) => {
@@ -108,7 +108,7 @@ const useBudgets = () => {
 
       try {
         const budget = await createBudget(currentAccountId, payload);
-        setBudgets((prev) => [budget, ...prev]);
+        setAllBudgets((prev) => [budget, ...prev]);
         notifyUpdated();
         return budget;
       } catch (err) {
@@ -132,7 +132,7 @@ const useBudgets = () => {
 
       try {
         const updated = await updateBudget(currentAccountId, budget.id, payload);
-        setBudgets((prev) =>
+        setAllBudgets((prev) =>
           prev.map((item) => (item.id === budget.id ? updated : item)),
         );
         notifyUpdated();
@@ -158,7 +158,7 @@ const useBudgets = () => {
 
       try {
         await deleteBudget(currentAccountId, budget.id);
-        setBudgets((prev) => prev.filter((item) => item.id !== budget.id));
+        setAllBudgets((prev) => prev.filter((item) => item.id !== budget.id));
         notifyUpdated();
       } catch (err) {
         setError(getErrorMessage(err));
@@ -170,8 +170,13 @@ const useBudgets = () => {
     [currentAccountId, notifyUpdated],
   );
 
+  const filteredBudgets = useMemo(
+    () => filterBudgetsByPeriod(allBudgets, filters),
+    [allBudgets, filters],
+  );
+
   const totals = useMemo<BudgetTotals>(() => {
-    return budgets.reduce(
+    return filteredBudgets.reduce(
       (acc, budget) => {
         acc.totalBudget += budget.amount;
         acc.totalSpent += budget.currentSpent ?? 0;
@@ -182,10 +187,10 @@ const useBudgets = () => {
       },
       { totalBudget: 0, totalSpent: 0, overruns: 0 },
     );
-  }, [budgets]);
+  }, [filteredBudgets]);
 
   return {
-    budgets,
+    budgets: filteredBudgets,
     filters,
     totals,
     loading,
@@ -195,8 +200,25 @@ const useBudgets = () => {
     create,
     update,
     remove,
-    refresh: fetchBudgets,
+    refresh: () => fetchBudgets(filters),
   };
 };
 
 export default useBudgets;
+
+const filterBudgetsByPeriod = (budgets: Budget[], filterValues: BudgetFilters) => {
+  if (filterValues.periodType === "monthly" && filterValues.month) {
+    return budgets.filter(
+      (budget) =>
+        (budget.periodType === "monthly" &&
+          budget.periodYear === filterValues.year &&
+          budget.periodMonth === filterValues.month) ||
+        (budget.periodType === "yearly" && budget.periodYear === filterValues.year),
+    );
+  }
+
+  return budgets.filter(
+    (budget) =>
+      budget.periodType === "yearly" && budget.periodYear === filterValues.year,
+  );
+};
