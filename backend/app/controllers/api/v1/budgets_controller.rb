@@ -17,7 +17,7 @@ module Api
           date:,
         )
 
-        render json: BudgetSerializer.collection(decorated)
+        render json: ::BudgetSerializer.collection(decorated)
       end
 
       def show
@@ -32,7 +32,7 @@ module Api
           date:,
         ).first
 
-        render json: BudgetSerializer.new(@budget, progress: decorated).as_json
+        render json: ::BudgetSerializer.new(@budget, progress: decorated).as_json
       end
 
       def create
@@ -43,7 +43,7 @@ module Api
 
         decorated = Budgets::Creator.call(account: @account, params: params_hash)
 
-        render json: BudgetSerializer.new(decorated[:budget], progress: decorated).as_json,
+        render json: ::BudgetSerializer.new(decorated[:budget], progress: decorated).as_json,
                status: :created
       rescue ActiveRecord::RecordInvalid => e
         render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
@@ -89,7 +89,7 @@ module Api
           date:,
         )
 
-        render json: BudgetSerializer.collection(decorated)
+        render json: ::BudgetSerializer.collection(decorated)
       end
 
       private

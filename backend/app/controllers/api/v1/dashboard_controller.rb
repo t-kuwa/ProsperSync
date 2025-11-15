@@ -120,7 +120,7 @@ module Api
           total_budget:,
           total_spent:,
           overruns:,
-          top_budgets: BudgetSerializer.collection(top_budgets),
+          top_budgets: ::BudgetSerializer.collection(top_budgets),
         }
       end
 
