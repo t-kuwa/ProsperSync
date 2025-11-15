@@ -7,6 +7,8 @@ import type {
   RecentTransaction,
   DashboardTotals,
   DashboardBalance,
+  DashboardBudgetSummary,
+  BudgetSnapshot,
 } from "../features/dashboard/types";
 
 type ApiDashboardAccount = {
@@ -61,6 +63,30 @@ type ApiDashboardStats = {
   recent_transactions: ApiDashboardRecentTransaction[];
   calendar_entries: ApiDashboardCalendarEntry[];
   balance: ApiDashboardBalance;
+  budget_summary: ApiBudgetSummary;
+};
+
+type ApiBudgetSummary = {
+  total_budget: number;
+  total_spent: number;
+  overruns: number;
+  top_budgets: ApiBudgetSnapshot[];
+};
+
+type ApiBudgetSnapshot = {
+  id: number;
+  account_id: number;
+  category_id: number | null;
+  amount: number;
+  period_type: "monthly" | "yearly";
+  period_month: number | null;
+  period_year: number;
+  name: string | null;
+  period_label: string;
+  current_spent: number | null;
+  remaining: number | null;
+  percentage: number | null;
+  category: ApiCategory | null;
 };
 
 const mapMonthlyStat = (item: ApiDashboardMonthlyBreakdown): MonthlyStat => ({
@@ -112,6 +138,30 @@ const mapDashboardBalance = (data: ApiDashboardBalance): DashboardBalance => ({
   net: data.net,
 });
 
+const mapBudgetSnapshot = (snapshot: ApiBudgetSnapshot): BudgetSnapshot => ({
+  id: snapshot.id,
+  name: snapshot.name,
+  amount: snapshot.amount,
+  periodLabel: snapshot.period_label,
+  currentSpent: snapshot.current_spent ?? 0,
+  remaining: snapshot.remaining ?? 0,
+  percentage: snapshot.percentage ?? 0,
+  category: snapshot.category
+    ? {
+        id: snapshot.category.id,
+        name: snapshot.category.name,
+        color: snapshot.category.color,
+      }
+    : null,
+});
+
+const mapBudgetSummary = (summary: ApiBudgetSummary): DashboardBudgetSummary => ({
+  totalBudget: summary.total_budget,
+  totalSpent: summary.total_spent,
+  overruns: summary.overruns,
+  topBudgets: summary.top_budgets.map(mapBudgetSnapshot),
+});
+
 const mapDashboardStats = (data: ApiDashboardStats): DashboardStats => ({
   account: {
     id: data.account.id,
@@ -123,6 +173,7 @@ const mapDashboardStats = (data: ApiDashboardStats): DashboardStats => ({
   recentTransactions: data.recent_transactions.map(mapRecentTransaction),
   calendarEntries: data.calendar_entries.map(mapCalendarEntry),
   balance: mapDashboardBalance(data.balance),
+  budgetSummary: mapBudgetSummary(data.budget_summary),
 });
 
 export const getDashboardStats = async (

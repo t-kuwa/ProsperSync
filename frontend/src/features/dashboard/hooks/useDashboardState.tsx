@@ -18,10 +18,19 @@ import {
   type FinancialEntry,
   type MonthlyStat,
 } from "../types";
-import { TRANSACTIONS_UPDATED_EVENT } from "../../../constants/events";
+import {
+  BUDGETS_UPDATED_EVENT,
+  TRANSACTIONS_UPDATED_EVENT,
+} from "../../../constants/events";
 
 const emptyTotals: DashboardTotals = { income: 0, expense: 0 };
 const emptyBalance: DashboardBalance = { totalIncome: 0, totalExpense: 0, net: 0 };
+const emptyBudgetSummary = {
+  totalBudget: 0,
+  totalSpent: 0,
+  overruns: 0,
+  topBudgets: [],
+} as const;
 
 const useDashboardStateInternal = () => {
   const { currentAccountId } = useAccountState();
@@ -63,7 +72,11 @@ const useDashboardStateInternal = () => {
       void fetchStats();
     };
     window.addEventListener(TRANSACTIONS_UPDATED_EVENT, handler);
-    return () => window.removeEventListener(TRANSACTIONS_UPDATED_EVENT, handler);
+    window.addEventListener(BUDGETS_UPDATED_EVENT, handler);
+    return () => {
+      window.removeEventListener(TRANSACTIONS_UPDATED_EVENT, handler);
+      window.removeEventListener(BUDGETS_UPDATED_EVENT, handler);
+    };
   }, [fetchStats]);
 
   const currentTotals = stats?.currentMonth ?? emptyTotals;
@@ -113,6 +126,7 @@ const useDashboardStateInternal = () => {
   const calendarEntries: CalendarEntry[] = stats?.calendarEntries ?? [];
   const monthlyBreakdown: MonthlyStat[] = stats?.monthlyBreakdown ?? [];
   const balance = stats?.balance ?? emptyBalance;
+  const budgetSummary = stats?.budgetSummary ?? emptyBudgetSummary;
 
   return {
     stats,
@@ -129,6 +143,7 @@ const useDashboardStateInternal = () => {
     calendarEntries,
     monthlyBreakdown,
     balance,
+    budgetSummary,
   };
 };
 
