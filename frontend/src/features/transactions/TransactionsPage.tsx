@@ -117,7 +117,7 @@ const TransactionsPage = ({
       headerSubtitle={`${currentAccount.name} の実データを管理できます。`}
       headerActions={headerActions}
     >
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
         <div className="space-y-6">
           <TransactionForm
             categories={categories}
