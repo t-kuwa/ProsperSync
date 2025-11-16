@@ -39,7 +39,7 @@ const BudgetEditModal = ({ budget, categories, processing, onSubmit, onClose }: 
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/40 px-3 py-4 backdrop-blur-sm sm:px-4 sm:py-6"
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-950/40 px-3 py-10 backdrop-blur-sm sm:items-center sm:px-4 sm:py-6"
       onClick={onClose}
     >
       <div
