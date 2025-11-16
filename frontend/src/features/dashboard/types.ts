@@ -38,6 +38,24 @@ export type CalendarEntry = {
   expense: number;
 };
 
+export type BudgetSnapshot = {
+  id: number;
+  name: string | null;
+  amount: number;
+  periodLabel: string;
+  currentSpent: number;
+  remaining: number;
+  percentage: number;
+  category: CategorySummary | null;
+};
+
+export type DashboardBudgetSummary = {
+  totalBudget: number;
+  totalSpent: number;
+  overruns: number;
+  topBudgets: BudgetSnapshot[];
+};
+
 export type DashboardStats = {
   account: {
     id: number;
@@ -49,6 +67,7 @@ export type DashboardStats = {
   recentTransactions: RecentTransaction[];
   calendarEntries: CalendarEntry[];
   balance: DashboardBalance;
+  budgetSummary: DashboardBudgetSummary;
 };
 
 export type FinancialEntry = {
