@@ -14,7 +14,7 @@ const buildInitialPayload = (): BudgetPayload => {
   const today = new Date();
   const base: BudgetPayload = {
     category_id: null,
-    amount: 50_000,
+    amount: 0,
     period_type: "monthly",
     period_year: today.getFullYear(),
     period_month: today.getMonth() + 1,

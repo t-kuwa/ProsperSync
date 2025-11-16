@@ -19,7 +19,7 @@ const buildInitialPayload = (editing?: Budget | null): BudgetPayload => {
     const today = new Date();
     return {
       category_id: null,
-      amount: 50_000,
+      amount: 0,
       period_type: "monthly",
       period_year: today.getFullYear(),
       period_month: today.getMonth() + 1,
@@ -52,10 +52,13 @@ const BudgetForm = ({
   showHeader = true,
 }: BudgetFormProps) => {
   const [payload, setPayload] = useState<BudgetPayload>(() => buildInitialPayload(editing));
+  const [amountInput, setAmountInput] = useState(() => String(buildInitialPayload(editing).amount));
   const [isRepeatModalOpen, setRepeatModalOpen] = useState(false);
 
   useEffect(() => {
-    setPayload(buildInitialPayload(editing));
+    const nextPayload = buildInitialPayload(editing);
+    setPayload(nextPayload);
+    setAmountInput(String(nextPayload.amount));
   }, [editing]);
 
   useEffect(() => {
@@ -85,8 +88,17 @@ const BudgetForm = ({
 
   const handleRepeatSubmit = (repeatPayload: BudgetPayload) => onSubmit(repeatPayload, null);
 
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setAmountInput(value);
+    const numericValue = Number(value || 0);
+    setPayload((prev) => ({ ...prev, amount: Number.isFinite(numericValue) ? numericValue : prev.amount }));
+  };
+
   const handleCancel = () => {
-    setPayload(buildInitialPayload(editing));
+    const resetPayload = buildInitialPayload(editing);
+    setPayload(resetPayload);
+    setAmountInput(String(resetPayload.amount));
     onCancel();
   };
 
@@ -195,8 +207,8 @@ const BudgetForm = ({
             予算金額
             <input
               type="number"
-              value={payload.amount}
-              onChange={(event) => handleChange("amount", Number(event.target.value))}
+              value={amountInput}
+              onChange={handleAmountChange}
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               min={0}
               step={1000}

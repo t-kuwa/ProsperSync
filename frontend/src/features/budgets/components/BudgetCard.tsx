@@ -16,7 +16,7 @@ const BudgetCard: FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => {
 
   return (
     <article
-      className={`relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border bg-white p-6 shadow-sm transition hover:shadow-md ${
+      className={`relative flex h-full w-full flex-col justify-between overflow-hidden rounded-3xl border bg-white p-6 shadow-sm transition hover:shadow-md ${
         isOverrun ? "border-rose-200 ring-2 ring-rose-100" : "border-slate-100"
       }`}
     >
@@ -58,8 +58,10 @@ const BudgetCard: FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
-        <BudgetProgressCircle percentage={percentage} isOverrun={isOverrun} />
+      <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-center">
+        <div className="flex justify-center lg:block">
+          <BudgetProgressCircle percentage={percentage} isOverrun={isOverrun} />
+        </div>
         <div className="flex-1 space-y-2">
           <div className="flex flex-wrap items-center justify-between text-sm text-slate-600">
             <span>予算 {formatCurrency(budget.amount)}</span>
