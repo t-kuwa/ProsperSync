@@ -114,6 +114,8 @@ module Api
           :period_year,
           :period_month,
           :name,
+          :repeat_enabled,
+          :repeat_until_date,
         )
 
         if permitted[:category_id].present?
@@ -130,6 +132,22 @@ module Api
         permitted[:period_year] = permitted[:period_year].to_i if permitted[:period_year]
         if permitted.key?(:period_month)
           permitted[:period_month] = permitted[:period_month].present? ? permitted[:period_month].to_i : nil
+        end
+        if permitted.key?(:repeat_enabled)
+          permitted[:repeat_enabled] = ActiveModel::Type::Boolean.new.cast(permitted[:repeat_enabled])
+        end
+        if permitted.key?(:repeat_until_date)
+          begin
+            permitted[:repeat_until_date] = if permitted[:repeat_until_date].present?
+                                              Date.parse(permitted[:repeat_until_date])
+                                            else
+                                              nil
+                                            end
+          rescue ArgumentError
+            render json: { errors: ["repeat_until_date は YYYY-MM-DD 形式で指定してください。"] },
+                   status: :unprocessable_content
+            return {}
+          end
         end
 
         permitted.to_h.symbolize_keys

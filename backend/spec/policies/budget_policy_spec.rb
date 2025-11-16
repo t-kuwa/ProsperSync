@@ -6,44 +6,47 @@ RSpec.describe BudgetPolicy, type: :policy do
   let(:account) { create(:account) }
   let(:member) { create(:user) }
   let!(:membership) { create(:membership, :member, account:, user: member) }
-  let(:budget) { create(:budget, account:) }
+  let(:category) { create(:category, :expense, account:) }
+  let(:budget) { create(:budget, account:, category:) }
 
   permissions :index?, :show?, :create?, :update?, :destroy?, :current? do
-    it "permits members of the account" do
+    it "アカウントのメンバーを許可すること" do
       expect(policy).to permit(member, budget)
     end
 
-    it "denies other users" do
+    it "他のユーザーを拒否すること" do
       other_user = create(:user)
       expect(policy).not_to permit(other_user, budget)
     end
 
-    it "denies guests" do
+    it "ゲストを拒否すること" do
       expect(policy).not_to permit(nil, budget)
     end
   end
 
   describe described_class::Scope do
-    subject(:resolved_scope) { described_class::Scope.new(user, Budget.all).resolve }
+    subject(:resolved_scope) { described_class.new(user, Budget.all).resolve }
 
-    let!(:budget_outside) { create(:budget) }
+    let(:other_account) { create(:account) }
+    let(:other_category) { create(:category, :expense, account: other_account) }
+    let!(:budget_outside) { create(:budget, account: other_account, category: other_category) }
 
-    context "when user is a member" do
+    context "ユーザーがメンバーの場合" do
       let(:user) { member }
 
-      it "includes budgets for the member's accounts" do
+      it "メンバーのアカウントの予算を含むこと" do
         expect(resolved_scope).to include(budget)
       end
 
-      it "excludes budgets from other accounts" do
+      it "他のアカウントの予算を除外すること" do
         expect(resolved_scope).not_to include(budget_outside)
       end
     end
 
-    context "when user is nil" do
+    context "ユーザーがnilの場合" do
       let(:user) { nil }
 
-      it "returns empty scope" do
+      it "空のスコープを返すこと" do
         expect(resolved_scope).to be_empty
       end
     end

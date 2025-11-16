@@ -11,6 +11,9 @@ export type Budget = {
   periodMonth: number | null;
   periodYear: number;
   name: string | null;
+  repeatEnabled: boolean;
+  repeatUntilDate: string | null;
+  parentBudgetId: number | null;
   periodLabel: string;
   currentSpent: number;
   remaining: number;
@@ -27,6 +30,8 @@ export type BudgetPayload = {
   period_year: number;
   period_month?: number | null;
   name?: string | null;
+  repeat_enabled?: boolean;
+  repeat_until_date?: string | null;
 };
 
 export type BudgetFilters = {

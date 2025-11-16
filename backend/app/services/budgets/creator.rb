@@ -16,6 +16,7 @@ module Budgets
       budget = nil
       ActiveRecord::Base.transaction do
         budget = account.budgets.create!(form.attributes_for_record)
+        Budgets::RepeatGenerator.call(parent_budget: budget)
       end
 
       Budgets::ProgressCalculator.call(

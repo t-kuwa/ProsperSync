@@ -11,6 +11,9 @@ export type ApiBudget = {
   period_month: number | null;
   period_year: number;
   name: string | null;
+  repeat_enabled: boolean;
+  repeat_until_date: string | null;
+  parent_budget_id: number | null;
   period_label: string;
   current_spent: number | null;
   remaining: number | null;
@@ -29,6 +32,9 @@ const mapBudget = (budget: ApiBudget): Budget => ({
   periodMonth: budget.period_month,
   periodYear: budget.period_year,
   name: budget.name,
+  repeatEnabled: budget.repeat_enabled,
+  repeatUntilDate: budget.repeat_until_date,
+  parentBudgetId: budget.parent_budget_id,
   periodLabel: budget.period_label,
   currentSpent: budget.current_spent ?? 0,
   remaining: budget.remaining ?? 0,

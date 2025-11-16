@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_09_064840) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_16_041059) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -50,9 +50,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_064840) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["account_id", "category_id", "period_type", "period_year", "period_month"], name: "index_budgets_on_account_and_period", unique: true
+    t.boolean "repeat_enabled", default: false, null: false
+    t.date "repeat_until_date"
+    t.bigint "parent_budget_id"
+    t.virtual "parent_budget_scope_id", type: :bigint, comment: "親予算が無い場合は0になる正規化カラム", as: "ifnull(`parent_budget_id`,0)", stored: true
+    t.index ["account_id", "category_id", "period_type", "period_year", "period_month", "parent_budget_scope_id"], name: "index_budgets_on_account_and_period", unique: true
     t.index ["account_id"], name: "index_budgets_on_account_id"
     t.index ["category_id"], name: "index_budgets_on_category_id"
+    t.index ["parent_budget_id"], name: "index_budgets_on_parent_budget_id"
   end
 
   create_table "categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "収支のカテゴリ", force: :cascade do |t|
@@ -132,6 +137,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_064840) do
   add_foreign_key "account_invitations", "users", column: "inviter_id"
   add_foreign_key "accounts", "users", column: "owner_id"
   add_foreign_key "budgets", "accounts"
+  add_foreign_key "budgets", "budgets", column: "parent_budget_id"
   add_foreign_key "budgets", "categories"
   add_foreign_key "categories", "accounts"
   add_foreign_key "expenses", "accounts"

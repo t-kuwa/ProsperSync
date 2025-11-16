@@ -4,7 +4,7 @@ RSpec.describe Budget, type: :model do
   let(:account) { create(:account) }
   let!(:category) { create(:category, :expense, account:) }
 
-  it "is valid with monthly attributes" do
+  it "月次属性で有効であること" do
     budget = described_class.new(
       account:,
       category:,
@@ -18,7 +18,7 @@ RSpec.describe Budget, type: :model do
     expect(budget).to be_valid
   end
 
-  it "normalizes period_month for yearly budget" do
+  it "年間予算の場合、period_monthを正規化すること" do
     budget = described_class.create!(
       account:,
       amount: 120_000,
@@ -31,7 +31,7 @@ RSpec.describe Budget, type: :model do
     expect(budget.period.yearly?).to be true
   end
 
-  it "rejects categories outside the account" do
+  it "アカウント外のカテゴリを拒否すること" do
     other_category = create(:category, :expense)
 
     budget = described_class.new(
@@ -47,7 +47,7 @@ RSpec.describe Budget, type: :model do
     expect(budget.errors[:category_id]).to include("は選択したアカウントに属していません")
   end
 
-  it "enforces uniqueness within the same period" do
+  it "同じ期間内での一意性を強制すること" do
     create(
       :budget,
       account:,

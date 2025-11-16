@@ -33,7 +33,7 @@ RSpec.describe Budgets::ProgressCalculator, type: :service do
     create(:expense, account:, category: category_transport, amount: 15_000, spent_on: Date.new(2025, 2, 10))
   end
 
-  it "returns progress metrics for the given budgets" do
+  it "指定された予算の進捗メトリクスを返すこと" do
     results = described_class.call(
       account:,
       budgets: [monthly_budget, yearly_budget],
