@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import formatCurrency from "../../dashboard/utils/formatCurrency";
-import BudgetProgressBar from "./BudgetProgressBar";
+import BudgetProgressCircle from "./BudgetProgressCircle";
 import type { Budget } from "../types";
 
 type BudgetCardProps = {
@@ -58,26 +58,28 @@ const BudgetCard: FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => {
         </div>
       </div>
 
-      <div className="mt-4 space-y-3">
-        <BudgetProgressBar percentage={percentage} isOverrun={isOverrun} />
-        <div className="flex flex-wrap items-center justify-between text-sm text-slate-600">
-          <span>予算 {formatCurrency(budget.amount)}</span>
-          <span>
-            実績 {formatCurrency(budget.currentSpent ?? 0)}
-            <span className={`ml-1 font-semibold ${isOverrun ? "text-rose-600" : "text-emerald-600"}`}>
-              ({percentage.toFixed(1)}%)
+      <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
+        <BudgetProgressCircle percentage={percentage} isOverrun={isOverrun} />
+        <div className="flex-1 space-y-2">
+          <div className="flex flex-wrap items-center justify-between text-sm text-slate-600">
+            <span>予算 {formatCurrency(budget.amount)}</span>
+            <span>
+              実績 {formatCurrency(budget.currentSpent ?? 0)}
+              <span className={`ml-1 font-semibold ${isOverrun ? "text-rose-600" : "text-emerald-600"}`}>
+                ({percentage.toFixed(1)}%)
+              </span>
             </span>
-          </span>
+          </div>
+          <p
+            className={`text-xs font-semibold ${
+              isOverrun ? "text-rose-600" : "text-slate-500"
+            }`}
+          >
+            {isOverrun
+              ? `予算超過 ${formatCurrency((budget.currentSpent ?? 0) - budget.amount)}`
+              : `残り ${formatCurrency(remaining)}`}
+          </p>
         </div>
-        <p
-          className={`text-xs font-semibold ${
-            isOverrun ? "text-rose-600" : "text-slate-500"
-          }`}
-        >
-          {isOverrun
-            ? `予算超過 ${formatCurrency((budget.currentSpent ?? 0) - budget.amount)}`
-            : `残り ${formatCurrency(remaining)}`}
-        </p>
       </div>
     </article>
   );

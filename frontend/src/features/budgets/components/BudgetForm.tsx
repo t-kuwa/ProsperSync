@@ -9,6 +9,9 @@ type BudgetFormProps = {
   editing?: Budget | null;
   onSubmit: (payload: BudgetPayload, editing?: Budget | null) => Promise<void>;
   onCancel: () => void;
+  variant?: "card" | "plain";
+  showRepeatActions?: boolean;
+  showHeader?: boolean;
 };
 
 const buildInitialPayload = (editing?: Budget | null): BudgetPayload => {
@@ -44,6 +47,9 @@ const BudgetForm = ({
   editing,
   onSubmit,
   onCancel,
+  variant = "card",
+  showRepeatActions = true,
+  showHeader = true,
 }: BudgetFormProps) => {
   const [payload, setPayload] = useState<BudgetPayload>(() => buildInitialPayload(editing));
   const [isRepeatModalOpen, setRepeatModalOpen] = useState(false);
@@ -79,20 +85,35 @@ const BudgetForm = ({
 
   const handleRepeatSubmit = (repeatPayload: BudgetPayload) => onSubmit(repeatPayload, null);
 
+  const handleCancel = () => {
+    setPayload(buildInitialPayload(editing));
+    onCancel();
+  };
+
+  const wrapperClassName =
+    variant === "card"
+      ? "space-y-4"
+      : variant === "plain"
+        ? "space-y-6"
+        : "";
+  const formClassName =
+    variant === "card"
+      ? "space-y-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+      : "space-y-4";
+
   return (
-    <div className="space-y-4">
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
-      >
-        <div className="text-left">
-          <h2 className="text-lg font-semibold text-slate-900">
-            {editing ? "予算を編集" : "新しい予算を作成"}
-          </h2>
-          <p className="text-sm text-slate-500">
-            カテゴリ別の支出上限と期間を設定して、進捗を可視化できます。
-          </p>
-        </div>
+    <div className={wrapperClassName}>
+      <form onSubmit={handleSubmit} className={formClassName}>
+        {showHeader ? (
+          <div className="text-left">
+            <h2 className="text-lg font-semibold text-slate-900">
+              {editing ? "予算を編集" : "新しい予算を作成"}
+            </h2>
+            <p className="text-sm text-slate-500">
+              カテゴリ別の支出上限と期間を設定して、進捗を可視化できます。
+            </p>
+          </div>
+        ) : null}
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm text-slate-600">
@@ -186,7 +207,7 @@ const BudgetForm = ({
         <div className="flex flex-wrap items-center justify-end gap-2">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
           >
             キャンセル
@@ -200,28 +221,31 @@ const BudgetForm = ({
           </button>
         </div>
       </form>
+      {showRepeatActions ? (
+        <>
+          <div className="rounded-3xl bg-white p-4 text-center shadow-sm ring-1 ring-slate-200">
+            <p className="text-sm text-slate-600">
+              繰り返し発生する予算は専用モーダルからまとめて作成できます。
+            </p>
+            <button
+              type="button"
+              onClick={() => setRepeatModalOpen(true)}
+              className="mt-3 inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-100"
+            >
+              <span className="material-icons text-base">repeat</span>
+              繰り返し予算を作成する
+            </button>
+          </div>
 
-      <div className="rounded-3xl bg-white p-4 text-center shadow-sm ring-1 ring-slate-200">
-        <p className="text-sm text-slate-600">
-          繰り返し発生する予算は専用モーダルからまとめて作成できます。
-        </p>
-        <button
-          type="button"
-          onClick={() => setRepeatModalOpen(true)}
-          className="mt-3 inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-100"
-        >
-          <span className="material-icons text-base">repeat</span>
-          繰り返し予算を作成する
-        </button>
-      </div>
-
-      <RepeatBudgetModal
-        open={isRepeatModalOpen}
-        onClose={() => setRepeatModalOpen(false)}
-        onSubmit={handleRepeatSubmit}
-        categories={categories}
-        processing={processing}
-      />
+          <RepeatBudgetModal
+            open={isRepeatModalOpen}
+            onClose={() => setRepeatModalOpen(false)}
+            onSubmit={handleRepeatSubmit}
+            categories={categories}
+            processing={processing}
+          />
+        </>
+      ) : null}
     </div>
   );
 };

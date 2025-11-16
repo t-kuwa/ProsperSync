@@ -5,6 +5,7 @@ import useAccountState from "../accounts/hooks/useAccountState";
 import useCategories from "../transactions/hooks/useCategories";
 import BudgetForm from "./components/BudgetForm";
 import BudgetList from "./components/BudgetList";
+import BudgetEditModal from "./components/BudgetEditModal";
 import useBudgets from "./hooks/useBudgets";
 import formatCurrency from "../dashboard/utils/formatCurrency";
 import type { Budget, BudgetPayload } from "./types";
@@ -46,7 +47,7 @@ const BudgetsPage = ({
     return `${currentAccount.name} の予算状況を確認できます。`;
   }, [currentAccount]);
 
-  const handleSubmit = async (payload: BudgetPayload, editingBudget: Budget | null) => {
+  const handleSubmit = async (payload: BudgetPayload, editingBudget?: Budget | null) => {
     if (editingBudget) {
       await update(editingBudget, payload);
     } else {
@@ -116,7 +117,6 @@ const BudgetsPage = ({
           <BudgetForm
             categories={categories}
             processing={processing || loadingCategories}
-            editing={editing}
             onSubmit={handleSubmit}
             onCancel={() => setEditing(null)}
           />
@@ -175,6 +175,14 @@ const BudgetsPage = ({
           />
         </div>
       </div>
+
+      <BudgetEditModal
+        budget={editing}
+        categories={categories}
+        processing={processing}
+        onSubmit={handleSubmit}
+        onClose={() => setEditing(null)}
+      />
     </DashboardShell>
   );
 };
