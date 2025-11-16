@@ -26,30 +26,88 @@ type DesktopMenuTriggerProps = {
   children: ReactNode;
   position?: "center" | "top";
   isActive?: boolean;
+  showInlineLabel?: boolean;
 };
 
-const DesktopMenuTrigger = ({ icon, label, children, position = "center", isActive = false }: DesktopMenuTriggerProps) => (
-  <div className="group/menu relative flex w-full justify-center">
+const DesktopMenuTrigger = ({
+  icon,
+  label,
+  children,
+  position = "center",
+  isActive = false,
+  showInlineLabel = false,
+}: DesktopMenuTriggerProps) => (
+  <div
+    className={`group/menu relative flex w-full h-11 items-center gap-0 flex-shrink-0 justify-start ${
+      showInlineLabel
+        ? "group-hover/sidebar:gap-3"
+        : ""
+    }`}
+  >
+    {showInlineLabel ? (
+      <div className="w-[12px] min-w-[12px] flex-shrink-0 group-hover/sidebar:w-0 group-hover/sidebar:min-w-0 group-hover/sidebar:overflow-hidden" />
+    ) : (
+      <div className="w-[12px] min-w-[12px] flex-shrink-0" />
+    )}
     <button
       type="button"
       aria-label={label}
-      className={`flex h-12 w-12 items-center justify-center rounded-2xl text-slate-400 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 hover:bg-slate-50 hover:text-slate-900 ${
+      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl text-slate-400 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 hover:bg-slate-50 hover:text-slate-900 ${
         isActive ? "ring-2 ring-slate-300" : ""
       }`}
     >
-      <span className="material-icons text-2xl">{icon}</span>
+      <span className="material-icons text-xl">{icon}</span>
     </button>
-    <div className={`pointer-events-none absolute left-full z-[70] flex items-center opacity-0 transition duration-200 group-hover/menu:pointer-events-auto group-hover/menu:opacity-100 group-focus-within/menu:pointer-events-auto group-focus-within/menu:opacity-100 ${
-      position === "top"
-        ? "bottom-0 translate-y-0"
-        : "top-1/2 -translate-y-1/2"
-    }`}>
+    {showInlineLabel ? (
+      <span
+        className={`pointer-events-none max-w-0 overflow-hidden text-sm text-slate-600 opacity-0 group-hover/sidebar:max-w-[160px] group-hover/sidebar:opacity-100 ${
+          isActive ? "text-slate-900" : "group-hover/sidebar:text-slate-800"
+        }`}
+      >
+        {label}
+      </span>
+    ) : null}
+    <div
+      className={`pointer-events-none absolute left-full z-[70] flex items-center opacity-0 group-hover/menu:pointer-events-auto group-hover/menu:opacity-100 group-focus-within/menu:pointer-events-auto group-focus-within/menu:opacity-100 ${
+        position === "top" ? "bottom-0 translate-y-0" : "top-1/2 -translate-y-1/2"
+      }`}
+    >
       <div className="h-full w-3 flex-shrink-0" />
       <div className="w-72 rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl shadow-slate-900/10">
         <p className="mb-3 text-xs font-semibold text-slate-400">{label}</p>
         {children}
       </div>
     </div>
+  </div>
+);
+
+type MainNavigationItemProps = {
+  icon: string;
+  label: string;
+  active: boolean;
+  onNavigate: () => void;
+};
+
+const MainNavigationItem = ({ icon, label, active, onNavigate }: MainNavigationItemProps) => (
+  <div className="flex w-full h-11 items-center justify-start gap-0 group-hover/sidebar:gap-3 flex-shrink-0">
+    <div className="w-[12px] min-w-[12px] flex-shrink-0 group-hover/sidebar:w-0 group-hover/sidebar:min-w-0 group-hover/sidebar:overflow-hidden" />
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onNavigate}
+      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl text-slate-400 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 hover:bg-slate-50 hover:text-slate-900 ${
+        active ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20" : ""
+      }`}
+    >
+      <span className="material-icons text-xl">{icon}</span>
+    </button>
+    <span
+      className={`pointer-events-none max-w-0 overflow-hidden text-sm text-slate-600 opacity-0 group-hover/sidebar:max-w-[160px] group-hover/sidebar:opacity-100 ${
+        active ? "text-slate-900" : "group-hover/sidebar:text-slate-800"
+      }`}
+    >
+      {label}
+    </span>
   </div>
 );
 
@@ -116,72 +174,89 @@ const Sidebar = ({
   };
 
   const renderDesktop = () => (
-    <aside className="fixed inset-y-0 left-0 z-[60] hidden w-24 flex-col items-center border-r border-slate-200 bg-white px-2 py-6 lg:flex">
-      <div className="flex h-full w-full flex-col items-center justify-between">
-        <div className="flex w-full flex-col items-center gap-5">
-          <div className="flex w-full flex-col items-center gap-6">
-            <div className="flex h-10 w-10 items-center justify-center">
-              <HaruveIcon className="h-10 w-10" />
-            </div>
-            <div className="group/menu relative flex w-full justify-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-600 text-white transition hover:bg-slate-800">
-                <span className="material-icons text-2xl">account_circle</span>
+    <aside className="group/sidebar fixed inset-y-0 left-0 z-[60] hidden w-20 flex-col border-r border-slate-200 bg-white px-1.5 py-4 hover:w-56 lg:flex">
+      <div className="flex h-full w-full flex-col">
+        <div className="flex w-full flex-col items-start gap-6">
+          <div className="flex w-full flex-col items-start gap-3">
+            <div className="flex items-center justify-start gap-0 group-hover/sidebar:gap-3">
+              <div className="w-[12px] min-w-[12px] flex-shrink-0 group-hover/sidebar:w-0 group-hover/sidebar:min-w-0 group-hover/sidebar:overflow-hidden" />
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                <HaruveIcon className="h-10 w-10" />
               </div>
-              <div className="pointer-events-none absolute left-full top-1/2 z-[70] flex -translate-y-1/2 items-center opacity-0 transition duration-200 group-hover/menu:pointer-events-auto group-hover/menu:opacity-100 group-focus-within/menu:pointer-events-auto group-focus-within/menu:opacity-100">
-                <div className="h-full w-3 flex-shrink-0" />
-                <div className="w-72 rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl shadow-slate-900/10">
-                  <p className="mb-3 text-xs font-semibold text-slate-400">ワークスペース</p>
-                  {currentAccount ? (
-                    <ul className="max-h-48 space-y-1 overflow-y-auto pr-1">
-                      {accounts.map((account) => {
-                        const isActive = account.id === currentAccount.id;
-                        return (
-                          <li key={account.id}>
-                            <button
-                              type="button"
-                              onClick={() => handleAccountSelect(account)}
-                              className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition ${
-                                isActive
-                                  ? "bg-slate-900/5 text-slate-900 ring-1 ring-slate-300"
-                                  : "text-slate-600 hover:bg-slate-50"
-                              }`}
-                            >
-                              <span className="truncate">{account.name}</span>
-                              <span className={`ml-2 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold ${accountTypePillClass(account)}`}>
-                                {accountTypeLabel(account)}
-                              </span>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-slate-500">
-                      表示できるワークスペースがありません。
-                    </p>
-                  )}
-                </div>
-              </div>
+              <span className="pointer-events-none max-w-0 overflow-hidden text-base font-semibold text-slate-900 opacity-0 group-hover/sidebar:max-w-[160px] group-hover/sidebar:opacity-100">
+                Haruve
+              </span>
             </div>
+            <DesktopMenuTrigger
+              icon="account_circle"
+              label={currentAccount?.name ?? "ワークスペース"}
+              showInlineLabel
+            >
+              {currentAccount ? (
+                <ul className="max-h-48 space-y-1 overflow-y-auto pr-1">
+                  {accounts.map((account) => {
+                    const isActive = account.id === currentAccount.id;
+                    return (
+                      <li key={account.id}>
+                        <button
+                          type="button"
+                          onClick={() => handleAccountSelect(account)}
+                          className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition ${
+                            isActive
+                              ? "bg-slate-900/5 text-slate-900 ring-1 ring-slate-300"
+                              : "text-slate-600 hover:bg-slate-50"
+                          }`}
+                        >
+                          <span className="truncate">{account.name}</span>
+                          <span className={`ml-2 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold ${accountTypePillClass(account)}`}>
+                            {accountTypeLabel(account)}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="text-sm text-slate-500">表示できるワークスペースがありません。</p>
+              )}
+            </DesktopMenuTrigger>
           </div>
 
-          <div className="flex w-full flex-col items-center gap-5">
-            <DesktopMenuTrigger 
-              icon="space_dashboard" 
-              label="メインメニュー"
-              isActive={MAIN_NAVIGATION.some((item) => currentRoute === item.route)}
+          <div className="flex w-full flex-col items-start gap-4">
+            {MAIN_NAVIGATION.map((item) => (
+              <MainNavigationItem
+                key={item.route}
+                icon={item.icon}
+                label={item.label}
+                active={currentRoute === item.route}
+                onNavigate={() => onNavigate(item.route)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-auto flex w-full flex-col items-start gap-3">
+          {accountNavigation.length ? (
+            <DesktopMenuTrigger
+              icon="layers"
+              label="アカウント設定"
+              isActive={
+                accountNavigation.some((item) => currentRoute === item.route) ||
+                currentRoute === APP_ROUTES.accountCreate
+              }
+              showInlineLabel
             >
-              <ul className="space-y-1">
-                {MAIN_NAVIGATION.map((item) => {
+              <ul className="space-y-1 text-sm">
+                {accountNavigation.map((item) => {
                   const active = currentRoute === item.route;
                   return (
                     <li key={item.route}>
                       <button
                         type="button"
                         onClick={() => onNavigate(item.route)}
-                        className={`flex w-full items-center justify-between rounded-2xl px-3 py-2 text-sm transition ${
+                        className={`flex w-full items-center justify-between rounded-2xl px-3 py-2 transition ${
                           active
-                            ? "bg-slate-900/90 text-white shadow-sm shadow-indigo-200"
+                            ? "bg-indigo-600 text-white shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
                         }`}
                       >
@@ -193,98 +268,56 @@ const Sidebar = ({
                         </span>
                         {active ? (
                           <span className="material-icons text-base text-white">
-                            check
+                            radio_button_checked
                           </span>
                         ) : null}
                       </button>
                     </li>
                   );
                 })}
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(APP_ROUTES.accountCreate)}
+                    className={`flex w-full items-center justify-between rounded-2xl px-3 py-2 transition ${
+                      currentRoute === APP_ROUTES.accountCreate
+                        ? "bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200"
+                        : "text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="material-icons text-base text-indigo-500">
+                        add
+                      </span>
+                      新しいアカウント
+                    </span>
+                    <span className="material-icons text-base text-indigo-400">
+                      north_east
+                    </span>
+                  </button>
+                </li>
               </ul>
             </DesktopMenuTrigger>
+          ) : null}
 
-            {accountNavigation.length ? (
-              <DesktopMenuTrigger 
-                icon="layers" 
-                label="アカウント管理"
-                isActive={
-                  accountNavigation.some((item) => currentRoute === item.route) ||
-                  currentRoute === APP_ROUTES.accountCreate
-                }
-              >
-                <ul className="space-y-1 text-sm">
-                  {accountNavigation.map((item) => {
-                    const active = currentRoute === item.route;
-                    return (
-                      <li key={item.route}>
-                        <button
-                          type="button"
-                          onClick={() => onNavigate(item.route)}
-                          className={`flex w-full items-center justify-between rounded-2xl px-3 py-2 transition ${
-                            active
-                              ? "bg-indigo-600 text-white shadow-sm"
-                              : "text-slate-600 hover:bg-slate-50"
-                          }`}
-                        >
-                          <span className="flex items-center gap-2">
-                            <span className="material-icons text-base text-slate-400">
-                              {item.icon}
-                            </span>
-                            {item.label}
-                          </span>
-                          {active ? (
-                            <span className="material-icons text-base text-white">
-                              radio_button_checked
-                            </span>
-                          ) : null}
-                        </button>
-                      </li>
-                    );
-                  })}
-                  <li>
-                    <button
-                      type="button"
-                      onClick={() => onNavigate(APP_ROUTES.accountCreate)}
-                      className={`flex w-full items-center justify-between rounded-2xl px-3 py-2 transition ${
-                        currentRoute === APP_ROUTES.accountCreate
-                          ? "bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200"
-                          : "text-slate-600 hover:bg-slate-50"
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <span className="material-icons text-base text-indigo-500">
-                          add
-                        </span>
-                        新しいアカウント
-                      </span>
-                      <span className="material-icons text-base text-indigo-400">
-                        north_east
-                      </span>
-                    </button>
-                  </li>
-                </ul>
-              </DesktopMenuTrigger>
-            ) : null}
-          </div>
+          {onLogout ? (
+            <DesktopMenuTrigger icon="person" label="ユーザー設定" position="top" showInlineLabel>
+              <div className="space-y-3 text-sm">
+                <p className="text-slate-500">
+                  ログアウトすると現在のセッションが終了します。
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onLogout()}
+                  className="flex w-full items-center justify-center rounded-2xl bg-slate-900 px-4 py-2 font-semibold text-white transition hover:bg-slate-800"
+                >
+                  <span className="material-icons mr-2 text-base">logout</span>
+                  ログアウト
+                </button>
+              </div>
+            </DesktopMenuTrigger>
+          ) : null}
         </div>
-
-        {onLogout ? (
-          <DesktopMenuTrigger icon="person" label="ユーザー" position="top">
-            <div className="space-y-3 text-sm">
-              <p className="text-slate-500">
-                ログアウトすると現在のセッションが終了します。
-              </p>
-              <button
-                type="button"
-                onClick={() => onLogout()}
-                className="flex w-full items-center justify-center rounded-2xl bg-slate-900 px-4 py-2 font-semibold text-white transition hover:bg-slate-800"
-              >
-                <span className="material-icons mr-2 text-base">logout</span>
-                ログアウト
-              </button>
-            </div>
-          </DesktopMenuTrigger>
-        ) : null}
       </div>
     </aside>
   );
