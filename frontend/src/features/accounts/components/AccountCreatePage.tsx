@@ -51,7 +51,6 @@ const AccountCreatePage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="チームアカウントを作成"
-      headerSubtitle="共同作業用のワークスペースを新たに作成します。"
     >
       <div className="mx-auto max-w-3xl space-y-6">
         {status ? (

@@ -51,7 +51,7 @@ const BudgetList: FC<BudgetListProps> = ({
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-6">
+    <div className="flex w-full flex-wrap gap-6 lg:gap-8">
       {budgets.map((budget) => (
         <div key={budget.id} className="flex w-full min-w-[280px] max-w-sm flex-1">
           <BudgetCard budget={budget} onEdit={onEdit} onDelete={onDelete} />

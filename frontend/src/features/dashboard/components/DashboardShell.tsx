@@ -3,13 +3,25 @@ import type { AppRoute } from "../../../routes";
 import DashboardHeader from "./DashboardHeader";
 import Sidebar from "./Sidebar";
 
+type DesktopHeroCardProps = {
+  title: string;
+};
+
+const DesktopHeroCard = ({ title }: DesktopHeroCardProps) => (
+  <div className="relative mb-8 hidden overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 text-slate-900 shadow-lg shadow-slate-900/5 ring-1 ring-white/60 lg:block">
+    <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/30 blur-3xl" />
+    <div className="space-y-2">
+      <h1 className="text-2xl font-semibold text-slate-900">{title}</h1>
+    </div>
+  </div>
+);
+
 type DashboardShellProps = {
   userName?: string;
   onLogout?: () => void;
   currentRoute: AppRoute;
   onNavigate: (route: AppRoute) => void;
   headerTitle: string;
-  headerSubtitle?: string;
   headerActions?: ReactNode;
   children: ReactNode;
 };
@@ -20,7 +32,6 @@ const DashboardShell = ({
   currentRoute,
   onNavigate,
   headerTitle,
-  headerSubtitle,
   headerActions,
   children,
 }: DashboardShellProps) => {
@@ -62,11 +73,13 @@ const DashboardShell = ({
         <DashboardHeader
           userName={userName}
           title={headerTitle}
-          subtitle={headerSubtitle}
           actions={headerActions}
           onMenuClick={() => setMobileSidebarOpen(true)}
         />
-        <main className="max-w-[100vw] flex-1 px-4 pb-6 pt-6 sm:px-6 lg:px-12">{children}</main>
+        <main className="max-w-[100vw] flex-1 px-4 pb-6 pt-6 sm:px-6 lg:px-12">
+          <DesktopHeroCard title={headerTitle} />
+          {children}
+        </main>
       </div>
     </div>
   );

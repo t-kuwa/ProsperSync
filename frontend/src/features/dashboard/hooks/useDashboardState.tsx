@@ -13,6 +13,7 @@ import useAccountState from "../../accounts/hooks/useAccountState";
 import {
   type CalendarEntry,
   type DashboardBalance,
+  type DashboardBudgetSummary,
   type DashboardStats,
   type DashboardTotals,
   type FinancialEntry,
@@ -25,12 +26,12 @@ import {
 
 const emptyTotals: DashboardTotals = { income: 0, expense: 0 };
 const emptyBalance: DashboardBalance = { totalIncome: 0, totalExpense: 0, net: 0 };
-const emptyBudgetSummary = {
+const emptyBudgetSummary: DashboardBudgetSummary = {
   totalBudget: 0,
   totalSpent: 0,
   overruns: 0,
   topBudgets: [],
-} as const;
+};
 
 const useDashboardStateInternal = () => {
   const { currentAccountId } = useAccountState();

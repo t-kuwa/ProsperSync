@@ -98,7 +98,6 @@ const TransactionsPage = ({
         currentRoute={currentRoute}
         onNavigate={onNavigate}
         headerTitle="収支登録"
-        headerSubtitle="アカウントを選択すると収支を登録できます。"
       >
         <div className="rounded-3xl bg-white p-8 text-center text-slate-500 shadow-sm ring-1 ring-slate-200">
           ワークスペースが選択されていません。サイドバーからアカウントを選択してください。
@@ -114,7 +113,6 @@ const TransactionsPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="収支を登録"
-      headerSubtitle={`${currentAccount.name} の実データを管理できます。`}
       headerActions={headerActions}
     >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">

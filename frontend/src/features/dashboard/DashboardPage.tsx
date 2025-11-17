@@ -133,6 +133,11 @@ const DashboardPage = ({
     ],
   );
 
+  const visibleSummaryCards = useMemo(
+    () => summaryCards.filter((card) => card.title !== "推定ランレート"),
+    [summaryCards],
+  );
+
   const headerActions = (
     <>
       <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 shadow-sm ring-1 ring-slate-200">
@@ -187,19 +192,21 @@ const DashboardPage = ({
 
     return (
       <div className="flex flex-col gap-6">
-        <SummaryCards cards={summaryCards} />
+        <SummaryCards cards={visibleSummaryCards} />
 
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-stretch">
-          <CalendarOverview
-            accountId={stats.account.id}
-            calendarEntries={calendarEntries}
-            monthlyBreakdown={monthlyBreakdown}
-            loading={loading}
-            error={error}
-            onRetry={refresh}
-            className="xl:col-span-2 h-fit"
-          />
-          <div className="flex flex-col gap-4 xl:col-span-1">
+          <div className="xl:col-span-2 h-full">
+            <CalendarOverview
+              accountId={stats.account.id}
+              calendarEntries={calendarEntries}
+              monthlyBreakdown={monthlyBreakdown}
+              loading={loading}
+              error={error}
+              onRetry={refresh}
+              className="h-full"
+            />
+          </div>
+          <div className="flex h-full flex-col gap-4 xl:col-span-1">
             <InsightsPanel
               inflowOutflowRatio={inflowOutflowRatio}
               totalAccountBalance={totalAccountBalance}
@@ -209,17 +216,21 @@ const DashboardPage = ({
           </div>
         </section>
 
-        <FinancialOverview
-          monthlyBreakdown={monthlyBreakdown}
-          loading={loading}
-          error={error}
-          onRetry={refresh}
-          className="w-full"
-        />
+        <section className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-stretch">
+          <div className="xl:col-span-2 h-full">
+            <FinancialOverview
+              monthlyBreakdown={monthlyBreakdown}
+              loading={loading}
+              error={error}
+              onRetry={refresh}
+              className="h-full w-full"
+            />
+          </div>
+          <div className="xl:col-span-1 h-full">
+            <RecentTransactions entries={recentEntries} loading={loading} />
+          </div>
+        </section>
 
-        <div className="h-full">
-          <RecentTransactions entries={recentEntries} loading={loading} />
-        </div>
       </div>
     );
   };
@@ -230,7 +241,7 @@ const DashboardPage = ({
       onLogout={onLogout}
       currentRoute={currentRoute}
       onNavigate={onNavigate}
-      headerTitle="ダッシュボード概要"
+      headerTitle="ダッシュボード"
       headerActions={headerActions}
     >
       <div className="flex flex-col gap-6">{renderContent()}</div>

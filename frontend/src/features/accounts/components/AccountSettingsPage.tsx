@@ -158,10 +158,6 @@ const AccountSettingsPage = ({
     }
   };
 
-  const headerSubtitle = currentAccount
-    ? `${currentAccount.name} の設定を管理します。`
-    : "アカウント情報を管理します。";
-
   return (
     <DashboardShell
       userName={userName}
@@ -169,7 +165,6 @@ const AccountSettingsPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="アカウント設定"
-      headerSubtitle={headerSubtitle}
     >
       {!currentAccount ? (
         <div className="rounded-3xl bg-white p-6 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">

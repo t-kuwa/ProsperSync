@@ -7,10 +7,17 @@ type BudgetHighlightsProps = {
   className?: string;
 };
 
+const cardBaseClass =
+  "relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-xl shadow-slate-900/10 ring-1 ring-white/60";
+
 const BudgetHighlights: FC<BudgetHighlightsProps> = ({ summary, className }) => {
   if (!summary.topBudgets.length) {
     return (
-      <section className={`rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}>
+      <section className={`${cardBaseClass} ${className ?? ""}`}>
+        <div
+          className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/30 blur-3xl"
+          aria-hidden
+        />
         <h3 className="text-base font-semibold text-slate-900">予算ハイライト</h3>
         <p className="mt-2 text-sm text-slate-500">
           今月の予算はまだ登録されていません。予算ページで作成しましょう。
@@ -20,7 +27,11 @@ const BudgetHighlights: FC<BudgetHighlightsProps> = ({ summary, className }) => 
   }
 
   return (
-    <section className={`rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 ${className ?? ""}`}>
+    <section className={`${cardBaseClass} ${className ?? ""}`}>
+      <div
+        className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/30 blur-3xl"
+        aria-hidden
+      />
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-base font-semibold text-slate-900">予算ハイライト</h3>
@@ -41,7 +52,10 @@ const BudgetHighlights: FC<BudgetHighlightsProps> = ({ summary, className }) => 
         {summary.topBudgets.map((budget) => {
           const isOverrun = budget.currentSpent > budget.amount;
           return (
-            <li key={budget.id} className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3">
+            <li
+              key={budget.id}
+              className="flex items-center justify-between gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-sm backdrop-blur"
+            >
               <div>
                 <p className="text-sm font-semibold text-slate-900">
                   {budget.name?.trim() || budget.category?.name || budget.periodLabel}

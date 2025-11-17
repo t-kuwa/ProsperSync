@@ -200,7 +200,6 @@ const MembersPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="メンバー管理"
-      headerSubtitle="ワークスペースのメンバーを追加・編集・削除できます。"
       headerActions={headerActions}
     >
       {!currentAccount ? (

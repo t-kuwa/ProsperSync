@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { AppRoute } from "../../routes";
 import DashboardShell from "../dashboard/components/DashboardShell";
 import useAccountState from "../accounts/hooks/useAccountState";
@@ -40,13 +40,6 @@ const BudgetsPage = ({
   } = useBudgets();
   const [editing, setEditing] = useState<Budget | null>(null);
 
-  const subtitle = useMemo(() => {
-    if (!currentAccount) {
-      return "アカウントを選択すると予算を管理できます。";
-    }
-    return `${currentAccount.name} の予算状況を確認できます。`;
-  }, [currentAccount]);
-
   const handleSubmit = async (payload: BudgetPayload, editingBudget?: Budget | null) => {
     if (editingBudget) {
       await update(editingBudget, payload);
@@ -75,7 +68,6 @@ const BudgetsPage = ({
         currentRoute={currentRoute}
         onNavigate={onNavigate}
         headerTitle="予算管理"
-        headerSubtitle="アカウントを選択すると予算を管理できます。"
       >
         <div className="rounded-3xl bg-white p-8 text-center text-slate-500 shadow-sm ring-1 ring-slate-200">
           サイドバーからアカウントを選択してください。
@@ -91,7 +83,6 @@ const BudgetsPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="予算管理"
-      headerSubtitle={subtitle}
       headerActions={
         <div className="flex flex-wrap items-center gap-3 rounded-xl bg-white px-4 py-2 text-xs text-slate-600 shadow-sm ring-1 ring-slate-200">
           <span>
