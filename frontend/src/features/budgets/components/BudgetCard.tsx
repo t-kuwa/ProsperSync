@@ -20,8 +20,8 @@ const BudgetCard: FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => {
         isOverrun ? "border-rose-200 ring-2 ring-rose-100" : "border-slate-100"
       }`}
     >
-      <div className="flex flex-wrap items-start justify-start gap-4 lg:justify-between">
-        <div>
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
             {budget.periodLabel}
           </p>

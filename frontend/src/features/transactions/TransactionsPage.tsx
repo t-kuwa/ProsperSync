@@ -59,18 +59,6 @@ const TransactionsPage = ({
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const categoryManagerRef = useRef<CategoryManagerHandle>(null);
 
-  const headerActions = (
-    <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 shadow-sm ring-1 ring-slate-200">
-      <span className="text-lg">🔍</span>
-      <input
-        value={filters.search}
-        onChange={(event) => updateFilter("search", event.target.value)}
-        placeholder="取引を検索"
-        className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 md:w-72"
-      />
-    </div>
-  );
-
   const handleFormSubmit = async (
     payload: TransactionPayload,
     editing: Transaction | null,
@@ -113,8 +101,16 @@ const TransactionsPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="収支を登録"
-      headerActions={headerActions}
     >
+      <div className="mb-6 flex items-center gap-2 rounded-3xl bg-white/90 px-5 py-3 shadow-sm ring-1 ring-slate-200">
+        <span className="text-lg">🔍</span>
+        <input
+          value={filters.search}
+          onChange={(event) => updateFilter("search", event.target.value)}
+          placeholder="取引を検索"
+          className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+        />
+      </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
         <div className="space-y-6">
           <TransactionForm

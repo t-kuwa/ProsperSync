@@ -60,7 +60,7 @@ const DesktopMenuTrigger = ({
     </button>
     {showInlineLabel ? (
       <span
-        className={`pointer-events-none max-w-0 overflow-hidden text-sm text-slate-600 opacity-0 group-hover/sidebar:max-w-[160px] group-hover/sidebar:opacity-100 ${
+        className={`pointer-events-none max-w-0 overflow-hidden whitespace-nowrap text-sm text-slate-600 opacity-0 group-hover/sidebar:max-w-[160px] group-hover/sidebar:opacity-100 ${
           isActive ? "text-slate-900" : "group-hover/sidebar:text-slate-800"
         }`}
       >
@@ -89,26 +89,30 @@ type MainNavigationItemProps = {
 };
 
 const MainNavigationItem = ({ icon, label, active, onNavigate }: MainNavigationItemProps) => (
-  <div className="flex w-full h-11 items-center justify-start gap-0 group-hover/sidebar:gap-3 flex-shrink-0">
+  <button
+    type="button"
+    aria-label={label}
+    onClick={onNavigate}
+    className="flex w-full h-11 items-center justify-start gap-0 group-hover/sidebar:gap-3 flex-shrink-0 rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+  >
     <div className="w-[12px] min-w-[12px] flex-shrink-0 group-hover/sidebar:w-0 group-hover/sidebar:min-w-0 group-hover/sidebar:overflow-hidden" />
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onNavigate}
-      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl text-slate-400 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 hover:bg-slate-50 hover:text-slate-900 ${
-        active ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20" : ""
+    <span
+      className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl text-slate-400 transition ${
+        active
+          ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
+          : "hover:bg-slate-50 hover:text-slate-900"
       }`}
     >
       <span className="material-icons text-xl">{icon}</span>
-    </button>
+    </span>
     <span
-      className={`pointer-events-none max-w-0 overflow-hidden text-sm text-slate-600 opacity-0 group-hover/sidebar:max-w-[160px] group-hover/sidebar:opacity-100 ${
+      className={`ml-0 max-w-0 overflow-hidden whitespace-nowrap text-sm text-slate-600 opacity-0 transition-all duration-300 group-hover/sidebar:max-w-[160px] group-hover/sidebar:pl-3 group-hover/sidebar:opacity-100 ${
         active ? "text-slate-900" : "group-hover/sidebar:text-slate-800"
       }`}
     >
       {label}
     </span>
-  </div>
+  </button>
 );
 
 type SidebarProps = {
@@ -174,7 +178,7 @@ const Sidebar = ({
   };
 
   const renderDesktop = () => (
-    <aside className="group/sidebar fixed inset-y-0 left-0 z-[60] hidden w-20 flex-col border-r border-slate-200 bg-white px-1.5 py-4 hover:w-56 lg:flex">
+    <aside className="group/sidebar fixed inset-y-4 left-4 z-[60] hidden w-20 flex-col rounded-[32px] border border-white/70 bg-gradient-to-b from-white/95 via-slate-50 to-slate-100 px-2 py-6 shadow-2xl shadow-slate-900/10 backdrop-blur-sm transition-[width] duration-300 hover:w-56 lg:flex">
       <div className="flex h-full w-full flex-col">
         <div className="flex w-full flex-col items-start gap-6">
           <div className="flex w-full flex-col items-start gap-3">

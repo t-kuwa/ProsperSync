@@ -138,24 +138,6 @@ const DashboardPage = ({
     [summaryCards],
   );
 
-  const headerActions = (
-    <>
-      <div className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 shadow-sm ring-1 ring-slate-200">
-        <span className="text-lg">🔍</span>
-        <input
-          placeholder="検索（取引 / アカウント / メンバー）"
-          className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 md:w-72"
-        />
-      </div>
-      <button
-        type="button"
-        className="flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
-      >
-        新規レポートを作成
-      </button>
-    </>
-  );
-
   const renderContent = () => {
     if (!stats && loading) {
       return (
@@ -242,7 +224,6 @@ const DashboardPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="ダッシュボード"
-      headerActions={headerActions}
     >
       <div className="flex flex-col gap-6">{renderContent()}</div>
     </DashboardShell>

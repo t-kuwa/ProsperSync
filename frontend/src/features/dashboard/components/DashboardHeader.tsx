@@ -1,17 +1,15 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import HaruveIcon from "./HaruveIcon";
 
 type DashboardHeaderProps = {
   userName?: string;
   title: string;
-  actions?: ReactNode;
   onMenuClick?: () => void;
 };
 
 const DashboardHeader = ({
   userName,
   title,
-  actions,
   onMenuClick,
 }: DashboardHeaderProps) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -68,15 +66,9 @@ const DashboardHeader = ({
         </button>
       </div>
 
-      <div className="mt-4 space-y-1">
-        <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
-        {userName ? (
-          <p className="text-xs text-slate-400">こんにちは、{userName} さん</p>
-        ) : null}
-      </div>
-
-      {actions ? (
-        <div className="mt-4 flex flex-col gap-2">{actions}</div>
+      <span className="sr-only">{title}</span>
+      {userName ? (
+        <span className="sr-only">こんにちは、{userName} さん</span>
       ) : null}
     </header>
   );

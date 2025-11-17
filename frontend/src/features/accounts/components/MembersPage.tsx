@@ -182,17 +182,6 @@ const MembersPage = ({
     }
   };
 
-  const headerActions = currentAccount ? (
-    <div className="rounded-xl bg-white px-4 py-2 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
-      <span className="font-semibold text-slate-900">
-        {currentAccount.name}
-      </span>
-      <span className="ml-2 text-xs text-slate-400">
-        メンバー数: {members.length}
-      </span>
-    </div>
-  ) : null;
-
   return (
     <DashboardShell
       userName={userName}
@@ -200,7 +189,6 @@ const MembersPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="メンバー管理"
-      headerActions={headerActions}
     >
       {!currentAccount ? (
         <div className="rounded-3xl bg-white p-6 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
@@ -208,6 +196,14 @@ const MembersPage = ({
         </div>
       ) : (
         <>
+          <div className="mb-4 rounded-3xl bg-white/90 px-5 py-3 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
+            <span className="font-semibold text-slate-900">
+              {currentAccount.name}
+            </span>
+            <span className="ml-2 text-xs text-slate-400">
+              メンバー数: {members.length}
+            </span>
+          </div>
           <div className="flex w-full flex-col gap-4">
             {status ? (
               <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-600 ring-1 ring-emerald-200">

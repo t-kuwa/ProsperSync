@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import type { AppRoute } from "../../../routes";
+import { APP_ROUTES, type AppRoute } from "../../../routes";
 import DashboardHeader from "./DashboardHeader";
 import Sidebar from "./Sidebar";
 
@@ -16,13 +16,49 @@ const DesktopHeroCard = ({ title }: DesktopHeroCardProps) => (
   </div>
 );
 
+const MOBILE_NAV_ITEMS: Array<{ label: string; icon: string; route: AppRoute }> = [
+  { label: "ホーム", icon: "home", route: APP_ROUTES.dashboard },
+  { label: "収支", icon: "receipt_long", route: APP_ROUTES.transactions },
+  { label: "予算", icon: "pie_chart", route: APP_ROUTES.budgets },
+];
+
+type MobileBottomNavProps = {
+  currentRoute: AppRoute;
+  onNavigate: (route: AppRoute) => void;
+};
+
+const MobileBottomNav = ({ currentRoute, onNavigate }: MobileBottomNavProps) => (
+  <nav className="pointer-events-none lg:hidden">
+    <div className="pointer-events-auto fixed inset-x-4 bottom-4 z-40 rounded-full border border-white/70 bg-gradient-to-r from-white via-slate-50 to-slate-100 px-3 py-2 shadow-xl shadow-slate-900/10 backdrop-blur">
+      <div className="flex items-center justify-between gap-2">
+        {MOBILE_NAV_ITEMS.map((item) => {
+          const active = currentRoute === item.route;
+          return (
+            <button
+              key={item.route}
+              type="button"
+              onClick={() => onNavigate(item.route)}
+              className={`flex h-12 w-full flex-1 items-center justify-center rounded-2xl transition ${
+                active ? "bg-indigo-50 text-indigo-600" : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              <span className={`material-icons text-2xl ${active ? "text-indigo-600" : "text-slate-400"}`}>
+                {item.icon}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  </nav>
+);
+
 type DashboardShellProps = {
   userName?: string;
   onLogout?: () => void;
   currentRoute: AppRoute;
   onNavigate: (route: AppRoute) => void;
   headerTitle: string;
-  headerActions?: ReactNode;
   children: ReactNode;
 };
 
@@ -32,7 +68,6 @@ const DashboardShell = ({
   currentRoute,
   onNavigate,
   headerTitle,
-  headerActions,
   children,
 }: DashboardShellProps) => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -73,13 +108,13 @@ const DashboardShell = ({
         <DashboardHeader
           userName={userName}
           title={headerTitle}
-          actions={headerActions}
           onMenuClick={() => setMobileSidebarOpen(true)}
         />
-        <main className="max-w-[100vw] flex-1 px-4 pb-6 pt-6 sm:px-6 lg:px-12">
+        <main className="max-w-[100vw] flex-1 px-4 pb-28 pt-6 sm:px-6 lg:px-12 lg:pb-6">
           <DesktopHeroCard title={headerTitle} />
           {children}
         </main>
+        <MobileBottomNav currentRoute={currentRoute} onNavigate={handleNavigate} />
       </div>
     </div>
   );

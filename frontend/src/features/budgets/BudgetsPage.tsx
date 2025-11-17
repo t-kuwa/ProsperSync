@@ -83,26 +83,24 @@ const BudgetsPage = ({
       currentRoute={currentRoute}
       onNavigate={onNavigate}
       headerTitle="予算管理"
-      headerActions={
-        <div className="flex flex-wrap items-center gap-3 rounded-xl bg-white px-4 py-2 text-xs text-slate-600 shadow-sm ring-1 ring-slate-200">
-          <span>
-            合計予算
-            <span className="ml-1 font-semibold text-slate-900">
-              {formatCurrency(totals.totalBudget)}
-            </span>
-          </span>
-          <span>
-            実績
-            <span className="ml-1 font-semibold text-slate-900">
-              {formatCurrency(totals.totalSpent)}
-            </span>
-          </span>
-          <span className={totals.overruns > 0 ? "text-rose-600" : "text-emerald-600"}>
-            {totals.overruns > 0 ? `超過 ${totals.overruns} 件` : "すべて順調です"}
-          </span>
-        </div>
-      }
     >
+      <div className="mb-6 flex flex-wrap items-center gap-3 rounded-3xl bg-white/90 px-6 py-4 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
+        <span>
+          合計予算
+          <span className="ml-1 font-semibold text-slate-900">
+            {formatCurrency(totals.totalBudget)}
+          </span>
+        </span>
+        <span>
+          実績
+          <span className="ml-1 font-semibold text-slate-900">
+            {formatCurrency(totals.totalSpent)}
+          </span>
+        </span>
+        <span className={totals.overruns > 0 ? "text-rose-600" : "text-emerald-600"}>
+          {totals.overruns > 0 ? `超過 ${totals.overruns} 件` : "すべて順調です"}
+        </span>
+      </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
         <div className="space-y-4">
           <BudgetForm
