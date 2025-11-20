@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import GlassPanel from "../../../components/ui/GlassPanel";
 import formatCurrency from "../../dashboard/utils/formatCurrency";
 import BudgetProgressCircle from "./BudgetProgressCircle";
 import type { Budget } from "../types";
@@ -15,10 +16,12 @@ const BudgetCard: FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => {
   const remaining = Math.max(budget.remaining ?? 0, 0);
 
   return (
-    <article
-      className={`relative flex h-full w-full flex-col justify-between overflow-hidden rounded-3xl border bg-white p-6 shadow-sm transition hover:shadow-md ${
-        isOverrun ? "border-rose-200 ring-2 ring-rose-100" : "border-slate-100"
+    <GlassPanel
+      as="article"
+      className={`flex h-full w-full flex-col justify-between gap-4 ${
+        isOverrun ? "border-rose-200/70 ring-rose-200/50" : ""
       }`}
+      interactive
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
@@ -58,7 +61,7 @@ const BudgetCard: FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-center">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
         <div className="flex justify-center lg:block">
           <BudgetProgressCircle percentage={percentage} isOverrun={isOverrun} />
         </div>
@@ -83,7 +86,7 @@ const BudgetCard: FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => {
           </p>
         </div>
       </div>
-    </article>
+    </GlassPanel>
   );
 };
 

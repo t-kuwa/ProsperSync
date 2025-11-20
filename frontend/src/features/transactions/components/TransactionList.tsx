@@ -1,4 +1,5 @@
 import formatCurrency from "../../dashboard/utils/formatCurrency";
+import GlassPanel from "../../../components/ui/GlassPanel";
 import type {
   Category,
   PaginationState,
@@ -105,8 +106,8 @@ const TransactionList = ({
   };
 
   return (
-    <div className="rounded-3xl bg-white py-6 shadow-sm ring-1 ring-slate-200">
-      <div className="mx-6 flex flex-wrap items-center justify-between gap-3">
+    <GlassPanel as="section" className="space-y-4" padding="md">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">取引履歴</h2>
           <p className="text-sm text-slate-500">
@@ -123,7 +124,7 @@ const TransactionList = ({
         </div>
       </div>
 
-      <div className="mt-4 space-y-3 rounded-2xl bg-slate-50/60 p-4">
+      <div className="space-y-3 rounded-2xl bg-slate-50/60 p-4">
         <div className="flex flex-wrap items-center gap-2">
           <Chip
             label="すべて"
@@ -241,7 +242,7 @@ const TransactionList = ({
         </div>
       </div>
 
-      <div className="mx-6 mt-4 overflow-x-auto">
+      <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 text-sm">
           <thead>
             <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -353,12 +354,10 @@ const TransactionList = ({
       </div>
 
       {error ? (
-        <p className="mx-6 mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-600">
-          {error}
-        </p>
+        <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-600">{error}</p>
       ) : null}
 
-      <div className="mx-6 mt-6 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
         <span>
           ページ {pagination.page} / {totalPages}
         </span>
@@ -381,7 +380,7 @@ const TransactionList = ({
           </button>
         </div>
       </div>
-    </div>
+    </GlassPanel>
   );
 };
 

@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import GlassPanel from "../../../components/ui/GlassPanel";
 import type {
   Category,
   CategoryPayload,
@@ -114,7 +115,7 @@ const CategoryManager = forwardRef<CategoryManagerHandle, CategoryManagerProps>(
     );
 
     return (
-      <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+      <GlassPanel as="section" className="space-y-4" padding="md">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-slate-900">
@@ -147,7 +148,7 @@ const CategoryManager = forwardRef<CategoryManagerHandle, CategoryManagerProps>(
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
@@ -172,7 +173,7 @@ const CategoryManager = forwardRef<CategoryManagerHandle, CategoryManagerProps>(
           </p>
         ) : null}
 
-        <div className="mt-4 space-y-2">
+        <div className="space-y-2">
           {loading ? (
             <p className="text-sm text-slate-400">読み込み中です…</p>
           ) : filteredCategories.length === 0 ? (
@@ -234,7 +235,7 @@ const CategoryManager = forwardRef<CategoryManagerHandle, CategoryManagerProps>(
             onSubmit={handleSubmit}
           />
         ) : null}
-      </div>
+      </GlassPanel>
     );
   },
 );

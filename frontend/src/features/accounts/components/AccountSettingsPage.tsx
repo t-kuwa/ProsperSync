@@ -6,6 +6,7 @@ import DashboardShell from "../../dashboard/components/DashboardShell";
 import { getMembers } from "../../../api/accounts";
 import useAccountState from "../hooks/useAccountState";
 import type { Membership } from "../types";
+import GlassPanel from "../../../components/ui/GlassPanel";
 
 type AccountFormValues = {
   name: string;
@@ -167,9 +168,9 @@ const AccountSettingsPage = ({
       headerTitle="アカウント設定"
     >
       {!currentAccount ? (
-        <div className="rounded-3xl bg-white p-6 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
+        <GlassPanel className="text-sm text-slate-600">
           アカウントが選択されていません。サイドバーからワークスペースを選択してください。
-        </div>
+        </GlassPanel>
       ) : (
         <div className="flex flex-col gap-4">
           {status ? (
@@ -188,7 +189,7 @@ const AccountSettingsPage = ({
             </div>
           ) : null}
 
-          <article className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <GlassPanel as="article" className="flex flex-col gap-4">
             <header className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 {isEditing ? (
@@ -302,16 +303,76 @@ const AccountSettingsPage = ({
                 )}
               </div>
             )}
-          </article>
+          </GlassPanel>
 
-          <section className="rounded-3xl bg-white p-6 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
+          <GlassPanel as="section">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">メンバー</h2>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-slate-400">
+                {loadingMembers ? "同期中" : `${members.length}名`}
+              </span>
+            </div>
+            {loadingMembers ? (
+              <p className="mt-3 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                メンバーを読み込んでいます…
+              </p>
+            ) : members.length === 0 ? (
+              <p className="mt-3 text-sm text-slate-500">まだメンバーがいません。</p>
+            ) : (
+              <ul className="mt-4 space-y-3">
+                {members.map((member) => (
+                  <li
+                    key={member.id}
+                    className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-3"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {member.user?.name ?? `ユーザー #${member.userId}`}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {member.user?.email ?? "メール未設定"}
+                      </p>
+                    </div>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        member.role === "owner"
+                          ? "bg-amber-50 text-amber-700"
+                          : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {member.role === "owner" ? "オーナー" : "メンバー"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </GlassPanel>
+
+          <GlassPanel as="section" className="text-sm text-slate-600">
             <h2 className="text-lg font-semibold text-slate-900">あなたの役職</h2>
             <p className="mt-2 text-sm text-slate-600">
               {isOwner
                 ? "あなたはこのワークスペースのオーナーです。"
                 : "あなたはこのワークスペースのメンバーです。アカウント情報を編集できません。"}
             </p>
-          </section>
+          </GlassPanel>
+
+          {isOwner && currentAccount.accountType === "team" ? (
+            <GlassPanel as="section" tone="danger" className="text-sm">
+              <h2 className="text-lg font-semibold text-rose-700">危険な操作</h2>
+              <p className="mt-2 text-sm">
+                このワークスペースを削除すると、すべてのメンバーと取引データが完全に失われます。
+              </p>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="mt-4 inline-flex items-center justify-center rounded-2xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500 disabled:cursor-not-allowed disabled:bg-rose-300"
+              >
+                {deleting ? "削除中..." : "チームを削除"}
+              </button>
+            </GlassPanel>
+          ) : null}
         </div>
       )}
     </DashboardShell>
