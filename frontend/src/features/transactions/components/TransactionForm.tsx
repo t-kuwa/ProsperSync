@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import formatCurrency from "../../dashboard/utils/formatCurrency";
 import { getErrorMessage } from "../../../api/client";
+import GlassPanel from "../../../components/ui/GlassPanel";
 import type {
   Category,
   Transaction,
@@ -229,7 +230,7 @@ const TransactionForm = ({
   const disableSubmit = submitting || processing || loadingCategories;
 
   return (
-    <div className="h-fit rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
+    <GlassPanel as="section" className="h-fit" padding="md">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">収支を登録</h2>
@@ -422,7 +423,7 @@ const TransactionForm = ({
           {editingTransaction ? "収支を更新" : "収支を登録"}
         </button>
       </form>
-    </div>
+    </GlassPanel>
   );
 };
 
