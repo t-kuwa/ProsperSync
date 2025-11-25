@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Category } from "../../transactions/types";
 import type { BudgetPayload, BudgetPeriodType } from "../types";
+import { Card } from "../../../components/ui/Card";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 
 type RepeatBudgetModalProps = {
   open: boolean;
@@ -97,47 +100,47 @@ const RepeatBudgetModal = ({ open, onClose, onSubmit, categories, processing }: 
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-slate-950/40 px-3 py-4 backdrop-blur-sm sm:px-4 sm:py-6"
+      className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-background/80 px-3 py-4 backdrop-blur-sm sm:px-4 sm:py-6"
       onClick={onClose}
     >
-      <div
-        className="w-full max-w-full rounded-3xl bg-white p-6 shadow-xl ring-1 ring-slate-200 sm:max-w-2xl lg:max-w-3xl lg:p-8"
+      <Card
+        className="w-full max-w-full p-6 shadow-xl sm:max-w-2xl lg:max-w-3xl lg:p-8"
         onClick={handleWrapperClick}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+        <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">Repeat Budget</p>
-            <h2 className="text-xl font-semibold text-slate-900">繰り返し予算を作成</h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">Repeat Budget</p>
+            <h2 className="text-xl font-semibold text-text-primary">繰り返し予算を作成</h2>
+            <p className="text-sm text-text-secondary">
               開始期間から終了日までの不足分を自動生成します。後から各月の予算を個別に調整できます。
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-full p-2 text-text-secondary transition hover:bg-surface hover:text-text-primary"
           >
             <span className="material-icons">close</span>
           </button>
         </div>
 
         <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:gap-8">
-          <section className="rounded-2xl border border-indigo-100 bg-gradient-to-b from-indigo-50 via-white to-indigo-50 p-5 text-xs text-indigo-700 shadow-sm lg:w-[260px] lg:flex-shrink-0">
+          <section className="rounded-2xl border border-primary/20 bg-primary/5 p-5 text-xs text-primary shadow-sm lg:w-[260px] lg:flex-shrink-0">
             <div className="space-y-4 text-left">
               <div>
-                <p className="text-sm font-semibold text-indigo-800">繰り返し設定</p>
-                <p className="text-[12px] leading-relaxed text-indigo-600">
+                <p className="text-sm font-semibold text-primary">繰り返し設定</p>
+                <p className="text-[12px] leading-relaxed text-primary/80">
                   選択した期間と終了日をもとに、足りない月・年の予算を自動で複製します。定期的な支出をまとめて準備できます。
                 </p>
               </div>
-              <div className="rounded-xl bg-white/80 px-4 py-4 text-[12px] text-indigo-700 shadow-sm">
+              <div className="rounded-xl bg-background/80 px-4 py-4 text-[12px] text-primary shadow-sm">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-primary">
                     <span className="material-icons text-sm">lightbulb</span>
                   </span>
-                  <p className="text-sm font-semibold text-indigo-800">Tips</p>
+                  <p className="text-sm font-semibold text-primary">Tips</p>
                 </div>
-                <p className="mt-2 leading-relaxed text-indigo-700">
+                <p className="mt-2 leading-relaxed text-primary/80">
                   作成後は各期間の予算を個別に編集・削除できます。長期の計画も安心です。
                 </p>
               </div>
@@ -146,18 +149,17 @@ const RepeatBudgetModal = ({ open, onClose, onSubmit, categories, processing }: 
 
           <form onSubmit={handleSubmit} className="flex-1 space-y-5 overflow-y-auto lg:max-h-[70vh]">
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="flex flex-col gap-2 text-sm text-slate-600">
-                予算名（任意）
-                <input
-                  value={payload.name ?? ""}
-                  onChange={(event) => handleChange("name", event.target.value)}
-                  placeholder="例: 住宅ローン"
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                />
-              </label>
+              <Input
+                label="予算名（任意）"
+                value={payload.name ?? ""}
+                onChange={(event) => handleChange("name", event.target.value)}
+                placeholder="例: 住宅ローン"
+              />
 
-              <label className="flex flex-col gap-2 text-sm text-slate-600">
-                対象カテゴリ
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-text-secondary">
+                  対象カテゴリ
+                </label>
                 <select
                   value={payload.category_id ?? ""}
                   onChange={(event) =>
@@ -166,7 +168,7 @@ const RepeatBudgetModal = ({ open, onClose, onSubmit, categories, processing }: 
                       event.target.value ? Number(event.target.value) : null,
                     )
                   }
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
                 >
                   <option value="">全カテゴリ</option>
                   {expenseCategories.map((category) => (
@@ -175,105 +177,103 @@ const RepeatBudgetModal = ({ open, onClose, onSubmit, categories, processing }: 
                     </option>
                   ))}
                 </select>
-              </label>
+              </div>
 
-              <label className="flex flex-col gap-2 text-sm text-slate-600">
-                期間タイプ
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-text-secondary">
+                  期間タイプ
+                </label>
                 <select
                   value={payload.period_type}
                   onChange={(event) =>
                     handleChange("period_type", event.target.value as BudgetPeriodType)
                   }
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
                 >
                   <option value="monthly">月次</option>
                   <option value="yearly">年次</option>
                 </select>
-              </label>
+              </div>
 
-              <label className="flex flex-col gap-2 text-sm text-slate-600">
-                年
-                <input
-                  type="number"
-                  value={payload.period_year ?? ""}
-                  onChange={(event) => handleChange("period_year", Number(event.target.value))}
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                  min={2000}
-                />
-              </label>
+              <Input
+                label="年"
+                type="number"
+                value={payload.period_year ?? ""}
+                onChange={(event) => handleChange("period_year", Number(event.target.value))}
+                min={2000}
+              />
 
               {isMonthly ? (
-                <label className="flex flex-col gap-2 text-sm text-slate-600">
-                  月
-                  <input
-                    type="number"
-                    value={payload.period_month ?? ""}
-                    onChange={(event) =>
-                      handleChange(
-                        "period_month",
-                        event.target.value ? Number(event.target.value) : null,
-                      )
-                    }
-                    className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                    min={1}
-                    max={12}
-                  />
-                </label>
+                <Input
+                  label="月"
+                  type="number"
+                  value={payload.period_month ?? ""}
+                  onChange={(event) =>
+                    handleChange(
+                      "period_month",
+                      event.target.value ? Number(event.target.value) : null,
+                    )
+                  }
+                  min={1}
+                  max={12}
+                />
               ) : null}
 
-              <label className="flex flex-col gap-2 text-sm text-slate-600">
-                予算金額
-                <input
-                  type="number"
-                  value={payload.amount}
-                  onChange={(event) => handleChange("amount", Number(event.target.value))}
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                  min={0}
-                  step={1000}
-                />
-              </label>
+              <Input
+                label="予算金額"
+                type="number"
+                value={String(payload.amount)}
+                onChange={(event) => handleChange("amount", Number(event.target.value))}
+                min={0}
+                step={1000}
+              />
 
-              <label className="flex flex-col gap-2 text-sm text-slate-600">
-                繰り返し終了日
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-text-secondary">
+                  繰り返し終了日
+                </label>
                 <input
                   type="date"
                   value={payload.repeat_until_date ?? ""}
                   onChange={(event) => handleChange("repeat_until_date", event.target.value || null)}
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
                   min={minDate}
                   required
                 />
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-text-secondary">
                   {isMonthly ? "開始月の翌月以降を選択してください" : "開始年の翌年以降を選択してください"}
                 </span>
-              </label>
+              </div>
             </div>
 
             {validationError ? (
-              <div className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-600">
+              <div className="rounded-xl bg-red-50 px-3 py-2 text-xs text-red-600 border border-red-100">
                 {validationError}
               </div>
             ) : null}
 
             <div className="flex flex-wrap justify-end gap-2">
-              <button
+              <Button
                 type="button"
                 onClick={onClose}
-                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
+                variant="outline"
+                size="sm"
               >
                 キャンセル
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={processing}
-                className="rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-300"
+                variant="primary"
+                size="sm"
+                isLoading={processing}
               >
-                {processing ? "作成中…" : "この設定で作成"}
-              </button>
+                この設定で作成
+              </Button>
             </div>
           </form>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

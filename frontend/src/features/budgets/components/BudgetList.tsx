@@ -1,6 +1,8 @@
 import type { FC } from "react";
 import type { Budget } from "../types";
 import BudgetCard from "./BudgetCard";
+import { Card } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
 
 type BudgetListProps = {
   budgets: Budget[];
@@ -21,32 +23,34 @@ const BudgetList: FC<BudgetListProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="rounded-3xl bg-white p-8 text-center text-slate-500 shadow-sm ring-1 ring-slate-200">
+      <Card className="p-8 text-center text-text-secondary">
         予算データを読み込んでいます…
-      </div>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-3xl bg-white p-8 text-center shadow-sm ring-1 ring-rose-100">
-        <p className="text-sm text-rose-600">{error}</p>
-        <button
+      <Card className="p-8 text-center border-red-100 bg-red-50">
+        <p className="text-sm text-red-600">{error}</p>
+        <Button
           type="button"
           onClick={onRetry}
-          className="mt-4 rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-500"
+          variant="primary"
+          size="sm"
+          className="mt-4 bg-red-600 hover:bg-red-500"
         >
           もう一度試す
-        </button>
-      </div>
+        </Button>
+      </Card>
     );
   }
 
   if (budgets.length === 0) {
     return (
-      <div className="rounded-3xl bg-white p-8 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-200">
+      <Card className="p-8 text-center text-sm text-text-secondary">
         まだ予算が登録されていません。左側のフォームから作成できます。
-      </div>
+      </Card>
     );
   }
 

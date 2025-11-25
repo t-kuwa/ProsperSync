@@ -1,10 +1,9 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 
 const mergeClassNames = (...classNames: Array<string | false | undefined>) =>
   classNames.filter(Boolean).join(" ");
-
-export const inputBaseClassName =
-  "rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
 
 type FormFieldProps = {
   label: string;
@@ -17,21 +16,14 @@ export const FormField = ({
   name,
   ...props
 }: FormFieldProps) => {
-  const controlId = id ?? name;
-
   return (
-    <label
-      htmlFor={controlId}
-      className="flex flex-col text-sm text-slate-700"
-    >
-      <span className="mb-2 font-medium">{label}</span>
-      <input
-        id={controlId}
-        name={name}
-        className={mergeClassNames(inputBaseClassName, className)}
-        {...props}
-      />
-    </label>
+    <Input
+      label={label}
+      id={id ?? name}
+      name={name}
+      className={className}
+      {...props}
+    />
   );
 };
 
@@ -54,7 +46,7 @@ export const FormCheckbox = ({
     <label
       htmlFor={controlId}
       className={mergeClassNames(
-        "flex items-center gap-3 text-xs text-slate-600",
+        "flex items-center gap-3 text-sm text-text-secondary cursor-pointer",
         containerClassName,
       )}
     >
@@ -63,7 +55,7 @@ export const FormCheckbox = ({
         name={name}
         type="checkbox"
         className={mergeClassNames(
-          "h-4 w-4 rounded border-slate-300 bg-white text-indigo-600 focus:ring-indigo-500",
+          "h-4 w-4 rounded border-border text-primary focus:ring-primary",
           className,
         )}
         {...props}
@@ -88,16 +80,13 @@ export const FormSubmitButton = ({
   type,
   ...props
 }: FormSubmitButtonProps) => (
-  <button
+  <Button
     type={type ?? "submit"}
-    className={mergeClassNames(
-      "flex w-full items-center justify-center rounded-xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:bg-indigo-500/50",
-      className,
-    )}
+    className={`w-full ${className || ""}`}
     disabled={loading || disabled}
-    aria-busy={loading || undefined}
+    isLoading={loading}
     {...props}
   >
     {loading ? loadingLabel : idleLabel}
-  </button>
+  </Button>
 );

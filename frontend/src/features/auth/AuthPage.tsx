@@ -36,21 +36,23 @@ const AuthPage = ({ onAuthenticated }: AuthPageProps) => {
   }, [activeTab]);
 
   return (
-    <main className="min-h-screen bg-slate-50 md:flex md:items-center md:justify-center md:px-6 md:py-10">
-      <div className="mx-auto w-full max-w-md px-6 py-10 md:px-0">
-        <div className="mb-8 flex flex-col items-center gap-3">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div className="flex flex-col items-center gap-2">
           <HaruveIcon className="h-12 w-12" />
-          <p className="text-2xl font-semibold tracking-tight text-slate-900">Haruve</p>
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-text-primary">
+            {activeTab === "signup" ? "Create your account" : "Sign in to your account"}
+          </h2>
+          <p className="mt-2 text-center text-sm text-text-secondary">
+            {activeTab === "signup"
+              ? "Start your journey with us today."
+              : "Welcome back! Please enter your details."}
+          </p>
         </div>
+
         <AuthCard
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          heading={activeTab === "signup" ? "新しいアカウントを作成" : "おかえりなさい"}
-          subheading={
-            activeTab === "signup"
-              ? "まずはアカウントを作成して、体験をはじめましょう。"
-              : "アカウントにサインインして、体験を続けましょう。"
-          }
         >
           {activeTab === "signup" ? (
             <SignupForm
@@ -72,7 +74,7 @@ const AuthPage = ({ onAuthenticated }: AuthPageProps) => {
           )}
         </AuthCard>
       </div>
-    </main>
+    </div>
   );
 };
 

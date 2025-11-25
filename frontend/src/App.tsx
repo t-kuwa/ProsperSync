@@ -3,9 +3,9 @@ import AuthPage from "./features/auth/AuthPage";
 import DashboardPage from "./features/dashboard/DashboardPage";
 import BudgetsPage from "./features/budgets/BudgetsPage";
 import type { AuthSuccess } from "./features/auth/types";
-import { DashboardProvider } from "./features/dashboard/hooks/useDashboardState";
+import { DashboardProvider } from "./features/dashboard/context/DashboardContext";
 import TransactionsPage from "./features/transactions/TransactionsPage";
-import { AccountProvider } from "./features/accounts/hooks/useAccountState";
+import { AccountProvider } from "./features/accounts/context/AccountContext";
 import { apiClient, AUTH_ERROR_EVENT } from "./api/client";
 import AccountCreatePage from "./features/accounts/components/AccountCreatePage";
 import AccountSettingsPage from "./features/accounts/components/AccountSettingsPage";
@@ -15,6 +15,7 @@ import {
   matchAccountRoute,
   type AppRoute,
 } from "./routes";
+import { MainLayout } from "./components/layout/MainLayout";
 import { logoutUser } from "./features/auth/api";
 
 const STORAGE_KEY = "haruve-auth";
@@ -204,44 +205,26 @@ const App = () => {
   const renderPage = () => {
     if (route === APP_ROUTES.dashboard) {
       return (
-        <DashboardPage
-          userName={auth.user.name}
-          currentRoute={route}
-          onNavigate={navigate}
-          onLogout={handleLogout}
-        />
+        <DashboardPage />
       );
     }
 
     if (route === APP_ROUTES.transactions) {
       return (
-        <TransactionsPage
-          userName={auth.user.name}
-          currentRoute={route}
-          onNavigate={navigate}
-          onLogout={handleLogout}
-        />
+        <TransactionsPage />
       );
     }
 
     if (route === APP_ROUTES.budgets) {
       return (
-        <BudgetsPage
-          userName={auth.user.name}
-          currentRoute={route}
-          onNavigate={navigate}
-          onLogout={handleLogout}
-        />
+        <BudgetsPage />
       );
     }
 
     if (route === APP_ROUTES.accountCreate) {
       return (
         <AccountCreatePage
-          userName={auth.user.name}
-          currentRoute={route}
           onNavigate={navigate}
-          onLogout={handleLogout}
         />
       );
     }
@@ -249,11 +232,7 @@ const App = () => {
     if (accountRouteMatch?.type === "settings") {
       return (
         <AccountSettingsPage
-          userName={auth.user.name}
           currentUserId={auth.user.id}
-          currentRoute={route}
-          onNavigate={navigate}
-          onLogout={handleLogout}
         />
       );
     }
@@ -261,22 +240,13 @@ const App = () => {
     if (accountRouteMatch?.type === "members") {
       return (
         <MembersPage
-          userName={auth.user.name}
           currentUserId={auth.user.id}
-          currentRoute={route}
-          onNavigate={navigate}
-          onLogout={handleLogout}
         />
       );
     }
 
     return (
-      <DashboardPage
-        userName={auth.user.name}
-        currentRoute={APP_ROUTES.dashboard}
-        onNavigate={navigate}
-        onLogout={handleLogout}
-      />
+      <DashboardPage />
     );
   };
 
@@ -290,7 +260,16 @@ const App = () => {
       key={auth.user.id}
       initialAccountId={auth.user.primaryAccountId}
     >
-      <DashboardProvider>{renderPage()}</DashboardProvider>
+      <DashboardProvider>
+        <MainLayout
+          userName={auth.user.name}
+          onLogout={handleLogout}
+          currentPath={route}
+          onNavigate={(path) => navigate(path as AppRoute)}
+        >
+          {renderPage()}
+        </MainLayout>
+      </DashboardProvider>
     </AccountProvider>
   );
 };

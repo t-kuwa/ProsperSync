@@ -1,4 +1,6 @@
 import formatCurrency from "../../dashboard/utils/formatCurrency";
+import { Card } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
 import type {
   Category,
   PaginationState,
@@ -44,9 +46,9 @@ const Chip = ({
   color: "slate" | "emerald" | "rose";
 }) => {
   const activeClasses: Record<typeof color, string> = {
-    slate: "bg-slate-900 text-white",
-    emerald: "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200",
-    rose: "bg-rose-100 text-rose-700 ring-1 ring-rose-200",
+    slate: "bg-text-primary text-background",
+    emerald: "bg-green-100 text-green-700 ring-1 ring-green-200",
+    rose: "bg-red-100 text-red-700 ring-1 ring-red-200",
   };
 
   return (
@@ -56,7 +58,7 @@ const Chip = ({
       className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
         active
           ? activeClasses[color]
-          : "bg-white text-slate-500 ring-1 ring-slate-200 hover:bg-slate-50"
+          : "bg-surface text-text-secondary ring-1 ring-border hover:bg-background hover:text-text-primary"
       }`}
     >
       {label}
@@ -88,7 +90,7 @@ const TransactionList = ({
     }
 
     return (
-      <span className="ml-1 text-[10px] font-semibold text-indigo-500">
+      <span className="ml-1 text-[10px] font-semibold text-primary">
         {sort.direction === "asc" ? "▲" : "▼"}
       </span>
     );
@@ -105,25 +107,25 @@ const TransactionList = ({
   };
 
   return (
-    <div className="rounded-3xl bg-white py-6 shadow-sm ring-1 ring-slate-200">
-      <div className="mx-6 flex flex-wrap items-center justify-between gap-3">
+    <Card className="py-6">
+      <div className="mx-6 flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">取引履歴</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-lg font-semibold text-text-primary">取引履歴</h2>
+          <p className="text-sm text-text-secondary">
             フィルタや並び替えを活用して収支を探しましょう。
           </p>
         </div>
         <div className="flex flex-wrap gap-2 text-xs font-medium">
-          <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">
+          <span className="rounded-full bg-green-50 px-3 py-1 text-green-700 border border-green-100">
             総収入 {formatCurrency(totals.income)}
           </span>
-          <span className="rounded-full bg-rose-50 px-3 py-1 text-rose-600">
+          <span className="rounded-full bg-red-50 px-3 py-1 text-red-600 border border-red-100">
             総支出 {formatCurrency(totals.expense)}
           </span>
         </div>
       </div>
 
-      <div className="mt-4 space-y-3 rounded-2xl bg-slate-50/60 p-4">
+      <div className="mx-6 mb-6 space-y-3 rounded-2xl bg-background p-4 border border-border">
         <div className="flex flex-wrap items-center gap-2">
           <Chip
             label="すべて"
@@ -151,12 +153,12 @@ const TransactionList = ({
                 onFilterChange("search", event.target.value)
               }
               placeholder="キーワード検索"
-              className="w-48 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200"
+              className="w-48 rounded-full border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 text-text-primary placeholder:text-text-secondary"
             />
             <button
               type="button"
               onClick={onResetFilters}
-              className="text-xs font-semibold text-slate-500 underline-offset-4 hover:underline"
+              className="text-xs font-semibold text-text-secondary underline-offset-4 hover:underline hover:text-text-primary"
             >
               リセット
             </button>
@@ -165,7 +167,7 @@ const TransactionList = ({
 
         <div className="grid gap-3 md:grid-cols-4">
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
               カテゴリ
             </label>
             <select
@@ -176,7 +178,7 @@ const TransactionList = ({
                   event.target.value ? Number(event.target.value) : null,
                 )
               }
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
             >
               <option value="">すべて</option>
               {categories.map((category) => (
@@ -188,7 +190,7 @@ const TransactionList = ({
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
               開始日
             </label>
             <input
@@ -200,12 +202,12 @@ const TransactionList = ({
                   onFilterChange("month", null);
                 }
               }}
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
             />
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
               終了日
             </label>
             <input
@@ -217,12 +219,12 @@ const TransactionList = ({
                   onFilterChange("month", null);
                 }
               }}
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
             />
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <label className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
               月で絞り込み
             </label>
             <input
@@ -235,16 +237,16 @@ const TransactionList = ({
                   onFilterChange("endDate", null);
                 }
               }}
-              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
             />
           </div>
         </div>
       </div>
 
-      <div className="mx-6 mt-4 overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
+      <div className="mx-6 overflow-x-auto">
+        <table className="min-w-full divide-y divide-border text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <tr className="text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
               {([
                 { field: "date", label: "日付" },
                 { field: "category", label: "カテゴリ" },
@@ -252,7 +254,7 @@ const TransactionList = ({
               ] as const).map((column) => (
                 <th
                   key={column.field}
-                  className="cursor-pointer whitespace-nowrap px-3 py-2"
+                  className="cursor-pointer whitespace-nowrap px-3 py-2 hover:text-text-primary transition-colors"
                   onClick={() => onSortChange(column.field)}
                 >
                   <span className="inline-flex items-center whitespace-nowrap">
@@ -265,12 +267,12 @@ const TransactionList = ({
               <th className="whitespace-nowrap px-3 py-2 text-center">操作</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-700">
+          <tbody className="divide-y divide-border text-text-primary">
             {loading ? (
               <tr>
                 <td
                   colSpan={5}
-                  className="px-3 py-6 text-center text-slate-400"
+                  className="px-3 py-6 text-center text-text-secondary"
                 >
                   データを取得しています...
                 </td>
@@ -279,7 +281,7 @@ const TransactionList = ({
               <tr>
                 <td
                   colSpan={5}
-                  className="px-3 py-6 text-center text-slate-400"
+                  className="px-3 py-6 text-center text-text-secondary"
                 >
                   条件に一致する取引がありません。
                 </td>
@@ -288,9 +290,9 @@ const TransactionList = ({
               transactions.map((transaction) => (
                 <tr
                   key={transaction.uid}
-                  className="transition hover:bg-slate-50/80"
+                  className="transition hover:bg-surface"
                 >
-                  <td className="whitespace-nowrap px-3 py-3 text-sm text-slate-500">
+                  <td className="whitespace-nowrap px-3 py-3 text-sm text-text-secondary">
                     {transaction.date}
                   </td>
                   <td className="px-3 py-3">
@@ -303,10 +305,10 @@ const TransactionList = ({
                         }}
                       />
                       <div>
-                        <p className="whitespace-nowrap text-sm font-semibold text-slate-900">
+                        <p className="whitespace-nowrap text-sm font-semibold text-text-primary">
                           {transaction.category.name}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-text-secondary">
                           {transaction.title}
                         </p>
                       </div>
@@ -316,34 +318,38 @@ const TransactionList = ({
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold ${
                         transaction.resourceType === "income"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-rose-50 text-rose-600"
+                          ? "bg-green-50 text-green-600"
+                          : "bg-red-50 text-red-600"
                       }`}
                     >
                       {transaction.resourceType === "income" ? "+" : "-"}
                       {formatCurrency(transaction.amount).replace("￥", "")}
                     </span>
                   </td>
-                  <td className="min-w-[120px] max-w-xs break-normal px-3 py-3 text-sm text-slate-500">
+                  <td className="min-w-[120px] max-w-xs break-normal px-3 py-3 text-sm text-text-secondary">
                     {transaction.memo ?? "メモなし"}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-center text-xs font-semibold text-indigo-600">
-                    <button
-                      type="button"
-                      className="rounded-full px-3 py-1 hover:bg-indigo-50"
-                      onClick={() => onEdit(transaction)}
-                      disabled={processing}
-                    >
-                      編集
-                    </button>
-                    <button
-                      type="button"
-                      className="ml-2 rounded-full px-3 py-1 text-rose-600 hover:bg-rose-50"
-                      onClick={() => handleDelete(transaction)}
-                      disabled={processing}
-                    >
-                      削除
-                    </button>
+                  <td className="whitespace-nowrap px-3 py-3 text-center text-xs font-semibold">
+                    <div className="flex items-center justify-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onEdit(transaction)}
+                        disabled={processing}
+                        className="text-primary hover:bg-primary/5"
+                      >
+                        編集
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(transaction)}
+                        disabled={processing}
+                        className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                      >
+                        削除
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -353,35 +359,35 @@ const TransactionList = ({
       </div>
 
       {error ? (
-        <p className="mx-6 mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-600">
+        <p className="mx-6 mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-100">
           {error}
         </p>
       ) : null}
 
-      <div className="mx-6 mt-6 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+      <div className="mx-6 mt-6 flex flex-wrap items-center justify-between gap-3 text-sm text-text-secondary">
         <span>
           ページ {pagination.page} / {totalPages}
         </span>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-40"
+          <Button
+            variant="outline"
+            size="sm"
             disabled={pagination.page <= 1}
             onClick={() => onPageChange(pagination.page - 1)}
           >
             前へ
-          </button>
-          <button
-            type="button"
-            className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-40"
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             disabled={pagination.page >= totalPages}
             onClick={() => onPageChange(pagination.page + 1)}
           >
             次へ
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

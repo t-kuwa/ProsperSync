@@ -7,6 +7,7 @@ import { getIncomes } from "../../../api/incomes";
 import { getErrorMessage } from "../../../api/client";
 import BottomSheet from "./BottomSheet";
 import DateTransactionList, { type DayTransaction } from "./DateTransactionList";
+import { Card } from "../../../components/ui/Card";
 
 type CalendarOverviewProps = {
   calendarEntries: CalendarEntry[];
@@ -242,21 +243,15 @@ const CalendarOverview = ({
     : "";
 
   return (
-    <div
-      className={`relative flex h-fit flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6 shadow-xl shadow-slate-900/10 ring-1 ring-white/60 ${className ?? ""}`}
-    >
-      <div
-        className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/40 blur-3xl"
-        aria-hidden
-      />
-      <div className="flex items-center justify-between">
+    <Card className={`p-6 flex flex-col ${className ?? ""}`}>
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">{monthKey}</h2>
+          <h2 className="text-lg font-semibold text-text-primary">{monthKey}</h2>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="rounded-full border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            className="rounded-full border border-border px-3 py-1 text-sm font-medium text-text-secondary transition hover:bg-surface hover:text-text-primary"
             onClick={() =>
               setVisibleMonth(
                 (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
@@ -268,7 +263,7 @@ const CalendarOverview = ({
           </button>
           <button
             type="button"
-            className="rounded-full border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            className="rounded-full border border-border px-3 py-1 text-sm font-medium text-text-secondary transition hover:bg-surface hover:text-text-primary"
             onClick={() =>
               setVisibleMonth(
                 (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
@@ -281,7 +276,7 @@ const CalendarOverview = ({
         </div>
       </div>
 
-      <div className="-mx-6 mt-6 grid grid-cols-7 gap-0 px-0 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
+      <div className="-mx-6 mt-6 grid grid-cols-7 gap-0 px-0 text-center text-xs font-semibold uppercase tracking-wide text-text-secondary opacity-70">
         {weekdays.map((weekday) => (
           <span key={weekday} className="py-2">
             {weekday}
@@ -296,7 +291,7 @@ const CalendarOverview = ({
         {calendar.map((cell, index) => {
           if (!cell) {
             return (
-              <div key={`empty-${index}`} className="h-20 min-h-[80px]" aria-hidden />
+              <div key={`empty-${index}`} className="h-14 min-h-[56px] md:h-20 md:min-h-[80px]" aria-hidden />
             );
           }
 
@@ -311,13 +306,13 @@ const CalendarOverview = ({
               key={key}
               role={canInteract ? "button" : undefined}
               tabIndex={canInteract ? 0 : -1}
-              className={`flex h-20 min-h-[80px] flex-col justify-between rounded-2xl border border-transparent p-2 text-left transition md:p-3 ${
+              className={`flex h-14 min-h-[56px] md:h-20 md:min-h-[80px] flex-col justify-between rounded-xl md:rounded-2xl border border-transparent p-1 md:p-3 text-left transition ${
                 canInteract
-                  ? "cursor-pointer hover:border-indigo-200"
+                  ? "cursor-pointer hover:border-primary/30 hover:bg-surface"
                   : "cursor-default opacity-60"
               } ${
-                isToday ? "border-indigo-200 bg-indigo-50/70" : "bg-slate-50"
-              } ${hasData ? "shadow-sm shadow-indigo-50" : ""}`}
+                isToday ? "border-primary/30 bg-primary/5" : ""
+              } ${hasData ? "" : ""}`}
               onClick={
                 hasData
                   ? canInteract
@@ -341,7 +336,7 @@ const CalendarOverview = ({
                   : undefined
               }
             >
-              <div className="flex items-center justify-center text-xs font-semibold text-slate-700">
+              <div className={`flex items-center justify-center text-xs font-semibold ${isToday ? "text-primary" : "text-text-secondary"}`}>
                 <span>{date.getDate()}</span>
               </div>
               <div className="space-y-0.5 text-right">
@@ -376,17 +371,17 @@ const CalendarOverview = ({
       </div>
 
       {loading ? (
-        <div className="mt-6 animate-pulse rounded-2xl bg-slate-50 py-10 text-center text-sm text-slate-400">
+        <div className="mt-6 animate-pulse rounded-2xl bg-surface py-10 text-center text-sm text-text-secondary">
           カレンダーデータを読み込んでいます…
         </div>
       ) : error ? (
-        <div className="mt-6 rounded-2xl bg-rose-50 px-4 py-6 text-center text-sm text-rose-600">
+        <div className="mt-6 rounded-2xl bg-red-50 px-4 py-6 text-center text-sm text-red-600">
           {error}
           {onRetry ? (
             <div>
               <button
                 type="button"
-                className="mt-3 rounded-full border border-rose-200 px-4 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-100"
+                className="mt-3 rounded-full border border-red-200 px-4 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100"
                 onClick={() => {
                   void onRetry();
                 }}
@@ -408,6 +403,12 @@ const CalendarOverview = ({
               plugins: {
                 legend: { position: "bottom" },
                 tooltip: {
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  titleColor: "#1e293b",
+                  bodyColor: "#475569",
+                  borderColor: "#e2e8f0",
+                  borderWidth: 1,
+                  padding: 12,
                   callbacks: {
                     label: (context) => {
                       const value = context.parsed.y ?? 0;
@@ -458,7 +459,7 @@ const CalendarOverview = ({
           />
         ) : null}
       </BottomSheet>
-    </div>
+    </Card>
   );
 };
 

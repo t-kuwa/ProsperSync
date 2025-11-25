@@ -17,7 +17,7 @@ const BudgetProgressCircle: FC<BudgetProgressCircleProps> = ({ percentage, isOve
     <div className="relative h-28 w-28 flex-shrink-0">
       <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
         <circle
-          className="text-slate-100"
+          className="text-surface"
           stroke="currentColor"
           strokeWidth="12"
           fill="transparent"
@@ -26,7 +26,7 @@ const BudgetProgressCircle: FC<BudgetProgressCircleProps> = ({ percentage, isOve
           cy="60"
         />
         <circle
-          className={isOverrun ? "text-rose-500" : "text-emerald-500"}
+          className={isOverrun ? "text-red-500" : "text-green-500"}
           stroke="currentColor"
           strokeWidth="12"
           strokeLinecap="round"
@@ -40,14 +40,14 @@ const BudgetProgressCircle: FC<BudgetProgressCircleProps> = ({ percentage, isOve
       </svg>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className={`text-2xl font-semibold ${isOverrun ? "text-rose-600" : "text-slate-900"}`}>
+        <span className={`text-2xl font-semibold ${isOverrun ? "text-red-600" : "text-text-primary"}`}>
           {percentage.toFixed(0)}%
         </span>
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">進捗</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">進捗</span>
       </div>
 
       {overflowPercent > 0 ? (
-        <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-rose-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-rose-600 shadow-sm">
+        <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-red-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-600 shadow-sm">
           超過 +{overflowPercent.toFixed(0)}%
         </span>
       ) : null}
