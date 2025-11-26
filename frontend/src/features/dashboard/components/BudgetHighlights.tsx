@@ -35,7 +35,7 @@ const BudgetHighlights: FC<BudgetHighlightsProps> = ({ summary, className }) => 
             summary.overruns > 0 ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"
           }`}
         >
-          {summary.overruns > 0 ? `超過 ${summary.overruns} 件` : "順調です"}
+          {summary.overruns > 0 ? `超過 ${summary.overruns} 件` : "順調"}
         </span>
       </header>
 

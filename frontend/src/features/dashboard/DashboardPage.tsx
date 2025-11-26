@@ -95,7 +95,7 @@ const DashboardPage = () => {
         trendValue:
           budgetSummary.overruns > 0
             ? `${budgetSummary.overruns} 件超過`
-            : "順調です",
+            : "順調",
         trendPositive: budgetSummary.overruns === 0,
       },
     ],

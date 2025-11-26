@@ -73,7 +73,7 @@ const BudgetsPage = () => {
           </span>
         </span>
         <span className={totals.overruns > 0 ? "text-red-600" : "text-emerald-600"}>
-          {totals.overruns > 0 ? `超過 ${totals.overruns} 件` : "すべて順調です"}
+          {totals.overruns > 0 ? `超過 ${totals.overruns} 件` : "すべて順調"}
         </span>
       </Card>
 
