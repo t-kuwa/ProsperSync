@@ -47,7 +47,7 @@ const DashboardHeader = ({
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-white/40 bg-white/60 px-4 pb-4 pt-4 shadow-lg backdrop-blur-md transition-transform duration-300 sm:px-6 lg:hidden ${
+      className={`sticky top-0 z-50 border-b border-white/20 bg-white/30 px-4 pb-4 pt-4 shadow-sm backdrop-blur-xl backdrop-saturate-150 transition-transform duration-300 sm:px-6 lg:hidden ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
