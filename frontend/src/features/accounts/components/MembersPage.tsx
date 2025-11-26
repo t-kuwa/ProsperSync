@@ -6,18 +6,14 @@ import {
   getMembers,
   updateMember,
 } from "../../../api/accounts";
-import type { AppRoute } from "../../../routes";
-import DashboardShell from "../../dashboard/components/DashboardShell";
 import useAccountState from "../hooks/useAccountState";
 import type { Membership, MembershipRole } from "../types";
 import AddMemberModal from "./AddMemberModal";
+import { Card } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
 
 type MembersPageProps = {
-  userName?: string;
   currentUserId: number;
-  onLogout?: () => void;
-  currentRoute: AppRoute;
-  onNavigate: (route: AppRoute) => void;
 };
 
 type MemberFormState = {
@@ -31,11 +27,7 @@ const initialFormState: MemberFormState = {
 };
 
 const MembersPage = ({
-  userName,
   currentUserId,
-  onLogout,
-  currentRoute,
-  onNavigate,
 }: MembersPageProps) => {
   const { currentAccount } = useAccountState();
   const [members, setMembers] = useState<Membership[]>([]);
@@ -183,90 +175,93 @@ const MembersPage = ({
   };
 
   return (
-    <DashboardShell
-      userName={userName}
-      onLogout={onLogout}
-      currentRoute={currentRoute}
-      onNavigate={onNavigate}
-      headerTitle="メンバー管理"
-    >
-      {!currentAccount ? (
-        <div className="rounded-3xl bg-white p-6 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
-          アカウントが選択されていません。サイドバーからワークスペースを選択してください。
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="text-left">
+          <h1 className="text-2xl font-bold text-text-primary">メンバー管理</h1>
+          <p className="mt-1 text-sm text-text-secondary">
+            ワークスペースのメンバーを管理します。
+          </p>
         </div>
+        {isOwner && currentAccount && (
+          <Button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            variant="primary"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <span className="material-icons text-lg">add</span>
+            メンバーを追加
+          </Button>
+        )}
+      </div>
+
+      {!currentAccount ? (
+        <Card className="p-6 text-sm text-text-secondary">
+          アカウントが選択されていません。サイドバーからワークスペースを選択してください。
+        </Card>
       ) : (
         <>
-          <div className="mb-4 rounded-3xl bg-white/90 px-5 py-3 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200">
-            <span className="font-semibold text-slate-900">
+          <div className="mb-4 rounded-3xl bg-surface/50 px-5 py-3 text-sm text-text-secondary shadow-sm ring-1 ring-border">
+            <span className="font-semibold text-text-primary">
               {currentAccount.name}
             </span>
-            <span className="ml-2 text-xs text-slate-400">
+            <span className="ml-2 text-xs text-text-secondary">
               メンバー数: {members.length}
             </span>
           </div>
           <div className="flex w-full flex-col gap-4">
             {status ? (
-              <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-600 ring-1 ring-emerald-200">
+              <Card className="bg-green-50 border-green-100 p-4 text-sm text-green-600">
                 {status}
-              </div>
+              </Card>
             ) : null}
 
             {error ? (
-              <div className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600 ring-1 ring-rose-200">
+              <Card className="bg-red-50 border-red-100 p-4 text-sm text-red-600">
                 {error}
-              </div>
+              </Card>
             ) : null}
 
             {loading ? (
-              <div className="rounded-3xl bg-white p-6 text-sm text-slate-500 shadow-sm ring-1 ring-slate-200">
+              <Card className="p-6 text-sm text-text-secondary">
                 メンバーを読み込み中です...
-              </div>
+              </Card>
             ) : members.length === 0 ? (
-              <div className="rounded-3xl bg-white p-6 text-sm text-slate-500 shadow-sm ring-1 ring-slate-200">
+              <Card className="p-6 text-sm text-text-secondary">
                 登録されているメンバーはいません。
-              </div>
+              </Card>
             ) : (
-              <div className="w-full rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
-                <header className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                  <h2 className="text-lg font-semibold text-slate-900">メンバー</h2>
-                  {isOwner && (
-                    <button
-                      type="button"
-                      onClick={() => setIsModalOpen(true)}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-300 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-400"
-                    >
-                      <span className="material-icons text-lg">add</span>
-                    </button>
-                  )}
-                </header>
-                <div className="overflow-x-scroll">
+              <Card className="overflow-hidden">
+                <div className="overflow-x-auto">
                   <table className="min-w-full">
-                    <thead className="bg-slate-50">
+                    <thead className="bg-surface border-b border-border">
                       <tr>
-                        <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                           アイコン
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                           名前
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                           メールアドレス
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                           ロール
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                           参加日
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                           最終ログイン日
                         </th>
-                        <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th className="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                           アクション
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200">
+                    <tbody className="divide-y divide-border bg-background">
                       {members.map((member) => {
                         const isSelf = member.userId === currentUserId;
                         const isOwnerMember = member.role === "owner";
@@ -299,34 +294,34 @@ const MembersPage = ({
                         return (
                           <tr
                             key={member.id}
-                            className="transition hover:bg-slate-50"
+                            className="transition hover:bg-surface/50"
                           >
                             <td className="whitespace-nowrap px-6 py-4">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface text-sm font-semibold text-text-secondary ring-1 ring-border">
                                 {initials}
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
+                            <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-text-primary">
                               {memberName}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+                            <td className="whitespace-nowrap px-6 py-4 text-sm text-text-secondary">
                               {memberEmail}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4">
                               <span
                                 className={`rounded-full px-3 py-1 text-xs font-semibold ${
                                   member.role === "owner"
-                                    ? "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100"
-                                    : "bg-slate-100 text-slate-600 ring-1 ring-slate-200"
+                                    ? "bg-green-50 text-green-600 ring-1 ring-green-100"
+                                    : "bg-surface text-text-secondary ring-1 ring-border"
                                 }`}
                               >
                                 {member.role === "owner" ? "オーナー" : "メンバー"}
                               </span>
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+                            <td className="whitespace-nowrap px-6 py-4 text-sm text-text-secondary">
                               {joinedDate}
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+                            <td className="whitespace-nowrap px-6 py-4 text-sm text-text-secondary">
                               {lastLoginDate}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4">
@@ -344,14 +339,14 @@ const MembersPage = ({
                                         event.target.value as MembershipRole,
                                       );
                                     }}
-                                    className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-50"
+                                    className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-text-primary shadow-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-surface"
                                   >
                                     <option value="member">メンバー</option>
                                     <option value="owner">オーナー</option>
                                   </select>
                                 )}
                                 {canRemoveFinal && (
-                                  <button
+                                  <Button
                                     type="button"
                                     onClick={() => {
                                       void handleRemoveMember(member);
@@ -360,12 +355,14 @@ const MembersPage = ({
                                       updatingMemberId === member.id ||
                                       removingMemberId === member.id
                                     }
-                                    className="inline-flex items-center justify-center rounded-xl border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
                                   >
                                     {removingMemberId === member.id
                                       ? "削除中..."
                                       : "削除"}
-                                  </button>
+                                  </Button>
                                 )}
                               </div>
                             </td>
@@ -375,7 +372,7 @@ const MembersPage = ({
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </Card>
             )}
           </div>
 
@@ -401,7 +398,7 @@ const MembersPage = ({
           />
         </>
       )}
-    </DashboardShell>
+    </div>
   );
 };
 

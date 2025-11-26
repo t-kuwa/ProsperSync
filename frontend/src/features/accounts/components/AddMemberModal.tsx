@@ -1,5 +1,8 @@
 import { useEffect, type FormEventHandler } from "react";
 import type { MembershipRole } from "../types";
+import { Card } from "../../../components/ui/Card";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 
 type AddMemberModalProps = {
   isOpen: boolean;
@@ -49,89 +52,91 @@ const AddMemberModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/40 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-background/80 backdrop-blur-sm transition-opacity"
       onClick={onClose}
     >
-      <div
-        className="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl ring-1 ring-slate-200"
+      <Card
+        className="w-full max-w-md p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">メンバーを追加</h2>
+          <h2 className="text-lg font-semibold text-text-primary">メンバーを追加</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1 text-text-secondary transition hover:bg-surface hover:text-text-primary"
           >
             <span className="material-icons text-lg">close</span>
           </button>
         </div>
 
-        <p className="mb-4 text-sm text-slate-500">
+        <p className="mb-4 text-sm text-text-secondary">
           既存ユーザーのIDを指定して招待します。オーナーのみが追加できます。
         </p>
 
         {!isOwner ? (
-          <div className="mb-4 rounded-xl bg-slate-100 px-3 py-2 text-xs text-slate-500">
+          <div className="mb-4 rounded-xl bg-surface px-3 py-2 text-xs text-text-secondary">
             メンバーを追加するにはオーナー権限が必要です。
           </div>
         ) : null}
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          <label className="text-sm font-medium text-slate-700">
-            ユーザーID
-            <input
-              type="number"
-              inputMode="numeric"
-              value={userId}
-              onChange={(event) => onUserIdChange(event.target.value)}
-              disabled={!isOwner || creating}
-              className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-              placeholder="例: 42"
-              required
-            />
-          </label>
+          <Input
+            label="ユーザーID"
+            type="number"
+            inputMode="numeric"
+            value={userId}
+            onChange={(event) => onUserIdChange(event.target.value)}
+            disabled={!isOwner || creating}
+            placeholder="例: 42"
+            required
+          />
 
-          <label className="text-sm font-medium text-slate-700">
-            ロール
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-text-secondary">
+              ロール
+            </label>
             <select
               value={role}
               onChange={(event) =>
                 onRoleChange(event.target.value as MembershipRole)
               }
               disabled={!isOwner || creating}
-              className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-50"
+              className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-text-primary shadow-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-surface"
             >
               <option value="member">メンバー</option>
               <option value="owner">オーナー</option>
             </select>
-          </label>
+          </div>
 
           {error ? (
-            <div className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-600">
+            <div className="rounded-xl bg-red-50 px-3 py-2 text-xs text-red-600 border border-red-100">
               {error}
             </div>
           ) : null}
 
           <div className="flex gap-3">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               disabled={creating}
-              className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+              variant="outline"
+              className="flex-1"
             >
               キャンセル
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={!isOwner || creating}
-              className="flex-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-300"
+              variant="primary"
+              isLoading={creating}
+              className="flex-1"
             >
-              {creating ? "追加中..." : "メンバーを追加"}
-            </button>
+              メンバーを追加
+            </Button>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };

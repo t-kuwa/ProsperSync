@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import type { Category } from "../../transactions/types";
 import type { Budget, BudgetPayload, BudgetPeriodType } from "../types";
 import RepeatBudgetModal from "./RepeatBudgetModal";
+import { Card } from "../../../components/ui/Card";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 
 type BudgetFormProps = {
   categories: Category[];
@@ -102,152 +105,147 @@ const BudgetForm = ({
     onCancel();
   };
 
-  const wrapperClassName =
-    variant === "card"
-      ? "space-y-4"
-      : variant === "plain"
-        ? "space-y-6"
-        : "";
-  const formClassName =
-    variant === "card"
-      ? "space-y-4 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
-      : "space-y-4";
+  const FormContent = (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {showHeader ? (
+        <div className="text-left">
+          <h2 className="text-lg font-semibold text-text-primary">
+            {editing ? "予算を編集" : "新しい予算を作成"}
+          </h2>
+          <p className="text-sm text-text-secondary">
+            カテゴリ別の支出上限と期間を設定して、進捗を可視化できます。
+          </p>
+        </div>
+      ) : null}
 
-  return (
-    <div className={wrapperClassName}>
-      <form onSubmit={handleSubmit} className={formClassName}>
-        {showHeader ? (
-          <div className="text-left">
-            <h2 className="text-lg font-semibold text-slate-900">
-              {editing ? "予算を編集" : "新しい予算を作成"}
-            </h2>
-            <p className="text-sm text-slate-500">
-              カテゴリ別の支出上限と期間を設定して、進捗を可視化できます。
-            </p>
-          </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Input
+          label="予算名（任意）"
+          value={payload.name ?? ""}
+          onChange={(event) => handleChange("name", event.target.value)}
+          placeholder="例: 11月の食費"
+        />
+
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-text-secondary">
+            対象カテゴリ
+          </label>
+          <select
+            value={payload.category_id ?? ""}
+            onChange={(event) =>
+              handleChange(
+                "category_id",
+                event.target.value ? Number(event.target.value) : null,
+              )
+            }
+            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
+          >
+            <option value="">全カテゴリ</option>
+            {expenseCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-text-secondary">
+            期間タイプ
+          </label>
+          <select
+            value={payload.period_type}
+            onChange={(event) =>
+              handleChange("period_type", event.target.value as BudgetPeriodType)
+            }
+            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary"
+          >
+            <option value="monthly">月次</option>
+            <option value="yearly">年次</option>
+          </select>
+        </div>
+
+        <Input
+          label="年"
+          type="number"
+          value={payload.period_year ?? ""}
+          onChange={(event) => handleChange("period_year", Number(event.target.value))}
+          min={2000}
+        />
+
+        {isMonthly ? (
+          <Input
+            label="月"
+            type="number"
+            value={payload.period_month ?? ""}
+            onChange={(event) =>
+              handleChange(
+                "period_month",
+                event.target.value ? Number(event.target.value) : null,
+              )
+            }
+            min={1}
+            max={12}
+          />
         ) : null}
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm text-slate-600">
-            予算名（任意）
-            <input
-              value={payload.name ?? ""}
-              onChange={(event) => handleChange("name", event.target.value)}
-              placeholder="例: 11月の食費"
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-            />
-          </label>
+        <Input
+          label="予算金額"
+          type="number"
+          value={amountInput}
+          onChange={handleAmountChange}
+          min={0}
+          step={1000}
+        />
+      </div>
 
-          <label className="flex flex-col gap-2 text-sm text-slate-600">
-            対象カテゴリ
-            <select
-              value={payload.category_id ?? ""}
-              onChange={(event) =>
-                handleChange(
-                  "category_id",
-                  event.target.value ? Number(event.target.value) : null,
-                )
-              }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-            >
-              <option value="">全カテゴリ</option>
-              {expenseCategories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <Button
+          type="button"
+          onClick={handleCancel}
+          variant="outline"
+          size="sm"
+        >
+          キャンセル
+        </Button>
+        <Button
+          type="submit"
+          disabled={processing}
+          variant="primary"
+          size="sm"
+          isLoading={processing}
+        >
+          {editing ? "更新する" : "保存する"}
+        </Button>
+      </div>
+    </form>
+  );
 
-          <label className="flex flex-col gap-2 text-sm text-slate-600">
-            期間タイプ
-            <select
-              value={payload.period_type}
-              onChange={(event) =>
-                handleChange("period_type", event.target.value as BudgetPeriodType)
-              }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-            >
-              <option value="monthly">月次</option>
-              <option value="yearly">年次</option>
-            </select>
-          </label>
-
-          <label className="flex flex-col gap-2 text-sm text-slate-600">
-            年
-            <input
-              type="number"
-              value={payload.period_year ?? ""}
-              onChange={(event) => handleChange("period_year", Number(event.target.value))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-              min={2000}
-            />
-          </label>
-
-          {isMonthly ? (
-            <label className="flex flex-col gap-2 text-sm text-slate-600">
-              月
-              <input
-                type="number"
-                value={payload.period_month ?? ""}
-                onChange={(event) =>
-                  handleChange(
-                    "period_month",
-                    event.target.value ? Number(event.target.value) : null,
-                  )
-                }
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                min={1}
-                max={12}
-              />
-            </label>
-          ) : null}
-
-          <label className="flex flex-col gap-2 text-sm text-slate-600">
-            予算金額
-            <input
-              type="number"
-              value={amountInput}
-              onChange={handleAmountChange}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-              min={0}
-              step={1000}
-            />
-          </label>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
-          >
-            キャンセル
-          </button>
-          <button
-            type="submit"
-            disabled={processing}
-            className="rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-300"
-          >
-            {processing ? "保存中…" : editing ? "更新する" : "保存する"}
-          </button>
-        </div>
-      </form>
+  return (
+    <div className={variant === "card" ? "space-y-4" : "space-y-6"}>
+      {variant === "card" ? (
+        <Card className="p-6">{FormContent}</Card>
+      ) : (
+        FormContent
+      )}
+      
       {showRepeatActions ? (
         <>
-          <div className="rounded-3xl bg-white p-4 text-center shadow-sm ring-1 ring-slate-200">
-            <p className="text-sm text-slate-600">
+          <Card className="p-4 text-center">
+            <p className="text-sm text-text-secondary">
               繰り返し発生する予算は専用モーダルからまとめて作成できます。
             </p>
-            <button
+            <Button
               type="button"
               onClick={() => setRepeatModalOpen(true)}
-              className="mt-3 inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-100"
+              variant="secondary"
+              size="sm"
+              className="mt-3"
             >
-              <span className="material-icons text-base">repeat</span>
+              <span className="material-icons text-base mr-1">repeat</span>
               繰り返し予算を作成する
-            </button>
-          </div>
+            </Button>
+          </Card>
 
           <RepeatBudgetModal
             open={isRepeatModalOpen}

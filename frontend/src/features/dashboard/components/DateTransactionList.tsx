@@ -65,26 +65,26 @@ const DateTransactionList = ({
   return (
     <div className="space-y-6">
       <header>
-        <p className="text-xs uppercase tracking-wide text-slate-400">
+        <p className="text-xs uppercase tracking-wide text-text-secondary">
           {dateLabel}
         </p>
-        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600">
-          <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-600">
+        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-text-secondary">
+          <span className="rounded-full bg-green-50 px-3 py-1 text-green-600">
             収入 {formatCurrency(summary.income)}
           </span>
-          <span className="rounded-full bg-rose-50 px-3 py-1 text-rose-600">
+          <span className="rounded-full bg-red-50 px-3 py-1 text-red-600">
             支出 {formatCurrency(summary.expense)}
           </span>
-          <span className="text-xs text-slate-400">合計 {totalCount} 件</span>
+          <span className="text-xs text-text-secondary opacity-70">合計 {totalCount} 件</span>
         </div>
       </header>
 
       <section className="space-y-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-emerald-400">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-green-500">
           収入
         </h3>
         {incomes.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-3 text-xs text-slate-400">
+          <p className="rounded-2xl border border-dashed border-border px-4 py-3 text-xs text-text-secondary">
             この日には収入がありません。
           </p>
         ) : (
@@ -97,11 +97,11 @@ const DateTransactionList = ({
       </section>
 
       <section className="space-y-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-rose-400">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-red-500">
           支出
         </h3>
         {expenses.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-3 text-xs text-slate-400">
+          <p className="rounded-2xl border border-dashed border-border px-4 py-3 text-xs text-text-secondary">
             この日には支出がありません。
           </p>
         ) : (
@@ -117,12 +117,12 @@ const DateTransactionList = ({
 };
 
 const TransactionRow = ({ transaction }: { transaction: DayTransaction }) => (
-  <li className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+  <li className="flex items-center justify-between rounded-2xl bg-surface px-4 py-3 border border-border">
     <div className="min-w-0">
-      <p className="truncate text-sm font-semibold text-slate-800">
+      <p className="truncate text-sm font-semibold text-text-primary">
         {transaction.title}
       </p>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-text-secondary">
         <span
           className="mr-2 inline-block h-2 w-2 rounded-full"
           style={{ backgroundColor: transaction.color ?? "#cbd5f5" }}
@@ -132,7 +132,7 @@ const TransactionRow = ({ transaction }: { transaction: DayTransaction }) => (
     </div>
     <span
       className={`text-sm font-semibold ${
-        transaction.type === "income" ? "text-emerald-600" : "text-rose-600"
+        transaction.type === "income" ? "text-green-600" : "text-red-600"
       }`}
     >
       {transaction.type === "income" ? "+" : "-"}

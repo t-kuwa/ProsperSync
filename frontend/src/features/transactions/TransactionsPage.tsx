@@ -1,7 +1,5 @@
 import { useRef, useState } from "react";
-import type { AppRoute } from "../../routes";
 import CalendarOverview from "../dashboard/components/CalendarOverview";
-import DashboardShell from "../dashboard/components/DashboardShell";
 import useAccountState from "../accounts/hooks/useAccountState";
 import CategoryManager, {
   type CategoryManagerHandle,
@@ -12,19 +10,7 @@ import useCategories from "./hooks/useCategories";
 import useTransactions from "./hooks/useTransactions";
 import type { Transaction, TransactionPayload } from "./types";
 
-type TransactionsPageProps = {
-  userName?: string;
-  onLogout?: () => void;
-  currentRoute: AppRoute;
-  onNavigate: (route: AppRoute) => void;
-};
-
-const TransactionsPage = ({
-  userName,
-  onLogout,
-  currentRoute,
-  onNavigate,
-}: TransactionsPageProps) => {
+const TransactionsPage = () => {
   const { currentAccount } = useAccountState();
   const {
     categories,
@@ -80,37 +66,20 @@ const TransactionsPage = ({
 
   if (!currentAccount) {
     return (
-      <DashboardShell
-        userName={userName}
-        onLogout={onLogout}
-        currentRoute={currentRoute}
-        onNavigate={onNavigate}
-        headerTitle="収支登録"
-      >
-        <div className="rounded-3xl bg-white p-8 text-center text-slate-500 shadow-sm ring-1 ring-slate-200">
-          ワークスペースが選択されていません。サイドバーからアカウントを選択してください。
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="rounded-3xl bg-surface p-8 text-center text-text-secondary shadow-sm border border-border">
+          ワークスペースが選択されていません。ヘッダーからアカウントを選択してください。
         </div>
-      </DashboardShell>
+      </div>
     );
   }
 
   return (
-    <DashboardShell
-      userName={userName}
-      onLogout={onLogout}
-      currentRoute={currentRoute}
-      onNavigate={onNavigate}
-      headerTitle="収支を登録"
-    >
-      <div className="mb-6 flex items-center gap-2 rounded-3xl bg-white/90 px-5 py-3 shadow-sm ring-1 ring-slate-200">
-        <span className="text-lg">🔍</span>
-        <input
-          value={filters.search}
-          onChange={(event) => updateFilter("search", event.target.value)}
-          placeholder="取引を検索"
-          className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-        />
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-text-primary">収支を登録</h1>
       </div>
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
         <div className="space-y-6">
           <TransactionForm
@@ -131,8 +100,8 @@ const TransactionsPage = ({
               loading={loadingCategories}
               processing={processingCategories}
               error={categoryError}
-              onCreate={createCategory}
-              onUpdate={updateCategory}
+              onCreate={async (payload) => { await createCategory(payload); }}
+              onUpdate={async (id, payload) => { await updateCategory(id, payload); }}
               onDelete={deleteCategory}
               onRefresh={refreshCategories}
             />
@@ -148,6 +117,7 @@ const TransactionsPage = ({
             error={error}
             onRetry={refreshTransactions}
             showTrendChart={false}
+            className="h-fit"
           />
           <TransactionList
             transactions={transactions}
@@ -172,7 +142,7 @@ const TransactionsPage = ({
           />
         </div>
       </div>
-    </DashboardShell>
+    </div>
   );
 };
 

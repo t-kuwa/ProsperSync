@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import formatCurrency from "../../dashboard/utils/formatCurrency";
 import { getErrorMessage } from "../../../api/client";
+import { Card } from "../../../components/ui/Card";
+import { Input } from "../../../components/ui/Input";
+import { Button } from "../../../components/ui/Button";
 import type {
   Category,
   Transaction,
@@ -215,11 +218,8 @@ const TransactionForm = ({
       }));
       setSubmitError(null);
     } catch (err) {
-      // エラーメッセージはonSubmit内で処理される想定だが、
-      // 念のためここでもエラーを表示できるようにする
       const errorMessage = getErrorMessage(err);
       setSubmitError(errorMessage);
-      // デバッグ用にコンソールにも出力
       console.error("TransactionForm submit error:", err);
     } finally {
       setSubmitting(false);
@@ -229,21 +229,21 @@ const TransactionForm = ({
   const disableSubmit = submitting || processing || loadingCategories;
 
   return (
-    <div className="h-fit rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
-      <div className="flex items-center justify-between">
+    <Card className="p-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">収支を登録</h2>
+          <h2 className="text-lg font-semibold text-text-primary">収支を登録</h2>
         </div>
-        <div className="text-right text-xs text-slate-400">
+        <div className="text-right text-xs text-text-secondary">
           今回の入力金額
-          <p className="text-base font-semibold text-slate-700">
+          <p className="text-base font-semibold text-text-primary">
             {formattedPreview}
           </p>
         </div>
       </div>
 
       {editingTransaction ? (
-        <div className="mt-4 flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+        <div className="mb-6 flex items-center justify-between rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
           <span>
             「{editingTransaction.title}」を編集しています。
           </span>
@@ -258,13 +258,13 @@ const TransactionForm = ({
       ) : null}
 
       {submitError ? (
-        <p className="mt-3 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-600">
+        <p className="mb-6 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 border border-red-100">
           {submitError}
         </p>
       ) : null}
 
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-        <div className="flex items-center gap-2 rounded-xl bg-slate-50 p-1 text-sm font-medium text-slate-600">
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="flex items-center gap-2 rounded-xl bg-surface p-1 text-sm font-medium text-text-secondary border border-border">
           {(["income", "expense"] as const).map((type) => (
             <button
               key={type}
@@ -274,7 +274,7 @@ const TransactionForm = ({
                   ? type === "income"
                     ? "bg-white text-emerald-600 shadow-sm ring-1 ring-emerald-200"
                     : "bg-white text-rose-600 shadow-sm ring-1 ring-rose-200"
-                  : "hover:text-slate-900"
+                  : "hover:text-text-primary hover:bg-background"
               } ${editingTransaction ? "cursor-not-allowed opacity-70" : ""}`}
               onClick={() => handleTypeChange(type)}
               disabled={Boolean(editingTransaction)}
@@ -284,30 +284,21 @@ const TransactionForm = ({
           ))}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-600">
-            タイトル
-          </label>
-          <input
-            value={formState.title}
-            onChange={(event) => handleFieldChange("title", event.target.value)}
-            placeholder="例: サブスクリプション売上 / オフィス家賃"
-            className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 ${
-              errors.title ? "border-rose-300" : "border-slate-200"
-            }`}
-          />
-          {errors.title ? (
-            <p className="mt-1 text-xs text-rose-600">{errors.title}</p>
-          ) : null}
-        </div>
+        <Input
+          label="タイトル"
+          value={formState.title}
+          onChange={(event) => handleFieldChange("title", event.target.value)}
+          placeholder="例: サブスクリプション売上 / オフィス家賃"
+          error={errors.title || undefined}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-600">
+            <label className="block text-sm font-medium text-text-secondary mb-1">
               金額
             </label>
-            <div className={`mt-1 flex items-center rounded-xl border px-3 py-2 ${errors.amount ? "border-rose-300" : "border-slate-200"}`}>
-              <span className="text-slate-400">¥</span>
+            <div className={`flex items-center rounded-xl border px-3 py-2 bg-background ${errors.amount ? "border-red-300" : "border-border focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"}`}>
+              <span className="text-text-secondary">¥</span>
               <input
                 value={formState.amount}
                 onChange={(event) =>
@@ -315,57 +306,48 @@ const TransactionForm = ({
                 }
                 inputMode="decimal"
                 placeholder="0"
-                className="ml-2 w-full border-none bg-transparent text-sm outline-none focus:ring-0"
+                className="ml-2 w-full border-none bg-transparent text-sm outline-none focus:ring-0 text-text-primary placeholder:text-text-secondary/50"
               />
             </div>
             {errors.amount ? (
-              <p className="mt-1 text-xs text-rose-600">{errors.amount}</p>
+              <p className="mt-1 text-xs text-red-600">{errors.amount}</p>
             ) : null}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-600">
-              日付
-            </label>
-            <input
-              type="date"
-              value={formState.date}
-              onChange={(event) => handleFieldChange("date", event.target.value)}
-              className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 ${
-                errors.date ? "border-rose-300" : "border-slate-200"
-              }`}
-            />
-            {errors.date ? (
-              <p className="mt-1 text-xs text-rose-600">{errors.date}</p>
-            ) : null}
-          </div>
+          <Input
+            label="日付"
+            type="date"
+            value={formState.date}
+            onChange={(event) => handleFieldChange("date", event.target.value)}
+            error={errors.date || undefined}
+          />
         </div>
 
         <div>
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-slate-600">
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-sm font-medium text-text-secondary">
               カテゴリ
             </label>
             <button
               type="button"
-              className="text-xs font-semibold text-indigo-600 hover:underline"
+              className="text-xs font-semibold text-primary hover:underline"
               onClick={() => onRequestNewCategory?.(formState.type)}
             >
               新しいカテゴリを作成
             </button>
           </div>
           {loadingCategories ? (
-            <div className="mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-400">
+            <div className="rounded-xl border border-border bg-surface px-3 py-2 text-sm text-text-secondary">
               カテゴリを読み込み中...
             </div>
           ) : availableCategories.length === 0 ? (
-            <div className="mt-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-400">
+            <div className="rounded-xl border border-border bg-surface px-3 py-2 text-sm text-text-secondary">
               該当するカテゴリがありません
             </div>
           ) : (
             <div
-              className={`mt-1 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 ${
-                errors.categoryId ? "rounded-xl border border-rose-300 p-1" : ""
+              className={`grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 ${
+                errors.categoryId ? "rounded-xl border border-red-300 p-1" : ""
               }`}
             >
               {availableCategories.map((category) => {
@@ -378,8 +360,8 @@ const TransactionForm = ({
                     onClick={() => handleFieldChange("categoryId", String(category.id))}
                     className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${
                       isSelected
-                        ? "border-indigo-400 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-100"
-                        : "border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:bg-indigo-50/50"
+                        ? "border-primary/50 bg-primary/5 text-primary ring-1 ring-primary/20"
+                        : "border-border bg-background text-text-secondary hover:border-primary/30 hover:bg-surface"
                     }`}
                   >
                     <span
@@ -393,12 +375,12 @@ const TransactionForm = ({
             </div>
           )}
           {errors.categoryId ? (
-            <p className="mt-1 text-xs text-rose-600">{errors.categoryId}</p>
+            <p className="mt-1 text-xs text-red-600">{errors.categoryId}</p>
           ) : null}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-600">
+          <label className="block text-sm font-medium text-text-secondary mb-1">
             メモ
           </label>
           <textarea
@@ -406,23 +388,21 @@ const TransactionForm = ({
             onChange={(event) => handleFieldChange("memo", event.target.value)}
             placeholder="支払い方法や簡単な補足などを残せます。"
             rows={3}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-text-primary placeholder:text-text-secondary/50"
           />
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={disableSubmit}
-          className={`w-full rounded-xl px-4 py-2 text-sm font-semibold text-white transition ${
-            disableSubmit
-              ? "cursor-not-allowed bg-slate-300"
-              : "bg-indigo-600 hover:bg-indigo-500"
-          }`}
+          className="w-full"
+          variant="primary"
+          isLoading={submitting}
         >
           {editingTransaction ? "収支を更新" : "収支を登録"}
-        </button>
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 };
 
