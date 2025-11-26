@@ -10,6 +10,7 @@ class Account < ApplicationRecord
   has_many :users, through: :memberships
   has_many :expenses, dependent: :destroy
   has_many :incomes, dependent: :destroy
+  has_many :fixed_recurring_entries, dependent: :destroy
   has_many :categories, dependent: :destroy
   has_many :budgets, dependent: :destroy
   has_many :account_invitations, dependent: :destroy

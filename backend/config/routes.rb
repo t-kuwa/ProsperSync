@@ -29,6 +29,11 @@ Rails.application.routes.draw do
         resources :categories, only: %i[index create update destroy], defaults: { format: :json }
         resources :expenses, only: %i[index show create update destroy], defaults: { format: :json }
         resources :incomes, only: %i[index show create update destroy], defaults: { format: :json }
+        resources :fixed_recurring_entries, defaults: { format: :json }
+        resources :fixed_recurring_occurrences,
+                  only: %i[index],
+                  controller: :fixed_recurring_entry_occurrences,
+                  defaults: { format: :json }
         resources :budgets, defaults: { format: :json } do
           get :current, on: :collection
         end

@@ -68,6 +68,7 @@ RSpec.configure do |config|
 
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include JsonHelpers, type: :request
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.before(:each) do
     ActionMailer::Base.deliveries.clear

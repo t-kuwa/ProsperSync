@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_16_041059) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_26_140353) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -88,6 +88,35 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_041059) do
     t.index ["user_id"], name: "index_expenses_on_user_id"
   end
 
+  create_table "fixed_recurring_entries", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "category_id", null: false
+    t.string "title", null: false
+    t.integer "kind", default: 0, null: false, comment: "expense or income"
+    t.integer "amount", null: false
+    t.integer "day_of_month", null: false
+    t.boolean "use_end_of_month", default: false, null: false
+    t.date "effective_from", null: false, comment: "有効開始月（月初）"
+    t.date "effective_to", comment: "有効終了月（月初、未設定なら無期限）"
+    t.text "memo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_fixed_recurring_entries_on_account_id"
+    t.index ["category_id"], name: "index_fixed_recurring_entries_on_category_id"
+  end
+
+  create_table "fixed_recurring_entry_occurrences", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "fixed_recurring_entry_id", null: false
+    t.date "period_month", null: false, comment: "対象月（必ず月初）"
+    t.date "occurs_on", null: false, comment: "実際の発生日"
+    t.integer "status", default: 0, null: false, comment: "scheduled/applied/canceled"
+    t.datetime "applied_at", comment: "実績反映日時"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fixed_recurring_entry_id", "period_month"], name: "index_freo_on_entry_id_and_period_month", unique: true
+    t.index ["fixed_recurring_entry_id"], name: "index_freo_on_entry_id"
+  end
+
   create_table "incomes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "収入", force: :cascade do |t|
     t.bigint "account_id", null: false, comment: "アカウント"
     t.bigint "user_id", null: false, comment: "ユーザー"
@@ -143,6 +172,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_041059) do
   add_foreign_key "expenses", "accounts"
   add_foreign_key "expenses", "categories"
   add_foreign_key "expenses", "users"
+  add_foreign_key "fixed_recurring_entries", "accounts"
+  add_foreign_key "fixed_recurring_entries", "categories"
+  add_foreign_key "fixed_recurring_entry_occurrences", "fixed_recurring_entries"
   add_foreign_key "incomes", "accounts"
   add_foreign_key "incomes", "categories"
   add_foreign_key "incomes", "users"

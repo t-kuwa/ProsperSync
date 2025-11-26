@@ -8,6 +8,7 @@ class Category < ApplicationRecord
 
   has_many :expenses, dependent: :restrict_with_error
   has_many :incomes, dependent: :restrict_with_error
+  has_many :fixed_recurring_entries, dependent: :restrict_with_error
   has_many :budgets, dependent: :nullify
 
   enum :type, { expense: 0, income: 1 }
@@ -20,4 +21,3 @@ class Category < ApplicationRecord
   scope :for_income, -> { income }
   scope :ordered, -> { order(:position, :name) }
 end
-
