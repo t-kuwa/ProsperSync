@@ -5,6 +5,7 @@ import BudgetsPage from "./features/budgets/BudgetsPage";
 import type { AuthSuccess } from "./features/auth/types";
 import { DashboardProvider } from "./features/dashboard/context/DashboardContext";
 import TransactionsPage from "./features/transactions/TransactionsPage";
+import FixedRecurringPage from "./features/fixedRecurring/FixedRecurringPage";
 import { AccountProvider } from "./features/accounts/context/AccountContext";
 import { apiClient, AUTH_ERROR_EVENT } from "./api/client";
 import AccountCreatePage from "./features/accounts/components/AccountCreatePage";
@@ -49,6 +50,7 @@ const resolveRoute = (path: string): AppRoute => {
     path === APP_ROUTES.dashboard ||
     path === APP_ROUTES.transactions ||
     path === APP_ROUTES.budgets ||
+    path === APP_ROUTES.fixedRecurring ||
     path === APP_ROUTES.accountCreate
   ) {
     return path;
@@ -164,6 +166,9 @@ const App = () => {
       if (route === APP_ROUTES.budgets) {
         return "予算管理 - Haruve";
       }
+      if (route === APP_ROUTES.fixedRecurring) {
+        return "固定収支 - Haruve";
+      }
       if (accountRoute?.type === "settings") {
         return "アカウント設定 - Haruve";
       }
@@ -212,6 +217,12 @@ const App = () => {
     if (route === APP_ROUTES.transactions) {
       return (
         <TransactionsPage />
+      );
+    }
+
+    if (route === APP_ROUTES.fixedRecurring) {
+      return (
+        <FixedRecurringPage />
       );
     }
 

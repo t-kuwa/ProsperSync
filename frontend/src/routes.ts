@@ -6,6 +6,7 @@ export type AppRoute =
   | "/dashboard"
   | "/transactions"
   | "/budgets"
+  | "/fixed-recurring"
   | "/accounts/new"
   | AccountScopedRoute;
 
@@ -13,6 +14,7 @@ export const APP_ROUTES = {
   dashboard: "/dashboard" as const,
   transactions: "/transactions" as const,
   budgets: "/budgets" as const,
+  fixedRecurring: "/fixed-recurring" as const,
   accountCreate: "/accounts/new" as const,
   accountSettings: (accountId: number): AccountScopedRoute =>
     `/accounts/${accountId}/settings`,

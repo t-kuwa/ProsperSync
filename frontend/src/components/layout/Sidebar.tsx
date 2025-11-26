@@ -25,6 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems = [
     { path: APP_ROUTES.dashboard, label: "Dashboard", icon: "dashboard" },
     { path: APP_ROUTES.transactions, label: "Transactions", icon: "receipt_long" },
+    { path: APP_ROUTES.fixedRecurring, label: "固定収支", icon: "repeat" },
     { path: APP_ROUTES.budgets, label: "Budgets", icon: "pie_chart" },
   ];
 
