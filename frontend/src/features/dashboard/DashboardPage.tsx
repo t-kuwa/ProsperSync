@@ -158,10 +158,12 @@ const DashboardPage = () => {
 
     return (
       <div className="flex flex-col gap-6">
-        <SummaryCards cards={visibleSummaryCards} />
+        <div className="animate-fade-in-fast">
+          <SummaryCards cards={visibleSummaryCards} />
+        </div>
 
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-stretch">
-          <div className="xl:col-span-2 h-full">
+          <div className="xl:col-span-2 h-full animate-fade-in-fast">
             <CalendarOverview
               accountId={stats.account.id}
               calendarEntries={calendarEntries}
@@ -173,17 +175,21 @@ const DashboardPage = () => {
             />
           </div>
           <div className="flex h-full flex-col gap-4 xl:col-span-1">
-            <InsightsPanel
-              inflowOutflowRatio={inflowOutflowRatio}
-              totalAccountBalance={totalAccountBalance}
-              className="h-full"
-            />
-            <BudgetHighlights summary={budgetSummary} />
+            <div className="animate-fade-in-fast">
+              <InsightsPanel
+                inflowOutflowRatio={inflowOutflowRatio}
+                totalAccountBalance={totalAccountBalance}
+                className="h-full"
+              />
+            </div>
+            <div className="animate-fade-in-fast">
+              <BudgetHighlights summary={budgetSummary} />
+            </div>
           </div>
         </section>
 
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-stretch">
-          <div className="xl:col-span-3 h-full">
+          <div className="xl:col-span-3 h-full animate-fade-in-fast">
             <FinancialOverview
               monthlyBreakdown={monthlyBreakdown}
               loading={loading}

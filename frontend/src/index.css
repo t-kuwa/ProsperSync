@@ -29,3 +29,19 @@ body,
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
+
+/* Quick, subtle entrance animation for cards */
+@keyframes fade-in-up-fast {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-fast {
+  animation: fade-in-up-fast 0.35s ease-out both;
+}

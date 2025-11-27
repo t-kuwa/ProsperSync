@@ -16,7 +16,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={`rounded-3xl border backdrop-blur-xl transition-all duration-300 ${variants[variant]} ${className}`}
+        className={`rounded-3xl border backdrop-blur-xl transition-all duration-300 animate-fade-in-fast ${variants[variant]} ${className}`}
         {...props}
       >
         {children}
