@@ -31,9 +31,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 
   const bottomNavItems = [
     { icon: "home", label: "ホーム", path: APP_ROUTES.dashboard },
-    { icon: "repeat", label: "固定収支", path: APP_ROUTES.fixedRecurring },
+    { icon: "account_balance_wallet", label: "収支管理", path: APP_ROUTES.transactions },
     { icon: "pie_chart", label: "予算", path: APP_ROUTES.budgets },
-    { icon: "grid_view", label: "一覧", path: APP_ROUTES.transactions },
+    { icon: "grid_view", label: "一覧", path: APP_ROUTES.fixedRecurring },
   ];
 
   return (
