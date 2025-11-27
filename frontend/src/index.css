@@ -20,3 +20,12 @@ body,
 #root {
   height: 100%;
 }
+
+/* Hide scrollbars for designated containers */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

@@ -17,7 +17,9 @@ type SummaryCardsProps = {
 const SummaryCards = ({ cards }: SummaryCardsProps) => {
   return (
     <>
-      <SwipeableCards cards={cards} />
+      <div className="sm:hidden w-full max-w-full overflow-x-hidden no-scrollbar">
+        <SwipeableCards cards={cards} />
+      </div>
       <div className="hidden grid-cols-1 gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {cards.map(
           ({ title, value, trendLabel, trendValue, trendPositive }) => (
