@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Sidebar } from "./Sidebar";
+import { APP_ROUTES } from "../../routes";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -27,6 +28,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     }
     setIsMobileMenuOpen(false);
   };
+
+  const bottomNavItems = [
+    { icon: "home", label: "ホーム", path: APP_ROUTES.dashboard },
+    { icon: "repeat", label: "固定収支", path: APP_ROUTES.fixedRecurring },
+    { icon: "pie_chart", label: "予算", path: APP_ROUTES.budgets },
+    { icon: "grid_view", label: "一覧", path: APP_ROUTES.transactions },
+  ];
 
   return (
     <div className="min-h-screen flex bg-background font-sans text-text-primary relative">
@@ -87,11 +95,41 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 md:pl-0 pt-16 md:pt-0">
+      <main className="flex-1 flex flex-col min-w-0 md:pl-0 pt-16 md:pt-0 pb-20 md:pb-0">
         <div className="flex-1 w-full">
           {children}
         </div>
       </main>
+
+      {/* Mobile Bottom Toolbar */}
+      <div className="md:hidden fixed inset-x-0 bottom-0 z-40 px-4 pb-5">
+        <div className="relative mx-auto max-w-xl">
+          <div className="h-16 rounded-3xl bg-white/80 backdrop-blur-xl border border-white/70 shadow-[0_8px_30px_rgba(0,0,0,0.1)] flex items-center justify-around px-3">
+            {bottomNavItems.map((item) => {
+              const active = currentPath === item.path;
+              return (
+                <button
+                  key={item.path}
+                  type="button"
+                  onClick={() => handleNavigate(item.path)}
+                  className={`flex flex-col items-center justify-center gap-1 text-xs transition ${
+                    active ? "text-primary font-semibold" : "text-text-secondary"
+                  }`}
+                >
+                  <span
+                    className={`material-icons text-2xl ${
+                      active ? "text-primary" : "text-text-secondary"
+                    }`}
+                  >
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   );
