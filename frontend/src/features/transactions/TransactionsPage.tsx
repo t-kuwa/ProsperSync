@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CalendarOverview from "../dashboard/components/CalendarOverview";
 import useAccountState from "../accounts/hooks/useAccountState";
 import CategoryManager, {
@@ -9,6 +9,7 @@ import TransactionList from "./components/TransactionList";
 import useCategories from "./hooks/useCategories";
 import useTransactions from "./hooks/useTransactions";
 import type { Transaction, TransactionPayload } from "./types";
+import { EDIT_TRANSACTION_EVENT } from "../../constants/events";
 
 const TransactionsPage = () => {
   const { currentAccount } = useAccountState();
@@ -44,6 +45,18 @@ const TransactionsPage = () => {
   } = useTransactions();
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const categoryManagerRef = useRef<CategoryManagerHandle>(null);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const custom = event as CustomEvent<Transaction>;
+      if (!custom?.detail) return;
+      setEditingTransaction(custom.detail);
+      window.history.pushState({}, "", "/transactions");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    };
+    window.addEventListener(EDIT_TRANSACTION_EVENT, handler as EventListener);
+    return () => window.removeEventListener(EDIT_TRANSACTION_EVENT, handler as EventListener);
+  }, []);
 
   const handleFormSubmit = async (
     payload: TransactionPayload,
