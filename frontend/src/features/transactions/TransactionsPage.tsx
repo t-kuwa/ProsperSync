@@ -90,7 +90,7 @@ const TransactionsPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-text-primary">収支を登録</h1>
+        <h1 className="hidden text-2xl font-bold text-text-primary md:block">収支を登録</h1>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">

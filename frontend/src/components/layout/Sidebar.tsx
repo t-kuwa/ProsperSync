@@ -23,10 +23,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
 
   const navItems = [
-    { path: APP_ROUTES.dashboard, label: "Dashboard", icon: "dashboard" },
-    { path: APP_ROUTES.transactions, label: "Transactions", icon: "receipt_long" },
+    { path: APP_ROUTES.dashboard, label: "ダッシュボード", icon: "dashboard" },
+    { path: APP_ROUTES.transactions, label: "収支管理", icon: "receipt_long" },
     { path: APP_ROUTES.fixedRecurring, label: "固定収支", icon: "repeat" },
-    { path: APP_ROUTES.budgets, label: "Budgets", icon: "pie_chart" },
+    { path: APP_ROUTES.budgets, label: "予算管理", icon: "pie_chart" },
   ];
 
   const handleNavigate = (path: string) => {
@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {currentAccount?.name}
               </p>
               <p className="text-xs text-text-secondary truncate group-hover:text-text-primary transition-colors">
-                Free Plan
+                フリープラン
               </p>
             </div>
             <span className="material-icons text-text-secondary text-sm">unfold_more</span>
@@ -71,7 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               />
               <Card className="absolute top-full left-0 w-full mt-2 z-20 p-1 shadow-lg animate-in fade-in zoom-in-95 duration-100">
                 <div className="px-2 py-1.5 text-xs font-medium text-text-secondary">
-                  Switch Account
+                  アカウントを切り替え
                 </div>
                 {accounts.map((account) => (
                   <button
@@ -98,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   className="w-full flex items-center gap-2 px-2 py-1.5 text-sm text-text-secondary hover:bg-surface hover:text-text-primary rounded-lg transition-colors"
                 >
                   <span className="material-icons text-sm">add</span>
-                  Create New Account
+                  新しいアカウントを作成
                 </button>
               </Card>
             </>
@@ -109,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Navigation */}
       <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
         <div className="px-3 py-2 text-xs font-semibold text-text-secondary uppercase tracking-wider">
-          Menu
+          メニュー
         </div>
         {navItems.map((item) => {
           const isActive = currentPath === item.path;
@@ -134,7 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {currentAccount && (
           <>
             <div className="mt-6 px-3 py-2 text-xs font-semibold text-text-secondary uppercase tracking-wider">
-              Account
+              アカウント
             </div>
             <button
               onClick={() => handleNavigate(APP_ROUTES.accountSettings(currentAccount.id))}
@@ -145,7 +145,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               }`}
             >
               <span className={`material-icons text-[20px] ${currentPath.includes("/settings") ? "text-white" : ""}`}>settings</span>
-              Settings
+              設定
             </button>
             <button
               onClick={() => handleNavigate(APP_ROUTES.accountMembers(currentAccount.id))}
@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               }`}
             >
               <span className={`material-icons text-[20px] ${currentPath.includes("/members") ? "text-white" : ""}`}>group</span>
-              Members
+              メンバー
             </button>
           </>
         )}
@@ -174,7 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {userName}
               </p>
               <p className="text-xs text-text-secondary truncate">
-                View Profile
+                プロフィールを見る
               </p>
             </div>
           </div>
@@ -185,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="w-full justify-start text-text-secondary hover:text-red-500 hover:bg-red-50 h-9"
           >
             <span className="material-icons text-lg mr-2">logout</span>
-            Sign out
+            ログアウト
           </Button>
         </div>
       )}

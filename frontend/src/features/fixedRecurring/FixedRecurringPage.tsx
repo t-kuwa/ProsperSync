@@ -63,7 +63,7 @@ const FixedRecurringPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div className="hidden md:block">
           <p className="text-xs uppercase tracking-wider text-primary">Fixed Recurring</p>
           <h1 className="text-3xl font-bold text-text-primary">固定収支の管理</h1>
           <p className="text-sm text-text-secondary">

@@ -207,7 +207,7 @@ const DashboardPage = () => {
   return (
     <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between">
+        <div className="hidden md:flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-text-primary">Dashboard</h1>
             <p className="text-text-secondary mt-1">Overview of your financial health</p>
