@@ -3,6 +3,8 @@
 # ==============================================
 class FixedRecurringEntryOccurrence < ApplicationRecord
   belongs_to :fixed_recurring_entry
+  belongs_to :income, optional: true
+  belongs_to :expense, optional: true
 
   enum :status, { scheduled: 0, applied: 1, canceled: 2 }
 
@@ -15,6 +17,7 @@ class FixedRecurringEntryOccurrence < ApplicationRecord
             }
   validate :period_month_on_month_start
   validate :occurs_on_same_month
+  validate :linked_record_presence_consistency
 
   scope :for_month, ->(date) { where(period_month: date.beginning_of_month) }
 
@@ -32,5 +35,11 @@ class FixedRecurringEntryOccurrence < ApplicationRecord
     return if occurs_on.beginning_of_month == period_month
 
     errors.add(:occurs_on, "は指定したperiod_monthと同じ月でなければなりません")
+  end
+
+  def linked_record_presence_consistency
+    return unless income_id.present? && expense_id.present?
+
+    errors.add(:base, "incomeとexpenseを同時に設定することはできません")
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_26_140353) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_26_225105) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -113,8 +113,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_26_140353) do
     t.datetime "applied_at", comment: "実績反映日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "income_id"
+    t.bigint "expense_id"
+    t.index ["expense_id"], name: "index_fixed_recurring_entry_occurrences_on_expense_id"
     t.index ["fixed_recurring_entry_id", "period_month"], name: "index_freo_on_entry_id_and_period_month", unique: true
     t.index ["fixed_recurring_entry_id"], name: "index_freo_on_entry_id"
+    t.index ["income_id"], name: "index_fixed_recurring_entry_occurrences_on_income_id"
   end
 
   create_table "incomes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "収入", force: :cascade do |t|
@@ -174,7 +178,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_26_140353) do
   add_foreign_key "expenses", "users"
   add_foreign_key "fixed_recurring_entries", "accounts"
   add_foreign_key "fixed_recurring_entries", "categories"
+  add_foreign_key "fixed_recurring_entry_occurrences", "expenses"
   add_foreign_key "fixed_recurring_entry_occurrences", "fixed_recurring_entries"
+  add_foreign_key "fixed_recurring_entry_occurrences", "incomes"
   add_foreign_key "incomes", "accounts"
   add_foreign_key "incomes", "categories"
   add_foreign_key "incomes", "users"

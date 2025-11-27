@@ -3,6 +3,14 @@ class FixedRecurringEntryOccurrencePolicy < ApplicationPolicy
     member_of_account?
   end
 
+  def apply?
+    member_of_account?
+  end
+
+  def cancel?
+    member_of_account?
+  end
+
   class Scope < Scope
     def resolve
       return scope.none unless user

@@ -42,8 +42,8 @@ module FixedRecurringEntries
 
     def prune_outside_range(target_months)
       entry.occurrences.where.not(period_month: target_months).find_each do |occurrence|
-        if occurrence.applied?
-          occurrence.update!(status: :canceled)
+        if occurrence.applied? || occurrence.canceled?
+          FixedRecurringEntries::Applier.cancel!(occurrence:)
         else
           occurrence.destroy!
         end

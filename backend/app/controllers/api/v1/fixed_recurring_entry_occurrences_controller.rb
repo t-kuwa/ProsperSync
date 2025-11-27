@@ -2,6 +2,7 @@ module Api
   module V1
     class FixedRecurringEntryOccurrencesController < BaseController
       before_action :set_account
+      before_action :set_occurrence, only: %i[apply cancel]
 
       def index
         authorize sample_occurrence
@@ -17,10 +18,30 @@ module Api
         render json: occurrences.map { |occurrence| serialize_occurrence(occurrence) }
       end
 
+      def apply
+        authorize @occurrence
+        FixedRecurringEntries::Applier.apply!(occurrence: @occurrence, user: current_user)
+        render json: serialize_occurrence(@occurrence.reload)
+      rescue StandardError => e
+        render json: { errors: [e.message] }, status: :unprocessable_content
+      end
+
+      def cancel
+        authorize @occurrence
+        FixedRecurringEntries::Applier.cancel!(occurrence: @occurrence)
+        render json: serialize_occurrence(@occurrence.reload)
+      rescue StandardError => e
+        render json: { errors: [e.message] }, status: :unprocessable_content
+      end
+
       private
 
       def set_account
         @account = Account.find(params[:account_id])
+      end
+
+      def set_occurrence
+        @occurrence = base_scope.find(params[:id])
       end
 
       def base_scope

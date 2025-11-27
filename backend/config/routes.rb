@@ -33,7 +33,12 @@ Rails.application.routes.draw do
         resources :fixed_recurring_occurrences,
                   only: %i[index],
                   controller: :fixed_recurring_entry_occurrences,
-                  defaults: { format: :json }
+                  defaults: { format: :json } do
+          member do
+            post :apply
+            post :cancel
+          end
+        end
         resources :budgets, defaults: { format: :json } do
           get :current, on: :collection
         end
