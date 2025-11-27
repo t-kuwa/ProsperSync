@@ -51,6 +51,58 @@ module Api
           category: serialize_category(entry.category)
         }
       end
+
+      def serialize_invoice_line(line)
+        return unless line
+
+        {
+          id: line.id,
+          description: line.description,
+          quantity: line.quantity,
+          unit_price_minor: line.unit_price_minor,
+          position: line.position
+        }
+      end
+
+      def serialize_invoice(invoice)
+        return unless invoice
+
+        {
+          id: invoice.id,
+          issuer_account_id: invoice.issuer_account_id,
+          payer_account_id: invoice.payer_account_id,
+          title: invoice.title,
+          description: invoice.description,
+          amount_minor: invoice.amount_minor,
+          currency: invoice.currency,
+          status: invoice.status,
+          issue_date: invoice.issue_date,
+          due_date: invoice.due_date,
+          invoice_number: invoice.invoice_number,
+          issuer_contact: invoice.issuer_contact,
+          payer_contact: invoice.payer_contact,
+          memo: invoice.memo,
+          created_at: invoice.created_at,
+          updated_at: invoice.updated_at,
+          lines: invoice.invoice_lines.order(:position, :id).map { |line| serialize_invoice_line(line) }
+        }
+      end
+
+      def serialize_cancel_request(cancel_request)
+        return unless cancel_request
+
+        {
+          id: cancel_request.id,
+          invoice_id: cancel_request.invoice_id,
+          requested_by_id: cancel_request.requested_by_id,
+          reason: cancel_request.reason,
+          status: cancel_request.status,
+          resolved_by_id: cancel_request.resolved_by_id,
+          resolved_at: cancel_request.resolved_at,
+          created_at: cancel_request.created_at,
+          updated_at: cancel_request.updated_at
+        }
+      end
     end
   end
 end

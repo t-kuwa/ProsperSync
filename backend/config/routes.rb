@@ -39,6 +39,20 @@ Rails.application.routes.draw do
             post :cancel
           end
         end
+        resources :invoices, defaults: { format: :json } do
+          member do
+            patch :issue
+          end
+          resources :cancel_requests,
+                    only: %i[create],
+                    controller: :invoice_cancel_requests,
+                    defaults: { format: :json } do
+            member do
+              patch :approve
+              patch :reject
+            end
+          end
+        end
         resources :budgets, defaults: { format: :json } do
           get :current, on: :collection
         end

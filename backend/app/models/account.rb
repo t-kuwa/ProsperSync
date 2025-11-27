@@ -11,6 +11,8 @@ class Account < ApplicationRecord
   has_many :expenses, dependent: :destroy
   has_many :incomes, dependent: :destroy
   has_many :fixed_recurring_entries, dependent: :destroy
+  has_many :issued_invoices, class_name: "Invoice", foreign_key: :issuer_account_id, dependent: :destroy
+  has_many :received_invoices, class_name: "Invoice", foreign_key: :payer_account_id, dependent: :nullify
   has_many :categories, dependent: :destroy
   has_many :budgets, dependent: :destroy
   has_many :account_invitations, dependent: :destroy

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_26_225105) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_27_132851) do
   create_table "account_invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "アカウント招待", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "inviter_id", null: false
@@ -136,6 +136,52 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_26_225105) do
     t.index ["user_id"], name: "index_incomes_on_user_id"
   end
 
+  create_table "invoice_cancel_requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "invoice_id", null: false
+    t.bigint "requested_by_id", null: false
+    t.text "reason"
+    t.integer "status", default: 0, null: false, comment: "pending/approved/rejected"
+    t.bigint "resolved_by_id"
+    t.datetime "resolved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_invoice_cancel_requests_on_invoice_id"
+    t.index ["requested_by_id"], name: "index_invoice_cancel_requests_on_requested_by_id"
+    t.index ["resolved_by_id"], name: "index_invoice_cancel_requests_on_resolved_by_id"
+  end
+
+  create_table "invoice_lines", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "invoice_id", null: false
+    t.string "description", null: false
+    t.integer "quantity", default: 1, null: false
+    t.integer "unit_price_minor", null: false
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_invoice_lines_on_invoice_id"
+  end
+
+  create_table "invoices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "issuer_account_id", null: false
+    t.bigint "payer_account_id", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.integer "amount_minor", null: false
+    t.string "currency", null: false
+    t.integer "status", default: 0, null: false, comment: "draft/issued/cancel_pending/canceled"
+    t.date "issue_date"
+    t.date "due_date"
+    t.string "invoice_number"
+    t.json "issuer_contact"
+    t.json "payer_contact"
+    t.text "memo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issuer_account_id", "invoice_number"], name: "index_invoices_on_issuer_account_id_and_invoice_number", unique: true
+    t.index ["issuer_account_id"], name: "index_invoices_on_issuer_account_id"
+    t.index ["payer_account_id"], name: "index_invoices_on_payer_account_id"
+  end
+
   create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "ユーザーのグループアカウントに所属するメンバー", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
@@ -184,6 +230,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_26_225105) do
   add_foreign_key "incomes", "accounts"
   add_foreign_key "incomes", "categories"
   add_foreign_key "incomes", "users"
+  add_foreign_key "invoice_cancel_requests", "invoices"
+  add_foreign_key "invoice_cancel_requests", "users", column: "requested_by_id"
+  add_foreign_key "invoice_cancel_requests", "users", column: "resolved_by_id"
+  add_foreign_key "invoice_lines", "invoices"
+  add_foreign_key "invoices", "accounts", column: "issuer_account_id"
+  add_foreign_key "invoices", "accounts", column: "payer_account_id"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
   add_foreign_key "users", "accounts", column: "primary_account_id"
