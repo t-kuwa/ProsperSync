@@ -60,21 +60,31 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       </div>
 
       {/* Mobile Drawer */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
+      <div
+        className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
+          isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
+        <div
+          className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${
+            isMobileMenuOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+        <div
+          className={`absolute top-0 left-0 bottom-0 w-64 shadow-2xl transform transition-transform duration-300 ${
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
           <Sidebar
             currentPath={currentPath}
             onNavigate={handleNavigate}
             userName={userName}
             onLogout={onLogout}
-            className="absolute top-0 left-0 bottom-0 w-64 shadow-2xl"
+            className="h-full"
           />
         </div>
-      )}
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 md:pl-0 pt-16 md:pt-0">
