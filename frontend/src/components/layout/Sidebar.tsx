@@ -26,6 +26,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { path: APP_ROUTES.dashboard, label: "ダッシュボード", icon: "dashboard" },
     { path: APP_ROUTES.transactions, label: "収支管理", icon: "receipt_long" },
     { path: APP_ROUTES.fixedRecurring, label: "固定収支", icon: "repeat" },
+    { path: APP_ROUTES.invoices, label: "請求書", icon: "request_quote" },
     { path: APP_ROUTES.budgets, label: "予算管理", icon: "pie_chart" },
   ];
 

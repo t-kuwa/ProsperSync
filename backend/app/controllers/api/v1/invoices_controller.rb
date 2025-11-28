@@ -6,7 +6,7 @@ module Api
 
       def index
         authorize Invoice.new(issuer_account: @account, payer_account: @account), :index?
-        invoices = policy_scope(base_scope).includes(:invoice_lines)
+        invoices = policy_scope(base_scope).includes(:invoice_lines, :invoice_cancel_requests)
         render json: invoices.map { |invoice| serialize_invoice(invoice) }
       end
 

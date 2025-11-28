@@ -7,6 +7,7 @@ import { DashboardProvider } from "./features/dashboard/context/DashboardContext
 import TransactionsPage from "./features/transactions/TransactionsPage";
 import TransactionsListPage from "./features/transactions/TransactionsListPage";
 import FixedRecurringPage from "./features/fixedRecurring/FixedRecurringPage";
+import InvoicesPage from "./features/invoices/InvoicesPage";
 import { AccountProvider } from "./features/accounts/context/AccountContext";
 import { apiClient, AUTH_ERROR_EVENT } from "./api/client";
 import AccountCreatePage from "./features/accounts/components/AccountCreatePage";
@@ -52,6 +53,7 @@ const resolveRoute = (path: string): AppRoute => {
     path === APP_ROUTES.transactions ||
     path === APP_ROUTES.budgets ||
     path === APP_ROUTES.fixedRecurring ||
+    path === APP_ROUTES.invoices ||
     path === APP_ROUTES.records ||
     path === APP_ROUTES.accountCreate
   ) {
@@ -171,6 +173,9 @@ const App = () => {
       if (route === APP_ROUTES.records) {
         return "収支一覧 - Haruve";
       }
+      if (route === APP_ROUTES.invoices) {
+        return "請求書 - Haruve";
+      }
       if (route === APP_ROUTES.fixedRecurring) {
         return "固定収支 - Haruve";
       }
@@ -228,6 +233,12 @@ const App = () => {
     if (route === APP_ROUTES.records) {
       return (
         <TransactionsListPage />
+      );
+    }
+
+    if (route === APP_ROUTES.invoices) {
+      return (
+        <InvoicesPage />
       );
     }
 

@@ -34,6 +34,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     { icon: "account_balance_wallet", label: "収支管理", path: APP_ROUTES.transactions },
     { icon: "pie_chart", label: "予算", path: APP_ROUTES.budgets },
     { icon: "grid_view", label: "一覧", path: APP_ROUTES.records },
+    { icon: "request_quote", label: "請求書", path: APP_ROUTES.invoices },
   ];
 
   return (

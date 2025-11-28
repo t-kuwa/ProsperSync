@@ -84,7 +84,10 @@ module Api
           memo: invoice.memo,
           created_at: invoice.created_at,
           updated_at: invoice.updated_at,
-          lines: invoice.invoice_lines.order(:position, :id).map { |line| serialize_invoice_line(line) }
+          lines: invoice.invoice_lines.order(:position, :id).map { |line| serialize_invoice_line(line) },
+          cancel_requests: invoice.invoice_cancel_requests.order(created_at: :desc).map do |req|
+            serialize_cancel_request(req)
+          end
         }
       end
 

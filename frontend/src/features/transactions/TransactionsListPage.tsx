@@ -94,12 +94,12 @@ const TransactionsListPage = () => {
       />
 
       {editingTransaction ? (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-[70] flex items-start justify-center px-4 py-6">
           <div
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setEditingTransaction(null)}
           />
-          <Card className="relative z-10 w-full max-w-xl p-6">
+          <Card className="relative z-10 w-full max-w-xl p-6 max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs text-text-secondary">収支編集</p>
