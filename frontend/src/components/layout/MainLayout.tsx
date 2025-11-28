@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { APP_ROUTES } from "../../routes";
+import DashboardHeader from "../../features/dashboard/components/DashboardHeader";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -57,15 +58,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border h-16 flex items-center justify-between px-4">
-        <button
-          onClick={() => setIsMobileMenuOpen(true)}
-          className="p-2 -ml-2 text-text-primary"
-        >
-          <span className="material-icons">menu</span>
-        </button>
-        <span className="text-lg font-semibold">Haruve</span>
-        <div className="w-8" /> {/* Spacer for centering */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50">
+        <DashboardHeader
+          userName={userName}
+          title=""
+          onMenuClick={() => setIsMobileMenuOpen(true)}
+        />
       </div>
 
       {/* Mobile Drawer */}
@@ -81,8 +79,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           onClick={() => setIsMobileMenuOpen(false)}
         />
         <div
-          className={`absolute top-0 left-0 bottom-0 w-64 shadow-2xl transform transition-transform duration-300 ${
-            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          className={`absolute top-0 right-0 bottom-0 w-64 shadow-2xl transform transition-transform duration-300 ${
+            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
           <Sidebar
